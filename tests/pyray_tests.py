@@ -69,7 +69,11 @@ class Title:
     def _load_new_image(self, image_path: str) -> pr.Texture:
 
         image: pr.Image = pr.load_image(image_path)
-        pr.image_resize(image, min(image.width, SCR_WIDTH - 40), min(image.height, SCR_HEIGHT // 3))
+        pr.image_resize(
+            image,
+            min(image.width, SCR_WIDTH - 40),
+            min(image.height, SCR_HEIGHT // 3)
+        )
         return pr.load_texture_from_image(image)
 
     def draw_title(self) -> None:
@@ -86,10 +90,9 @@ pr.init_window(SCR_WIDTH, SCR_HEIGHT, "pac-man menu example")
 
 pr.set_target_fps(60)
 
-game_title: Title = Title(SCR_HEIGHT // 5, "pac-man_title.png")
+game_title: Title = Title(SCR_HEIGHT // 5, "assets/icons/pac-man_title.png")
 
 button_st_y = game_title.get_lower_bounds[1] + 20
-print(f"start y for buttons: {button_st_y}\n")
 
 buttons: dict[str, Button] = {}
 
@@ -101,9 +104,7 @@ for button_label in ["start game", "view highscores", "instructions", "exit"]:
         button_label,
         BUTTON_TEXT_SIZE
     )
-    print(f"width of the button: {pr.measure_text(button_label, BUTTON_TEXT_SIZE)}\n")
     buttons[button_label] = cur_button
-    print(f"button {button_label} position : {cur_button.x, cur_button.y}\n")
     button_st_y += BUTTON_TEXT_SIZE + 10
 
 while not pr.window_should_close():
