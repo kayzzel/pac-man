@@ -1,5 +1,6 @@
 from ..entity.collectible.Collectible import Collectible
 
+
 class Cell:
     def __init__(self, pos_x: int, pos_y: int) -> None:
         self.pos_x: int = pos_x
