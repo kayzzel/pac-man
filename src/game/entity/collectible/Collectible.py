@@ -3,5 +3,5 @@ class Collectible:
         self.collectible_type = collectible_type
         self.points = points
 
-    def collected(self):
+    def collected(self) -> None:
         ...

@@ -10,41 +10,41 @@ class Config:
         self.__seed: int = 42
         self.__level_max_time: int = 90
 
-    def load_config(self, filename: str):
+    def load_config(self, filename: str) -> None:
         ...
 
     @property
-    def highscore_filename(self):
+    def highscore_filename(self) -> str:
         return self.__highscore_filename
 
     @property
-    def nb_level(self):
+    def nb_level(self) -> int:
         return self.__nb_level
 
     @property
-    def lives(self):
+    def lives(self) -> int:
         return self.__lives
 
     @property
-    def pacgum(self):
+    def pacgum(self) -> int:
         return self.__pacgum
 
     @property
-    def point_per_pacgum(self):
+    def point_per_pacgum(self) -> int:
         return self.__point_per_pacgum
 
     @property
-    def point_per_super_pacgum(self):
+    def point_per_super_pacgum(self) -> int:
         return self.__point_per_super_pacgum
 
     @property
-    def point_per_ghost(self):
+    def point_per_ghost(self) -> int:
         return self.__point_per_ghost
 
     @property
-    def seed(self):
+    def seed(self) -> int:
         return self.__seed
 
     @property
-    def level_max_time(self):
+    def level_max_time(self) -> int:
         return self.__level_max_time

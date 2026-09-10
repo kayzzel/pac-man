@@ -13,11 +13,11 @@ class Game:
         self.timer: int = 0
         self.is_paused = False
 
-    def pause(self):
+    def pause(self) -> None:
         ...
 
-    def resume(self):
+    def resume(self) -> None:
         ...
 
-    def game_loop(self):
+    def game_loop(self) -> None:
         ...
