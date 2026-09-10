@@ -1,0 +1,3 @@
+class Texture_pack:
+    def __init__(self) -> None:
+        ...
