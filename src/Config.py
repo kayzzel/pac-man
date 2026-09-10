@@ -1,6 +1,7 @@
 class Config:
     def __init__(self) -> None:
         self.__highscore_filename: str = "highscore.json"
+        self.__nb_level: int = 10
         self.__lives: int = 3
         self.__pacgum: int = 42
         self.__point_per_pacgum: int = 10
@@ -15,6 +16,10 @@ class Config:
     @property
     def highscore_filename(self):
         return self.__highscore_filename
+
+    @property
+    def nb_level(self):
+        return self.__nb_level
 
     @property
     def lives(self):

@@ -4,11 +4,18 @@ from .view.View import View
 
 class App:
     def __init__(self) -> None:
-        self.config: Config = Config()
-        self.current_view = View()
+        self.__config: Config = Config()
+        self.__current_view = View()
+        self.__is_running = False
 
     def load_config(self, filename: str) -> None:
-        self.config.load_config(filename)
+        self.__config.load_config(filename)
 
-    def change_vue(self, view: View) -> None:
+    def change_view(self, view: View) -> None:
+        ...
+
+    def start_app(self) -> None:
+        ...
+
+    def stop_app(self) -> None:
         ...
