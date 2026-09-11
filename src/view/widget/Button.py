@@ -3,8 +3,8 @@ from typing import Callable
 from .Widget import Widget
 
 
-BUTTON_BASE_COLOR: pr.Color = pr.RAYWHITE
-BUTTON_HOVER_COLOR: pr.Color = pr.GOLD
+BUTTON_BASE_COLOR: pr.Color = pr.WHITE
+BUTTON_HOVER_COLOR: pr.Color = pr.DARKGRAY
 
 
 class Button(Widget):
@@ -16,13 +16,15 @@ class Button(Widget):
         label: str,
         action: Callable,
         font_sz: int = 20,
-        color: pr.Color = BUTTON_BASE_COLOR
+        color: pr.Color = BUTTON_BASE_COLOR,
+        hover_color: pr.Color = BUTTON_HOVER_COLOR
     ) -> None:
 
         super().__init__(x, y, pr.measure_text(label, font_sz), font_sz)
         self.label: str = label
         self.action: Callable = action
         self.color: pr.Color = color
+        self.hover_color: pr.Color = hover_color
 
     def is_in(self, posx: int, posy: int) -> bool:
 
@@ -34,13 +36,11 @@ class Button(Widget):
 
     def display_widget(self) -> None:
 
-        self.color = (
-            BUTTON_HOVER_COLOR
-            if self.is_in(pr.get_mouse_x(), pr.get_mouse_y())
-            else BUTTON_BASE_COLOR
-        )
+        color: pr.Color = self.color
+        if self.is_in(pr.get_mouse_x(), pr.get_mouse_y()):
+            color = self.hover_color
 
-        pr.draw_text(self.label, self.posx, self.posy, self.h, self.color)
+        pr.draw_text(self.label, self.posx, self.posy, self.h, color)
 
     @property
     def is_pressed(self) -> bool:
