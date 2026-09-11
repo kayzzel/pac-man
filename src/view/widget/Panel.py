@@ -52,9 +52,13 @@ class Panel(Widget):
                 + self.font_size * len(labels)
             )
 
+        print(f"total height after decreasing int pad: {total_height}\n")
+
         self.ext_pad: int = 0
-        while total_height + self.ext_pad * 2 < self.h:
+        while total_height + self.ext_pad < self.h:
             self.ext_pad += 1
+
+        print(f"ext pad after calculating : {self.ext_pad}\npanel height: {self.h}\n")
 
     def center_button_x(self, label: str) -> int:
 
@@ -72,9 +76,10 @@ class Panel(Widget):
         self.calculate_button_spacing(
             padding,
             button_size,
-            button_actions.keys()
+            list(button_actions.keys())
         )
-        start_y: int = self.posy + self.ext_pad // 2
+        start_y: int = self.posy + self.ext_pad // 2 - self.font_size
+        print(f"panel y : {self.posy}\nbutton start y: {start_y}\n")
         self.buttons: dict[str, Button] = {
             label: Button(
                 self.center_button_x(label),
