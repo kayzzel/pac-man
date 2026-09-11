@@ -1,5 +1,5 @@
 import pyray as pr
-from typing import Callable
+from typing import Callable, Any
 from .View import View
 from .widget.Panel import RectPanel
 from .widget.Icon import Icon
@@ -14,7 +14,7 @@ BORDER_PADDING: int = 3
 
 class Main_menu(View):
 
-    def __init__(self, background_path: str) -> None:
+    def __init__(self) -> None:
 
         self.background: Icon = Icon(
             -2,
@@ -54,9 +54,7 @@ class Main_menu(View):
         panel_height -= panel_height // 3
 
         button_actions: dict[str, Callable] = {
-            "start game": (lambda: print(
-                "Action for button 'start game' not yet coded\n"
-            )),
+            "start game": (lambda: "map_choice_menu"),
             "view highscores": (lambda: print(
                 "Action for button 'view highscores' not yet coded\n"
             )),
@@ -78,12 +76,12 @@ class Main_menu(View):
             (pr.GRAY, pr.GOLD)
         )
 
-    def update(self) -> None:
+    def update(self) -> Any:
 
         for button in self.panel.buttons.values():
 
             if button.is_pressed:
-                button.action()
+                return button.action()
 
     def display_view(self) -> None:
 

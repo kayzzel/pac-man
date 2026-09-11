@@ -1,12 +1,11 @@
 import pyray as pr
 from typing import Callable
-from abc import abstractmethod
 from .Widget import Widget
 from .Button import Button, BUTTON_BASE_COLOR, BUTTON_HOVER_COLOR
 
 
 PANEL_OUTLINE_COLOR: pr.Color = pr.DARKGRAY
-PANEL_FILL_COLOR: pr.Color = pr.RAYWHITE
+PANEL_FILL_COLOR: pr.Color = pr.BLANK
 
 
 class Panel(Widget):
@@ -122,7 +121,12 @@ class RectPanel(Panel):
             self.outline_color
         )
         pr.draw_rectangle_rounded(
-            (self.posx + thickness, self.posy + thickness, self.w - thickness * 2, self.h - thickness * 2),
+            (
+                self.posx + thickness,
+                self.posy + thickness,
+                self.w - thickness * 2,
+                self.h - thickness * 2
+            ),
             0.1,
             4,
             self.fill_color

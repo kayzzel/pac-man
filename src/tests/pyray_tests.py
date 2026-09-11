@@ -1,22 +1,32 @@
 import pyray as pr
-from ..view import Main_menu
-
+from typing import Any
+from ..view import View, Main_menu, Map_choice_menu
 
 pr.init_window(800, 450, "pac-man menu example")
 
 pr.set_target_fps(60)
 
-menu: Main_menu = Main_menu("src/view/assets/gifs/pac-man_bg_gif.gif")
+menu: Main_menu = Main_menu()
+map_choice: Map_choice_menu = Map_choice_menu()
+
+views: dict[str, View] = {
+    "main_menu": menu,
+    "map_choice_menu": map_choice
+}
+
+cur_view: View = menu
 
 while not pr.window_should_close():
 
-    menu.update()
+    update_result: Any = cur_view.update()
+    if isinstance(update_result, str):
+        cur_view = views[update_result]
 
     pr.clear_background(pr.BLACK)
 
     pr.begin_drawing()
 
-    menu.display_view()
+    cur_view.display_view()
 
     pr.end_drawing()
 
