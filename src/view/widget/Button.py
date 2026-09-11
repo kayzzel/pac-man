@@ -3,6 +3,10 @@ from typing import Callable
 from .Widget import Widget
 
 
+BUTTON_BASE_COLOR: pr.Color = pr.RAYWHITE
+BUTTON_HOVER_COLOR: pr.Color = pr.GOLD
+
+
 class Button(Widget):
 
     def __init__(
@@ -12,13 +16,13 @@ class Button(Widget):
         label: str,
         action: Callable,
         font_sz: int = 20,
-        color: pr.Color = pr.WHITE
+        color: pr.Color = BUTTON_BASE_COLOR
     ) -> None:
 
         super().__init__(x, y, pr.measure_text(label, font_sz), font_sz)
         self.label: str = label
         self.action: Callable = action
-        self.color: pr.Color = pr.WHITE
+        self.color: pr.Color = color
 
     def is_in(self, posx: int, posy: int) -> bool:
 
@@ -31,9 +35,9 @@ class Button(Widget):
     def display_widget(self) -> None:
 
         self.color = (
-            pr.DARKGRAY
+            BUTTON_HOVER_COLOR
             if self.is_in(pr.get_mouse_x(), pr.get_mouse_y())
-            else pr.WHITE
+            else BUTTON_BASE_COLOR
         )
 
         pr.draw_text(self.label, self.posx, self.posy, self.h, self.color)

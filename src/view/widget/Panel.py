@@ -4,6 +4,9 @@ from .Widget import Widget
 from .Button import Button
 
 
+PANEL_BASE_COLOR: pr.Color = pr.RAYWHITE
+
+
 class Panel(Widget):
 
     def __init__(
@@ -15,7 +18,7 @@ class Panel(Widget):
         buttons: dict[str, Callable],
         button_size: int = 10,
         padding: int = 10,
-        color: pr.Color = pr.WHITE
+        color: pr.Color = PANEL_BASE_COLOR
     ) -> None:
 
         super().__init__(x, y, width, height)
