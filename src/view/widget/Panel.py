@@ -1,5 +1,6 @@
 import pyray as pr
 from typing import Callable
+from abc import abstractmethod
 from .Widget import Widget
 from .Button import Button, BUTTON_BASE_COLOR, BUTTON_HOVER_COLOR
 
@@ -103,6 +104,15 @@ class Panel(Widget):
 
     def display_widget(self) -> None:
 
+        for button in self.buttons.values():
+
+            button.display_widget()
+
+
+class RectPanel(Panel):
+
+    def display_widget(self) -> None:
+
         thickness: int = 2
         pr.draw_rectangle_rounded_lines_ex(
             (self.posx, self.posy, self.w, self.h),
@@ -117,7 +127,18 @@ class Panel(Widget):
             4,
             self.fill_color
         )
+        super().display_widget()
 
-        for button in self.buttons.values():
 
-            button.display_widget()
+class OvalPanel(Panel):
+
+    def display_widget(self) -> None:
+
+        pr.draw_ellipse_lines(
+            self.posx + (self.w // 2),
+            self.posy + (self.h // 2),
+            self.w // 2,
+            self.h // 2,
+            self.outline_color
+        )
+        super().display_widget()

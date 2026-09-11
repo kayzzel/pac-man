@@ -1,7 +1,7 @@
 import pyray as pr
 from typing import Callable
 from .View import View
-from .widget.Panel import Panel
+from .widget.Panel import RectPanel
 from .widget.Icon import Icon
 
 
@@ -66,7 +66,7 @@ class Main_menu(View):
             "exit": pr.close_window,
         }
 
-        self.panel: Panel = Panel(
+        self.panel: RectPanel = RectPanel(
             panel_x,
             panel_y,
             panel_width,
