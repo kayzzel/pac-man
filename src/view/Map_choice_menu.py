@@ -15,6 +15,12 @@ class Map_choice_menu(View):
     def __init__(self) -> None:
 
         self._init_panels()
+        self.title: str = "CHOOSE THE MAP"
+        self.title_font_sz: int = pr.get_screen_height() // 8
+        self.title_width: int = pr.measure_text(
+            self.title,
+            self.title_font_sz
+        )
 
     def _init_panels(self) -> None:
 
@@ -95,5 +101,12 @@ class Map_choice_menu(View):
 
     def display_view(self) -> None:
 
+        pr.draw_text(
+            self.title,
+            (pr.get_screen_width() - self.title_width) // 2,
+            20,
+            self.title_font_sz,
+            pr.RAYWHITE
+        )
         for panel in self.panels:
             panel.display_widget()
