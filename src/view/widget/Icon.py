@@ -143,24 +143,6 @@ class ClickableIcon(Icon):
         self.action: Callable = action
         self.was_in: bool = False
 
-    @property
-    def is_in(self) -> bool:
-
-        return (
-            self.posx <= pr.get_mouse_x() <= self.posx + self.w
-        ) and (
-            self.posy <= pr.get_mouse_y() <= self.posy + self.h
-        )
-
-    @property
-    def is_pressed(self) -> bool:
-
-        return (
-            pr.is_mouse_button_pressed(pr.MOUSE_BUTTON_LEFT)
-        ) and (
-            self.is_in
-        )
-
     def update_icon(self) -> None:
 
         if self.was_in and not self.is_in:

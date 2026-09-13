@@ -18,6 +18,24 @@ class Widget(ABC):
         self.w: int = width
         self.h: int = height
 
+    @property
+    def is_in(self) -> bool:
+
+        return (
+            self.posx <= pr.get_mouse_x() <= self.posx + self.w
+        ) and (
+            self.posy <= pr.get_mouse_y() <= self.posy + self.h
+        )
+
+    @property
+    def is_pressed(self) -> bool:
+
+        return (
+            pr.is_mouse_button_pressed(pr.MOUSE_BUTTON_LEFT)
+        ) and (
+            self.is_in
+        )
+
     @abstractmethod
     def display_widget(self) -> None:
 

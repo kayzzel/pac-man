@@ -3,8 +3,7 @@ from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
-from .widget.Panel import RectPanel
-from .widget.Icon import ClickableIcon
+from .widget import RectPanel, ClickableIcon, Input_box
 
 
 BUTTON_FONT_SIZE: int = 20
@@ -23,7 +22,7 @@ class Pause_menu(View):
         self.x: int = (sw() - self.w) // 2
         self.y: int = (sh() - self.h) // 2
         self._init_left_panel()
-        self._init_right_panel()
+        self._init_lock_and_password()
 
     def _init_left_panel(self) -> None:
 
@@ -84,7 +83,7 @@ class Pause_menu(View):
             self.w // 2 - self.w // 10
         )
 
-    def _init_right_panel(self) -> None:
+    def _init_lock_and_password(self) -> None:
 
         lock_width: int = self.w // 2 // 3
 
@@ -92,9 +91,25 @@ class Pause_menu(View):
             self.x + self.w // 2 + (self.w // 2 - lock_width) // 2,
             -2,
             LOCK_CLOSED_PATH,
-            lambda: print("haha not implemented input box yet"),
+            self.show_input_box,
             (lock_width, lock_width)
         )
+
+        input_width: int = self.w // 2 - self.w // 8
+
+        self.input_password: Input_box = Input_box(
+            self.x + self.w // 2 + (self.w // 2 - input_width) // 2,
+            self.lock_icon.posy + self.lock_icon.h + 10,
+            input_width,
+            self.h // 8,
+            20
+        )
+
+        self.show_input: bool = False
+
+    def show_input_box(self) -> None:
+
+        self.show_input = not self.show_input
 
     def update(self) -> Any:
 
@@ -109,3 +124,6 @@ class Pause_menu(View):
 
         self.left_panel.display_widget()
         self.lock_icon.display_widget()
+
+        if self.show_input:
+            self.input_password.display_widget()

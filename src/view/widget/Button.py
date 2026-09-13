@@ -26,15 +26,6 @@ class Button(Widget):
         self.color: pr.Color = color
         self.hover_color: pr.Color = hover_color
 
-    @property
-    def is_in(self) -> bool:
-
-        return (
-            self.posx <= pr.get_mouse_x() <= self.posx + self.w
-        ) and (
-            self.posy <= pr.get_mouse_y() <= self.posy + self.h
-        )
-
     def display_widget(self) -> None:
 
         color: pr.Color = self.color
@@ -42,12 +33,3 @@ class Button(Widget):
             color = self.hover_color
 
         pr.draw_text(self.label, self.posx, self.posy, self.h, color)
-
-    @property
-    def is_pressed(self) -> bool:
-
-        return (
-            pr.is_mouse_button_pressed(pr.MOUSE_BUTTON_LEFT)
-        ) and (
-            self.is_in
-        )
