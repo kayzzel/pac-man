@@ -1,12 +1,13 @@
 import pyray as pr
+from typing import Callable
 from .Widget import Widget
 
 
 MAX_INPUT_CHARS: int = 10
 
-DEFAULT_COLOR: pr.Color = pr.RAYWHITE
-TEXT_COLOR: pr.Color = pr.MAROON
-CURSOR_COLOR: pr.Color = pr.RED
+DEFAULT_COLOR: pr.Color = pr.GRAY
+TEXT_COLOR: pr.Color = pr.LIGHTGRAY
+CURSOR_COLOR: pr.Color = pr.RAYWHITE
 
 
 class Input_box(Widget):
@@ -18,6 +19,7 @@ class Input_box(Widget):
         width: int,
         height: int,
         max_chars: int = MAX_INPUT_CHARS,
+        action: Callable = lambda: 0,
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
             DEFAULT_COLOR,
             TEXT_COLOR,
@@ -33,6 +35,7 @@ class Input_box(Widget):
         self.font_size: int = self.h - 5
         self.max_chars: int = max_chars
         self.standin_input: str = "h" * max_chars
+        self.base_colors: tuple[pr.Color, pr.Color, pr.Color] = colors
         self.box_color: pr.Color
         self.text_color: pr.Color
         self.cursor_color: pr.Color
@@ -41,6 +44,8 @@ class Input_box(Widget):
         self.input: str = ""
         self.enter_input: bool = False
         self.frame_counter: int = 0
+
+        self.action: Callable = action
 
         self.calculate_font_size()
 
@@ -84,6 +89,9 @@ class Input_box(Widget):
 
             if pr.is_key_pressed(pr.KEY_ESCAPE):
                 self.enter_input = False
+
+            if pr.is_key_pressed(pr.KEY_ENTER):
+                self.action()
 
         else:
 

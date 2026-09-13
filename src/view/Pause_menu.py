@@ -6,6 +6,10 @@ from .View import View
 from .widget import RectPanel, ClickableIcon, Input_box
 
 
+CHEAT_PASSWORD: str = "password"
+PASSWORD_MSG_TIME: int = 120
+
+
 BUTTON_FONT_SIZE: int = 20
 PANEL_PADDING: int = BUTTON_FONT_SIZE - 5
 
@@ -22,6 +26,7 @@ class Pause_menu(View):
         self.x: int = (sw() - self.w) // 2
         self.y: int = (sh() - self.h) // 2
         self._init_left_panel()
+        self._init_right_panel()
         self._init_lock_and_password()
 
     def _init_left_panel(self) -> None:
@@ -99,17 +104,50 @@ class Pause_menu(View):
 
         self.input_password: Input_box = Input_box(
             self.x + self.w // 2 + (self.w // 2 - input_width) // 2,
-            self.lock_icon.posy + self.lock_icon.h + 10,
+            self.h // 3 + self.lock_icon.h + 10,
             input_width,
             self.h // 8,
-            20
+            20,
+            self.validate_password
         )
 
         self.show_input: bool = False
+        self.show_message: str = ""
+
+    def _init_right_panel(self) -> None:
+
+        self.show_right_panel: bool = False
 
     def show_input_box(self) -> None:
 
         self.show_input = not self.show_input
+
+        if not self.show_input:
+            self.input_password.input = ""
+
+        self.lock_icon.y = (
+            -2
+            if self.lock_icon.y == -3
+            else -3
+        )
+
+    def validate_password(self) -> None:
+
+        self.frame_counter: int = 0
+
+        if self.input_password.input == CHEAT_PASSWORD:
+
+            self.show_right_panel = True
+            self.show_message: str = "Well done, little cheater :)"
+            self.input_password.text_color = pr.GREEN
+            self.input_password.cursor_color = pr.DARKGREEN
+            self.lock_icon._load_image(LOCK_OPEN_PATH)
+
+        else:
+
+            self.show_message = "Password incorrect, try again"
+            self.input_password.text_color = pr.RED
+            self.input_password.cursor_color = pr.MAROON
 
     def update(self) -> Any:
 
@@ -123,7 +161,46 @@ class Pause_menu(View):
     def display_view(self) -> None:
 
         self.left_panel.display_widget()
-        self.lock_icon.display_widget()
 
-        if self.show_input:
-            self.input_password.display_widget()
+        if self.show_right_panel and self.frame_counter >= PASSWORD_MSG_TIME:
+            self.show_input = False
+            ...
+
+        else:
+
+            self.lock_icon.display_widget()
+
+            if self.show_message:
+
+                if self.frame_counter < PASSWORD_MSG_TIME:
+
+                    message_width: int = (self.w // 2 - pr.measure_text(
+                        self.show_message,
+                        self.h // 20
+                    )) // 2
+                    pr.draw_text(
+                        self.show_message,
+                        self.x + self.w // 2 + message_width,
+                        (
+                            self.input_password.posy
+                            + self.input_password.h
+                            + self.h // 10
+                        ),
+                        self.h // 20,
+                        self.input_password.text_color
+                    )
+                    self.frame_counter += 1
+
+                else:
+
+                    self.show_message = ""
+                    self.input_password.text_color = (
+                        self.input_password.base_colors[1]
+                    )
+                    self.input_password.cursor_color = (
+                        self.input_password.base_colors[2]
+                    )
+                    self.lock_icon._load_image(LOCK_CLOSED_PATH)
+
+            if self.show_input:
+                self.input_password.display_widget()
