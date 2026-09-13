@@ -1,8 +1,10 @@
 import pyray as pr
+from pyray import get_screen_width as sw
+from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
 from .widget.Panel import RectPanel
-from .widget.Icon import Icon
+from .widget.Icon import Icon, AnimIcon
 
 
 BACKGROUND_IMAGE_PATH: str = "src/view/assets/gifs/pac-man_bg_gif.gif"
@@ -16,28 +18,26 @@ class Main_menu(View):
 
     def __init__(self) -> None:
 
-        self.background: Icon = Icon(
+        self.background: AnimIcon = AnimIcon(
             -2,
             -2,
             BACKGROUND_IMAGE_PATH,
-            True,
-            (pr.get_screen_width(), pr.get_screen_height())
+            (sw(), sh())
         )
         self.menu_icon: Icon = Icon(
             -2,
-            min(pr.get_screen_height() // 5, 50),
+            min(sh() // 5, 50),
             "src/view/assets/icons/pac-man_title.png",
-            False,
             (
-                pr.get_screen_width() - int(pr.get_screen_width() * 0.2),
-                pr.get_screen_height() // 4
+                sw() - int(sw() * 0.2),
+                sh() // 4
             )
         )
         self.outline: tuple[int, int, int, int] = (
             BORDER_PADDING,
             BORDER_PADDING,
-            pr.get_screen_width() - BORDER_PADDING * 2,
-            pr.get_screen_height() - BORDER_PADDING * 2
+            sw() - BORDER_PADDING * 2,
+            sh() - BORDER_PADDING * 2
         )
         self.init_panel()
 
@@ -45,11 +45,11 @@ class Main_menu(View):
 
         icon_bottom: int = self.menu_icon.get_lower_bounds[1] + 100
 
-        panel_height: int = pr.get_screen_height() - icon_bottom
-        panel_width: int = pr.get_screen_width() // 3
+        panel_height: int = sh() - icon_bottom
+        panel_width: int = sw() // 3
 
         panel_y: int = icon_bottom + panel_height // 6
-        panel_x: int = (pr.get_screen_width() - panel_width) // 2
+        panel_x: int = (sw() - panel_width) // 2
 
         panel_height -= panel_height // 3
 

@@ -1,4 +1,6 @@
 import pyray as pr
+from pyray import get_screen_width as sw
+from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
 from .widget.Panel import OvalPanel, RectPanel
@@ -16,7 +18,7 @@ class Map_choice_menu(View):
 
         self._init_panels()
         self.title: str = "CHOOSE THE MAP"
-        self.title_font_sz: int = pr.get_screen_height() // 8
+        self.title_font_sz: int = sh() // 8
         self.title_width: int = pr.measure_text(
             self.title,
             self.title_font_sz
@@ -60,8 +62,8 @@ class Map_choice_menu(View):
         back_height: int = BUTTON_FONT_SIZE + RECT_PANEL_PADDING
 
         self.panels.append(RectPanel(
-            pr.get_screen_width() - back_width - 10,
-            pr.get_screen_height() - back_height - 10,
+            sw() - back_width - 10,
+            sh() - back_height - 10,
             back_width,
             back_height,
             {back_label: self.button_actions[back_label]},
@@ -82,7 +84,7 @@ class Map_choice_menu(View):
         ) + ELLIPSE_PANEL_PADDING
         nb_buttons: int = len(self.button_actions.keys())
         width_remaining: int = (
-            pr.get_screen_width() -
+            sw() -
             nb_buttons * self.panel_width
         )
 
@@ -103,7 +105,7 @@ class Map_choice_menu(View):
 
         pr.draw_text(
             self.title,
-            (pr.get_screen_width() - self.title_width) // 2,
+            (sw() - self.title_width) // 2,
             20,
             self.title_font_sz,
             pr.RAYWHITE

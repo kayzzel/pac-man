@@ -4,10 +4,14 @@ from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
 from .widget.Panel import RectPanel
+from .widget.Icon import ClickableIcon
 
 
 BUTTON_FONT_SIZE: int = 20
 PANEL_PADDING: int = BUTTON_FONT_SIZE - 5
+
+LOCK_CLOSED_PATH: str = "src/view/assets/icons/lock_closed.jpg"
+LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
 
 
 class Pause_menu(View):
@@ -19,6 +23,7 @@ class Pause_menu(View):
         self.x: int = (sw() - self.w) // 2
         self.y: int = (sh() - self.h) // 2
         self._init_left_panel()
+        self._init_right_panel()
 
     def _init_left_panel(self) -> None:
 
@@ -44,7 +49,7 @@ class Pause_menu(View):
         vertical_padding: int = self.h // 12
 
         self.left_panel: RectPanel = RectPanel(
-            (self.w // 2 - self.left_panel_w) // 2,
+            self.x + (self.w // 2 - self.left_panel_w) // 2,
             self.y + vertical_padding,
             self.left_panel_w,
             (self.h - vertical_padding * 2),
@@ -79,6 +84,18 @@ class Pause_menu(View):
             self.w // 2 - self.w // 10
         )
 
+    def _init_right_panel(self) -> None:
+
+        lock_width: int = self.w // 2 // 3
+
+        self.lock_icon: ClickableIcon = ClickableIcon(
+            self.x + self.w // 2 + (self.w // 2 - lock_width) // 2,
+            -2,
+            LOCK_CLOSED_PATH,
+            lambda: print("haha not implemented input box yet"),
+            (lock_width, lock_width)
+        )
+
     def update(self) -> Any:
 
         for button in self.left_panel.buttons.values():
@@ -91,3 +108,4 @@ class Pause_menu(View):
     def display_view(self) -> None:
 
         self.left_panel.display_widget()
+        self.lock_icon.display_widget()
