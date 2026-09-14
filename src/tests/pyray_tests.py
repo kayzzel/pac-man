@@ -6,6 +6,8 @@ pr.init_window(800, 450, "pac-man menu example")
 
 pr.set_target_fps(60)
 
+pr.set_exit_key(pr.KEY_NULL)
+
 app: App = App()
 
 menu: Main_menu = Main_menu(app)
@@ -19,7 +21,7 @@ views: dict[str, View] = {
 }
 app.add_view(views)
 
-app.__current_view = menu
+app.change_view("main_menu")
 
 while not pr.window_should_close():
 
@@ -27,7 +29,7 @@ while not pr.window_should_close():
 
     pr.begin_drawing()
 
-    app.__current_view.display_view()
+    app.display_app()
 
     pr.end_drawing()
 

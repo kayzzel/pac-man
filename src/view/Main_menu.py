@@ -87,6 +87,10 @@ class Main_menu(View):
 
     def display_view(self) -> None:
 
+        if pr.is_key_pressed(pr.KEY_ESCAPE):
+            self.app.change_view("pause_menu")
+            return
+
         pr.draw_rectangle_lines_ex(
             self.outline,
             BORDER_THICKNESS,

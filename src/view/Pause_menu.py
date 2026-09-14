@@ -34,9 +34,7 @@ class Pause_menu(View):
     def _init_left_panel(self) -> None:
 
         self.button_actions: dict[str, tuple[Callable, Any]] = {
-            "Resume": (lambda: print(
-                "Action for button 'resume' not yet coded\n"
-            ), None),
+            "Resume": (self.app.return_to_prev_view, None),
             "Options": (lambda: print(
                 "Action for button 'options' not yet coded\n"
             ), None),
@@ -155,6 +153,9 @@ class Pause_menu(View):
     #             button.call_action()
 
     def display_view(self) -> None:
+
+        if pr.is_key_pressed(pr.KEY_ESCAPE):
+            self.app.return_to_prev_view()
 
         outline: tuple[int, int, int, int] = (
             self.x, self.y, self.w, self.h

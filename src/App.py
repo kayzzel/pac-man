@@ -32,8 +32,19 @@ class App:
             self.__previous_views.append(self.__current_view)
             self.__current_view = self.views[view]
 
+        print(f"changed current view to {self.get_view().__class__.__name__}")
+
     def start_app(self) -> None:
         ...
 
     def stop_app(self) -> None:
         ...
+
+    def display_app(self) -> None:
+
+        if self.__current_view:
+            self.__current_view.display_view()
+
+    def get_view(self) -> View | None:
+
+        return self.__current_view
