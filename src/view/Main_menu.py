@@ -16,7 +16,9 @@ BORDER_PADDING: int = 3
 
 class Main_menu(View):
 
-    def __init__(self) -> None:
+    def __init__(self, app) -> None:
+
+        super().__init__(app)
 
         self.background: AnimIcon = AnimIcon(
             -2,
@@ -27,7 +29,7 @@ class Main_menu(View):
         self.menu_icon: Icon = Icon(
             -2,
             min(sh() // 5, 50),
-            "src/view/assets/icons/pac-man_title.png",
+            TITLE_IMAGE_PATH,
             (
                 sw() - int(sw() * 0.2),
                 sh() // 4
@@ -53,15 +55,15 @@ class Main_menu(View):
 
         panel_height -= panel_height // 3
 
-        button_actions: dict[str, Callable] = {
-            "start game": (lambda: "map_choice_menu"),
+        button_actions: dict[str, tuple[Callable, Any]] = {
+            "start game": (self.app.change_view, "map_choice_menu"),
             "view highscores": (lambda: print(
                 "Action for button 'view highscores' not yet coded\n"
-            )),
+            ), None),
             "instructions": (lambda: print(
                 "Action for button 'instructions' not yet coded\n"
-            )),
-            "exit": pr.close_window,
+            ), None),
+            "exit": (pr.close_window, None),
         }
 
         self.panel: RectPanel = RectPanel(
@@ -76,12 +78,12 @@ class Main_menu(View):
             (pr.GRAY, pr.GOLD)
         )
 
-    def update(self) -> Any:
+    # def update(self) -> None:
 
-        for button in self.panel.buttons.values():
+    #     for button in self.panel.buttons.values():
 
-            if button.is_pressed:
-                return button.action()
+    #         if button.is_pressed:
+    #             button.call_action()
 
     def display_view(self) -> None:
 

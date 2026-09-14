@@ -1,5 +1,8 @@
-from abc import ABC, abstractmethod
 import pyray as pr
+from pyray import get_screen_width as sw
+from pyray import get_screen_height as sh
+from abc import ABC, abstractmethod
+from typing import Any
 
 
 class Widget(ABC):
@@ -36,6 +39,29 @@ class Widget(ABC):
             self.is_in
         )
 
+    def _update_widget(self) -> None:
+
+        if self.is_pressed:
+
+            self.call_action()
+
+    def call_action(self) -> None:
+
+        if not hasattr(self, "action"):
+
+            return
+
+        args: Any = self.action[1]
+
+        if isinstance(args, tuple):
+            self.action[0](*args)
+
+        elif args:
+            self.action[0](args)
+
+        else:
+            self.action[0]()
+
     @abstractmethod
     def display_widget(self) -> None:
 
@@ -47,7 +73,7 @@ class Widget(ABC):
         return (
             self.x
             if self.x >= 0
-            else (pr.get_screen_width() - self.w) // -(self.x)
+            else (sw() - self.w) // -(self.x)
         )
 
     @property
@@ -56,5 +82,5 @@ class Widget(ABC):
         return (
             self.y
             if self.y >= 0
-            else (pr.get_screen_height() - self.h) // -(self.y)
+            else (sh() - self.h) // -(self.y)
         )

@@ -1,6 +1,8 @@
+import pyray as pr
+from pyray import get_screen_width as sw
+from pyray import get_screen_height as sh
 from .Widget import Widget
 from typing import Any, Callable
-import pyray as pr
 
 
 BASE_FRAME_DELAY: int = 5
@@ -13,7 +15,6 @@ class Icon(Widget):
         x: int,
         y: int,
         image_path: str,
-        is_gif: bool,
         max_size: tuple[int, int]
     ) -> None:
 
@@ -58,7 +59,7 @@ class Icon(Widget):
         return (
             self.x
             if self.x >= 0
-            else (pr.get_screen_width() - self.i_w) // -(self.x)
+            else (sw() - self.i_w) // -(self.x)
         )
 
     @property
@@ -67,7 +68,7 @@ class Icon(Widget):
         return (
             self.y
             if self.y >= 0
-            else (pr.get_screen_height() - self.i_h) // -(self.y)
+            else (sh() - self.i_h) // -(self.y)
         )
 
     @property
@@ -77,9 +78,7 @@ class Icon(Widget):
 
     def display_widget(self) -> None:
 
-        if self.is_gif:
-            self.update_frames()
-
+        self._update_widget()
         pr.draw_texture(self.texture, self.posx, self.posy, pr.WHITE)
 
 
@@ -94,17 +93,18 @@ class AnimIcon(Icon):
         self.frame_delay: int = BASE_FRAME_DELAY
         self.frame_counter: int = 0
 
-        new_width: int = self.image.width
-        if new_width > self.max_size[0]:
-            new_width = self.max_size[0]
+        self.texture: pr.Texture = pr.load_texture_from_image(self.image)
+        # new_width: int = self.image.width
+        # if new_width > self.max_size[0]:
+        #     new_width = self.max_size[0]
 
-        new_height: int = self.image.height
-        if new_height > self.max_size[1]:
-            new_height = self.max_size[1]
+        # new_height: int = self.image.height
+        # if new_height > self.max_size[1]:
+        #     new_height = self.max_size[1]
 
-        self._resize_image(new_width, new_height)
+        # self._resize_image(new_width, new_height)
 
-    def update_frames(self) -> None:
+    def _update_widget(self) -> None:
 
         self.frame_counter += 1
 
@@ -115,21 +115,16 @@ class AnimIcon(Icon):
             if self.cur_frame >= self.frames[0]:
                 self.cur_frame = 0
 
-            self.nx_frame_offset = (
+            nx_frame_offset: int = (
                 self.image.width * self.image.height * 4 * self.cur_frame
             )
 
             pr.update_texture(
                 self.texture,
-                self.image.data + self.nx_frame_offset
+                self.image.data + nx_frame_offset
             )
 
             self.frame_counter = 0
-
-    def display_widget(self) -> None:
-
-        self.update_frames()
-        super().display_widget()
 
 
 class ClickableIcon(Icon):
@@ -139,15 +134,15 @@ class ClickableIcon(Icon):
         x: int,
         y: int,
         image_path: str,
-        action: Callable,
+        action: tuple[Callable, Any],
         max_size: tuple[int, int]
     ) -> None:
 
         super().__init__(x, y, image_path, max_size)
-        self.action: Callable = action
+        self.action: tuple[Callable, Any] = action
         self.was_in: bool = False
 
-    def update_icon(self) -> None:
+    def _update_widget(self) -> None:
 
         if self.was_in and not self.is_in:
 
@@ -166,9 +161,4 @@ class ClickableIcon(Icon):
             )
 
         if self.is_pressed:
-            self.action()
-
-    def display_widget(self) -> None:
-
-        self.update_icon()
-        super().display_widget()
+            self.call_action()

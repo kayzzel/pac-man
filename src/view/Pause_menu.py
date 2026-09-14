@@ -19,7 +19,9 @@ LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
 
 class Pause_menu(View):
 
-    def __init__(self) -> None:
+    def __init__(self, app) -> None:
+
+        super().__init__(app)
 
         self.w: int = sw() - sw() // 8
         self.h: int = sh() - sh() // 8
@@ -31,22 +33,18 @@ class Pause_menu(View):
 
     def _init_left_panel(self) -> None:
 
-        self.button_actions: dict[str, Callable] = {
-            "Resume": lambda: print(
+        self.button_actions: dict[str, tuple[Callable, Any]] = {
+            "Resume": (lambda: print(
                 "Action for button 'resume' not yet coded\n"
-            ),
-            "Options": lambda: print(
+            ), None),
+            "Options": (lambda: print(
                 "Action for button 'options' not yet coded\n"
-            ),
-            "Scores": lambda: print(
+            ), None),
+            "Scores": (lambda: print(
                 "Action for button 'scores' not yet coded\n"
-            ),
-            "Save and exit": lambda: print(
-                "Action for button 'save and exit' not yet coded\n"
-            ),
-            "Exit": lambda: print(
-                "Action for button 'exit' not yet coded\n"
-            )
+            ), None),
+            "Save and exit": (self.app.change_view, "main_menu"),
+            "Exit": (self.app.change_view, "main_menu")
         }
 
         self.calculate_panel_spacing()
@@ -149,14 +147,12 @@ class Pause_menu(View):
             self.input_password.text_color = pr.RED
             self.input_password.cursor_color = pr.MAROON
 
-    def update(self) -> Any:
+    # def update(self) -> None:
 
-        for button in self.left_panel.buttons.values():
+    #     for button in self.left_panel.buttons.values():
 
-            if button.is_pressed:
-                return button.action()
-
-        return None
+    #         if button.is_pressed:
+    #             button.call_action()
 
     def display_view(self) -> None:
 

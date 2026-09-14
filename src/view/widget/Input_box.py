@@ -60,7 +60,7 @@ class Input_box(Widget):
 
             self.font_size -= 1
 
-    def update_widget(self) -> None:
+    def _update_widget(self) -> None:
 
         if self.is_pressed and not self.enter_input:
             self.enter_input = True
@@ -100,7 +100,7 @@ class Input_box(Widget):
 
     def display_widget(self) -> None:
 
-        self.update_widget()
+        self._update_widget()
 
         pr.draw_rectangle(*self.textbox, pr.DARKGRAY)
 

@@ -1,5 +1,5 @@
 import pyray as pr
-from typing import Callable
+from typing import Callable, Any
 from .Widget import Widget
 from .Button import Button, BUTTON_BASE_COLOR, BUTTON_HOVER_COLOR
 
@@ -16,7 +16,7 @@ class Panel(Widget):
         y: int,
         width: int,
         height: int,
-        buttons: dict[str, Callable],
+        buttons: dict[str, tuple[Callable, Any]],
         button_size: int = 10,
         padding: int = 10,
         panel_colors: tuple[pr.Color, pr.Color] = (
@@ -30,6 +30,7 @@ class Panel(Widget):
     ) -> None:
 
         super().__init__(x, y, width, height)
+
         self.outline_color: pr.Color
         self.fill_color: pr.Color
         self.outline_color, self.fill_color = panel_colors
@@ -66,13 +67,9 @@ class Panel(Widget):
                 + self.font_size * len(labels)
             )
 
-        print(f"total height after decreasing int pad: {total_height}\n")
-
         self.ext_pad: int = 0
         while total_height + self.ext_pad < self.h:
             self.ext_pad += 1
-
-        print(f"ext pad after calculating : {self.ext_pad}\npanel height: {self.h}\n")
 
     def center_button_x(self, label: str) -> int:
 
@@ -82,7 +79,7 @@ class Panel(Widget):
 
     def init_buttons(
         self,
-        button_actions: dict[str, Callable],
+        button_actions: dict[str, tuple[Callable, Any]],
         button_size: int,
         padding: int
     ) -> None:

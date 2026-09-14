@@ -3,8 +3,7 @@ from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
-from .widget.Panel import OvalPanel, RectPanel
-from .widget.Button import Button
+from .widget import Panel, OvalPanel, RectPanel
 
 
 BUTTON_FONT_SIZE: int = 20
@@ -14,7 +13,9 @@ RECT_PANEL_PADDING: int = BUTTON_FONT_SIZE - 5
 
 class Map_choice_menu(View):
 
-    def __init__(self) -> None:
+    def __init__(self, app) -> None:
+
+        super().__init__(app)
 
         self._init_panels()
         self.title: str = "CHOOSE THE MAP"
@@ -26,23 +27,21 @@ class Map_choice_menu(View):
 
     def _init_panels(self) -> None:
 
-        self.panels: list[OvalPanel] = []
-
-        self.button_actions: dict[str, Callable] = {
+        self.button_actions: dict[str, tuple[Callable, Any]] = {
             "MANDATORY": (lambda: print(
                 "Action for button 'mandatory' is not yet coded\n"
-            )),
+            ), None),
             "ARCADE": (lambda: print(
                 "Action for button 'arcade' is not yet coded\n"
-            )),
+            ), None),
             "CUSTOM": (lambda: print(
                 "Action for button 'custom' is not yet coded\n"
-            ))
+            ), None)
         }
 
         self.calculate_panel_spacing()
 
-        self.panels: list[OvalPanel] = [OvalPanel(
+        self.panels: list[Panel] = [OvalPanel(
             self.spacing * (i + 1) + self.panel_width * i,
             -2,
             self.panel_width,
@@ -54,7 +53,10 @@ class Map_choice_menu(View):
         ]
 
         back_label: str = "back <-|"
-        self.button_actions[back_label] = (lambda: "main_menu")
+        self.button_actions[back_label] = (
+            self.app.return_to_prev_view,
+            None
+        )
 
         back_width: int = (
             pr.measure_text(back_label, BUTTON_FONT_SIZE)
@@ -90,16 +92,16 @@ class Map_choice_menu(View):
 
         self.spacing: int = width_remaining // (nb_buttons + 1)
 
-    def update(self) -> Any:
+    # def update(self) -> Any:
 
-        buttons: list[Button] = []
-        for panel in self.panels:
-            buttons += list(panel.buttons.values())
+    #     buttons: list[Button] = []
+    #     for panel in self.panels:
+    #         buttons += list(panel.buttons.values())
 
-        for button in buttons:
+    #     for button in buttons:
 
-            if button.is_pressed:
-                return button.action()
+    #         if button.is_pressed:
+    #             button.call_action()
 
     def display_view(self) -> None:
 

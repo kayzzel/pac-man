@@ -1,5 +1,5 @@
 import pyray as pr
-from typing import Callable
+from typing import Callable, Any
 from .Widget import Widget
 
 
@@ -14,7 +14,7 @@ class Button(Widget):
         x: int,
         y: int,
         label: str,
-        action: Callable,
+        action: tuple[Callable, Any],
         font_sz: int = 20,
         color: pr.Color = BUTTON_BASE_COLOR,
         hover_color: pr.Color = BUTTON_HOVER_COLOR
@@ -22,11 +22,13 @@ class Button(Widget):
 
         super().__init__(x, y, pr.measure_text(label, font_sz), font_sz)
         self.label: str = label
-        self.action: Callable = action
+        self.action: tuple[Callable, Any] = action
         self.color: pr.Color = color
         self.hover_color: pr.Color = hover_color
 
     def display_widget(self) -> None:
+
+        self._update_widget()
 
         color: pr.Color = self.color
         if self.is_in:
