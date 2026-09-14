@@ -160,11 +160,17 @@ class Pause_menu(View):
 
     def display_view(self) -> None:
 
+        outline: tuple[int, int, int, int] = (
+            self.x, self.y, self.w, self.h
+        )
+        pr.draw_rectangle(*outline, pr.BLACK)
+        pr.draw_rectangle_lines_ex(outline, 5, pr.RAYWHITE)
+
         self.left_panel.display_widget()
 
         if self.show_right_panel and self.frame_counter >= PASSWORD_MSG_TIME:
+
             self.show_input = False
-            ...
 
         else:
 
@@ -172,35 +178,40 @@ class Pause_menu(View):
 
             if self.show_message:
 
-                if self.frame_counter < PASSWORD_MSG_TIME:
-
-                    message_width: int = (self.w // 2 - pr.measure_text(
-                        self.show_message,
-                        self.h // 20
-                    )) // 2
-                    pr.draw_text(
-                        self.show_message,
-                        self.x + self.w // 2 + message_width,
-                        (
-                            self.input_password.posy
-                            + self.input_password.h
-                            + self.h // 10
-                        ),
-                        self.h // 20,
-                        self.input_password.text_color
-                    )
-                    self.frame_counter += 1
-
-                else:
-
-                    self.show_message = ""
-                    self.input_password.text_color = (
-                        self.input_password.base_colors[1]
-                    )
-                    self.input_password.cursor_color = (
-                        self.input_password.base_colors[2]
-                    )
-                    self.lock_icon._load_image(LOCK_CLOSED_PATH)
+                self.display_message()
 
             if self.show_input:
+
                 self.input_password.display_widget()
+
+    def display_message(self) -> None:
+
+        if self.frame_counter < PASSWORD_MSG_TIME:
+
+            message_width: int = (self.w // 2 - pr.measure_text(
+                self.show_message,
+                self.h // 20
+            )) // 2
+            pr.draw_text(
+                self.show_message,
+                self.x + self.w // 2 + message_width,
+                (
+                    self.input_password.posy
+                    + self.input_password.h
+                    + self.h // 10
+                ),
+                self.h // 20,
+                self.input_password.text_color
+            )
+            self.frame_counter += 1
+
+        else:
+
+            self.show_message = ""
+            self.input_password.text_color = (
+                self.input_password.base_colors[1]
+            )
+            self.input_password.cursor_color = (
+                self.input_password.base_colors[2]
+            )
+            self.lock_icon._load_image(LOCK_CLOSED_PATH)
