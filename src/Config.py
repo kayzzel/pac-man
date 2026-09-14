@@ -1,3 +1,7 @@
+from .utils.json_utils import get_json_from_file
+from typing import Any
+
+
 class Config:
     def __init__(self) -> None:
         self.__highscore_filename: str = "highscore.json"
@@ -11,7 +15,7 @@ class Config:
         self.__level_max_time: int = 90
 
     def load_config(self, filename: str) -> None:
-        ...
+        config: Any = get_json_from_file(filename)
 
     @property
     def highscore_filename(self) -> str:
