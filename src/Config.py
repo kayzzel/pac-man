@@ -1,5 +1,20 @@
 from .utils.json_utils import get_json_from_file
 from typing import Any
+from pydantic import BaseModel, Field, ValidationError
+
+
+class ConfigValidate(BaseModel):
+    model_config = {"extra": "ignore"}
+
+    highscore_filename: str = Field(min_length=1)
+    nb_level: int = Field(ge=10)
+    lives: int = Field(ge=1)
+    pacgum: int = Field(ge=0)
+    point_per_pacgum: int = Field(ge=0)
+    point_per_super_pacgum: int = Field(ge=0)
+    point_per_ghost: int = Field(ge=0)
+    seed: int = Field(ge=0)
+    level_max_time: int = Field(ge=1)
 
 
 class Config:
@@ -15,7 +30,30 @@ class Config:
         self.__level_max_time: int = 90
 
     def load_config(self, filename: str) -> None:
-        config: Any = get_json_from_file(filename)
+        try:
+            config_data: Any = get_json_from_file(filename)
+        except ValueError as err:
+            raise ValueError(err) from err
+
+        if (not isinstance(config_data, dict)):
+            raise ValueError("ERROR: Config file must contain a dict")
+
+        try:
+            config = ConfigValidate(**config_data)
+        except ValidationError as err:
+            raise ValueError(
+                f"ERROR: Config file do not match expected schema: {err}"
+            ) from err
+
+        self.__highscore_filename = config.highscore_filename
+        self.__nb_level = config.nb_level
+        self.__lives = config.lives
+        self.__pacgum = config.pacgum
+        self.__point_per_pacgum = config.point_per_pacgum
+        self.__point_per_super_pacgum = config.point_per_super_pacgum
+        self.__point_per_ghost = config.point_per_ghost
+        self.__seed = config.seed
+        self.__level_max_time = config.level_max_time
 
     @property
     def highscore_filename(self) -> str:
