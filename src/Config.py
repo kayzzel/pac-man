@@ -1,4 +1,6 @@
 from .utils.json_utils import get_json_from_file
+
+from sys import stderr
 from typing import Any
 from pydantic import BaseModel, Field, ValidationError
 
@@ -6,15 +8,15 @@ from pydantic import BaseModel, Field, ValidationError
 class ConfigValidate(BaseModel):
     model_config = {"extra": "ignore"}
 
-    highscore_filename: str = Field(min_length=1)
-    nb_level: int = Field(ge=10)
-    lives: int = Field(ge=1)
-    pacgum: int = Field(ge=0)
-    point_per_pacgum: int = Field(ge=0)
-    point_per_super_pacgum: int = Field(ge=0)
-    point_per_ghost: int = Field(ge=0)
-    seed: int = Field(ge=0)
-    level_max_time: int = Field(ge=1)
+    highscore_filename: str = Field(default="highscore.json", min_length=1)
+    nb_level: int = Field(default=10, ge=10)
+    lives: int = Field(default=3, ge=1)
+    pacgum: int = Field(default=42, ge=0)
+    point_per_pacgum: int = Field(default=10, ge=0)
+    point_per_super_pacgum: int = Field(default=50, ge=0)
+    point_per_ghost: int = Field(default=200, ge=0)
+    seed: int = Field(default=42, ge=0)
+    level_max_time: int = Field(default=90, ge=1)
 
 
 class Config:
@@ -30,21 +32,36 @@ class Config:
         self.__level_max_time: int = 90
 
     def load_config(self, filename: str) -> None:
-        try:
-            config_data: Any = get_json_from_file(filename)
-        except ValueError as err:
-            raise ValueError(err) from err
+        config_data = get_json_from_file(filename)
+        if not isinstance(config_data, dict):
+            print(
+                    "ERROR: Config file must contain a dict, using defaults",
+                    file=stderr
+                )
+            config_data = {}
 
-        if (not isinstance(config_data, dict)):
-            raise ValueError("ERROR: Config file must contain a dict")
+        result: dict[str, Any] = {}
+        for name, field in ConfigValidate.model_fields.items():
+            if name not in config_data:
+                print(
+                    f"WARNING: missing '{name}', "
+                    f"using default {field.default}",
+                    file=stderr,
+                )
+            raw_value = config_data.get(name, field.default)
+            try:
+                result[name] = getattr(
+                    ConfigValidate.model_validate({name: raw_value}), name
+                )
+            except ValidationError:
+                print(
+                        f"WARNING: invalid '{name}', "
+                        f"using default {field.default}",
+                        file=stderr
+                    )
+                result[name] = field.default
 
-        try:
-            config = ConfigValidate(**config_data)
-        except ValidationError as err:
-            raise ValueError(
-                f"ERROR: Config file do not match expected schema: {err}"
-            ) from err
-
+        config = ConfigValidate(**result)
         self.__highscore_filename = config.highscore_filename
         self.__nb_level = config.nb_level
         self.__lives = config.lives
