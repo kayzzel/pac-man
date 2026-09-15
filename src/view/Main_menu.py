@@ -1,6 +1,4 @@
 import pyray as pr
-from pyray import get_screen_width as sw
-from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
 from .widget.Panel import RectPanel
@@ -16,42 +14,39 @@ BORDER_PADDING: int = 3
 
 class Main_menu(View):
 
-    def __init__(self, app) -> None:
-
-        super().__init__(app)
+    def _update_icons(self) -> None:
 
         self.background: AnimIcon = AnimIcon(
             -2,
             -2,
             BACKGROUND_IMAGE_PATH,
-            (sw(), sh())
+            (self.w, self.h)
         )
         self.menu_icon: Icon = Icon(
             -2,
-            min(sh() // 5, 50),
+            min(self.h // 5, 50),
             TITLE_IMAGE_PATH,
             (
-                sw() - int(sw() * 0.2),
-                sh() // 4
+                self.w - int(self.w * 0.2),
+                self.h // 4
             )
         )
         self.outline: tuple[int, int, int, int] = (
             BORDER_PADDING,
             BORDER_PADDING,
-            sw() - BORDER_PADDING * 2,
-            sh() - BORDER_PADDING * 2
+            self.w - BORDER_PADDING * 2,
+            self.h - BORDER_PADDING * 2
         )
-        self.init_panel()
 
-    def init_panel(self) -> None:
+    def _update_panel(self) -> None:
 
         icon_bottom: int = self.menu_icon.get_lower_bounds[1] + 100
 
-        panel_height: int = sh() - icon_bottom
-        panel_width: int = sw() // 3
+        panel_height: int = self.h - icon_bottom
+        panel_width: int = self.w // 3
 
         panel_y: int = icon_bottom + panel_height // 6
-        panel_x: int = (sw() - panel_width) // 2
+        panel_x: int = (self.w - panel_width) // 2
 
         panel_height -= panel_height // 3
 
@@ -86,6 +81,9 @@ class Main_menu(View):
     #             button.call_action()
 
     def display_view(self) -> None:
+
+        self._update_icons()
+        self._update_panel()
 
         if pr.is_key_pressed(pr.KEY_ESCAPE):
             self.app.change_view("pause_menu")

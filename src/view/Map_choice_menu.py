@@ -13,27 +13,20 @@ RECT_PANEL_PADDING: int = BUTTON_FONT_SIZE - 5
 
 class Map_choice_menu(View):
 
-    def __init__(self, app) -> None:
+    def _update_title(self) -> None:
 
-        super().__init__(app)
-
-        self._init_panels()
         self.title: str = "CHOOSE THE MAP"
-        self.title_font_sz: int = sh() // 8
+        self.title_font_sz: int = self.h // 8
         self.title_width: int = pr.measure_text(
             self.title,
             self.title_font_sz
         )
 
-    def _init_panels(self) -> None:
+    def _update_panels(self) -> None:
 
         self.button_actions: dict[str, tuple[Callable, Any]] = {
-            "MANDATORY": (lambda: print(
-                "Action for button 'mandatory' is not yet coded\n"
-            ), None),
-            "ARCADE": (lambda: print(
-                "Action for button 'arcade' is not yet coded\n"
-            ), None),
+            "MANDATORY": (self.app.change_view, "game_view"),
+            "ARCADE": (self.app.change_view, "game_view"),
             "CUSTOM": (lambda: print(
                 "Action for button 'custom' is not yet coded\n"
             ), None)
@@ -64,8 +57,8 @@ class Map_choice_menu(View):
         back_height: int = BUTTON_FONT_SIZE + RECT_PANEL_PADDING
 
         self.panels.append(RectPanel(
-            sw() - back_width - 10,
-            sh() - back_height - 10,
+            self.w - back_width - 10,
+            self.h - back_height - 10,
             back_width,
             back_height,
             {back_label: self.button_actions[back_label]},
@@ -86,7 +79,7 @@ class Map_choice_menu(View):
         ) + ELLIPSE_PANEL_PADDING
         nb_buttons: int = len(self.button_actions.keys())
         width_remaining: int = (
-            sw() -
+            self.w -
             nb_buttons * self.panel_width
         )
 
@@ -105,9 +98,12 @@ class Map_choice_menu(View):
 
     def display_view(self) -> None:
 
+        self._update_title()
+        self._update_panels()
+
         pr.draw_text(
             self.title,
-            (sw() - self.title_width) // 2,
+            (self.w - self.title_width) // 2,
             20,
             self.title_font_sz,
             pr.RAYWHITE

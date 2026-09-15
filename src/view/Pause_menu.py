@@ -19,19 +19,17 @@ LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
 
 class Pause_menu(View):
 
-    def __init__(self, app) -> None:
+    @property
+    def w(self) -> int:
 
-        super().__init__(app)
+        return sw() - sw() // 8
 
-        self.w: int = sw() - sw() // 8
-        self.h: int = sh() - sh() // 8
-        self.x: int = (sw() - self.w) // 2
-        self.y: int = (sh() - self.h) // 2
-        self._init_left_panel()
-        self._init_right_panel()
-        self._init_lock_and_password()
+    @property
+    def h(self) -> int:
 
-    def _init_left_panel(self) -> None:
+        return sh() - sh() // 8
+
+    def _update_left_panel(self) -> None:
 
         self.button_actions: dict[str, tuple[Callable, Any]] = {
             "Resume": (self.app.return_to_prev_view, None),
@@ -84,7 +82,7 @@ class Pause_menu(View):
             self.w // 2 - self.w // 10
         )
 
-    def _init_lock_and_password(self) -> None:
+    def _update_lock_and_password(self) -> None:
 
         lock_width: int = self.w // 2 // 3
 
@@ -92,7 +90,7 @@ class Pause_menu(View):
             self.x + self.w // 2 + (self.w // 2 - lock_width) // 2,
             -2,
             LOCK_CLOSED_PATH,
-            self.show_input_box,
+            (self.show_input_box, None),
             (lock_width, lock_width)
         )
 
@@ -110,7 +108,7 @@ class Pause_menu(View):
         self.show_input: bool = False
         self.show_message: str = ""
 
-    def _init_right_panel(self) -> None:
+    def _update_right_panel(self) -> None:
 
         self.show_right_panel: bool = False
 
@@ -153,6 +151,10 @@ class Pause_menu(View):
     #             button.call_action()
 
     def display_view(self) -> None:
+
+        self._update_left_panel()
+        self._update_right_panel()
+        self._update_lock_and_password()
 
         if pr.is_key_pressed(pr.KEY_ESCAPE):
             self.app.return_to_prev_view()
