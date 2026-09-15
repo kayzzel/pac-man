@@ -6,6 +6,7 @@ from pyray import get_screen_height as sh
 class View(ABC):
     def __init__(self, app) -> None:
         self.app = app
+        self.is_init: bool = False
 
     def update(self) -> None:
         ...

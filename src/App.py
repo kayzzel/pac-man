@@ -18,9 +18,19 @@ class App:
 
     def return_to_prev_view(self) -> None:
 
-        if self.__previous_views and self.__previous_views[-1]:
+        if not self.previous_view:
+            return
 
-            self.__current_view = self.__previous_views[-1]
+        if (
+            hasattr(self.current_view, "show_as_modal")
+        ) and (
+            self.current_view.show_as_modal
+        ):
+
+            self.current_view.show_as_modal = False
+            return
+
+        self.change_view(self.previous_view)
 
     def change_view(self, view: View | str) -> None:
 
@@ -47,6 +57,14 @@ class App:
     def current_view(self) -> View | None:
 
         return self.__current_view
+
+    @property
+    def previous_view(self) -> View | None:
+
+        if not self.__previous_views:
+            return None
+
+        return self.__previous_views[-1]
 
     @property
     def config(self) -> Config:

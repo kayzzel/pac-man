@@ -16,7 +16,7 @@ app: App = App()
 menu: Main_menu = Main_menu(app)
 map_choice: Map_choice_menu = Map_choice_menu(app)
 pause_menu: Pause_menu = Pause_menu(app)
-game_view: Game_view = Game_view(app, Game(app.config))
+game_view: Game_view = Game_view(app, Game(app.config), pause_menu)
 
 views: dict[str, View] = {
     "main_menu": menu,

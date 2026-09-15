@@ -85,21 +85,18 @@ class Map_choice_menu(View):
 
         self.spacing: int = width_remaining // (nb_buttons + 1)
 
-    # def update(self) -> Any:
+    def _update(self) -> Any:
 
-    #     buttons: list[Button] = []
-    #     for panel in self.panels:
-    #         buttons += list(panel.buttons.values())
-
-    #     for button in buttons:
-
-    #         if button.is_pressed:
-    #             button.call_action()
-
-    def display_view(self) -> None:
+        if not pr.is_window_resized() and self.is_init:
+            return
 
         self._update_title()
         self._update_panels()
+        self.is_init = True
+
+    def display_view(self) -> None:
+
+        self._update()
 
         pr.draw_text(
             self.title,

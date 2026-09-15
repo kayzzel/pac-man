@@ -73,21 +73,18 @@ class Main_menu(View):
             (pr.GRAY, pr.GOLD)
         )
 
-    # def update(self) -> None:
+    def _update(self) -> None:
 
-    #     for button in self.panel.buttons.values():
-
-    #         if button.is_pressed:
-    #             button.call_action()
-
-    def display_view(self) -> None:
+        if not pr.is_window_resized() and self.is_init:
+            return
 
         self._update_icons()
         self._update_panel()
+        self.is_init = True
 
-        if pr.is_key_pressed(pr.KEY_ESCAPE):
-            self.app.change_view("pause_menu")
-            return
+    def display_view(self) -> None:
+
+        self._update()
 
         pr.draw_rectangle_lines_ex(
             self.outline,

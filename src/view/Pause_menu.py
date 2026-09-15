@@ -143,21 +143,19 @@ class Pause_menu(View):
             self.input_password.text_color = pr.RED
             self.input_password.cursor_color = pr.MAROON
 
-    # def update(self) -> None:
+    def _update(self) -> None:
 
-    #     for button in self.left_panel.buttons.values():
-
-    #         if button.is_pressed:
-    #             button.call_action()
-
-    def display_view(self) -> None:
+        if not pr.is_window_resized() and self.is_init:
+            return
 
         self._update_left_panel()
         self._update_right_panel()
         self._update_lock_and_password()
+        self.is_init = True
 
-        if pr.is_key_pressed(pr.KEY_ESCAPE):
-            self.app.return_to_prev_view()
+    def display_view(self) -> None:
+
+        self._update()
 
         outline: tuple[int, int, int, int] = (
             self.x, self.y, self.w, self.h
