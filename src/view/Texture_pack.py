@@ -9,15 +9,17 @@ class Texture_pack:
 
     def __init__(self, pack_path: str = DEFAULT_PACK) -> None:
 
-        self._load_pack(pack_path)
         self.folders_needed: list[str] = [
-            "pac-man_textures",
-            "ghosts_textures",
-            "fruits_textures"
+            "pac-man_sprites",
+            "ghosts_sprites",
+            "collectibles_sprites"
         ]
         self.textures_needed: list[str] = [
-            "pac-man_closed",
-            "pac-man_open",
+            "pac-man_up",
+            "pac-man_down",
+            "pac-man_right",
+            "pac-man_left",
+            "pac-man_death",
             "blinky_right",
             "blinky_left",
             "blinky_up",
@@ -34,6 +36,12 @@ class Texture_pack:
             "clyde_left",
             "clyde_up",
             "clyde_down",
+            "eyes_up",
+            "eyes_down",
+            "eyes_right",
+            "eyes_left",
+            "afraid_blue",
+            "afraid_white",
             "apple",
             "strawberry",
             "orange",
@@ -41,8 +49,11 @@ class Texture_pack:
             "melon",
             "galaxian",
             "bell",
-            "key"
+            "key",
+            "pellet",
+            "power_pellet"
         ]
+        self._load_pack(pack_path)
 
     def _load_pack(self, pack_path: str) -> None:
 
@@ -54,7 +65,7 @@ class Texture_pack:
         self.all_textures: dict = {}
         for folder in folders.values():
             self.all_textures.update({
-                t.name.split(".")[0]: pack_path + t.path
+                t.name.split(".")[0]: t.path
                 for t in os.scandir(folder)
                 if t.is_file() and t.name.split(".")[0] in self.textures_needed
             })

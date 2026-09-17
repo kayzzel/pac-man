@@ -5,7 +5,7 @@ from .Widget import Widget
 from typing import Any, Callable
 
 
-BASE_FRAME_DELAY: int = 5
+BASE_FRAME_DELAY: int = 8
 
 
 class Icon(Widget):
@@ -15,33 +15,37 @@ class Icon(Widget):
         x: int,
         y: int,
         image_path: str,
-        max_size: tuple[int, int]
+        max_size: tuple[int, int],
+        to_resize: bool = False
     ) -> None:
 
         self.max_size: tuple[int, int] = max_size
+        self.to_resize: bool = to_resize
 
         self._load_image(image_path)
 
         super().__init__(x, y, self.i_w, self.i_h)
 
-    def _resize_image(self, new_width: int, new_height: int) -> None:
+    def _resize_image(self, max_width: int, max_height: int) -> None:
+
+        new_width: int = self.image.width
+        if new_width > max_width:
+            new_width = max_width
+
+        new_height: int = self.image.height
+        if new_height > max_height:
+            new_height = max_height
 
         pr.image_resize(self.image, new_width, new_height)
-        self.texture: pr.Texture = pr.load_texture_from_image(self.image)
 
-    def _load_image(self, image_path: str) -> None:
+    def _load_image(self, image_path: str, to_resize: bool = False) -> None:
 
         self.image: pr.Image = pr.load_image(image_path)
 
-        new_width: int = self.image.width
-        if new_width > self.max_size[0]:
-            new_width = self.max_size[0]
+        if self.to_resize:
+            self._resize_image(*self.max_size)
 
-        new_height: int = self.image.height
-        if new_height > self.max_size[1]:
-            new_height = self.max_size[1]
-
-        self._resize_image(new_width, new_height)
+        self.texture: pr.Texture = pr.load_texture_from_image(self.image)
 
     @property
     def i_w(self) -> int:
@@ -86,23 +90,15 @@ class AnimIcon(Icon):
 
     def _load_image(self, image_path: str) -> None:
 
-        self.frames: Any = pr.ffi.new('int *', 1)
+        self.frames: Any = pr.ffi.new('int *', 0)
         self.image: pr.Image = pr.load_image_anim(image_path, self.frames)
+        self.frames_value = self.frames[0]
 
         self.cur_frame: int = 0
         self.frame_delay: int = BASE_FRAME_DELAY
         self.frame_counter: int = 0
 
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
-        # new_width: int = self.image.width
-        # if new_width > self.max_size[0]:
-        #     new_width = self.max_size[0]
-
-        # new_height: int = self.image.height
-        # if new_height > self.max_size[1]:
-        #     new_height = self.max_size[1]
-
-        # self._resize_image(new_width, new_height)
 
     def _update_widget(self) -> None:
 
@@ -112,19 +108,41 @@ class AnimIcon(Icon):
 
             self.cur_frame += 1
 
-            if self.cur_frame >= self.frames[0]:
+            if self.cur_frame >= self.frames_value:
                 self.cur_frame = 0
 
             nx_frame_offset: int = (
                 self.image.width * self.image.height * 4 * self.cur_frame
             )
 
+            data_ptr = pr.ffi.cast("unsigned char *", self.image.data)
+            offset_ptr = pr.ffi.cast("void *", data_ptr + nx_frame_offset)
+
             pr.update_texture(
                 self.texture,
-                self.image.data + nx_frame_offset
+                offset_ptr
             )
 
             self.frame_counter = 0
+
+    def display_widget(self) -> None:
+
+        if not self.to_resize:
+            super().display_widget()
+            return
+
+        self._update_widget()
+
+        src_rect: pr.Rectangle = pr.Rectangle(
+            0, 0, self.image.width, self.image.height
+        )
+        dest_rect: pr.Rectangle = pr.Rectangle(
+            self.posx, self.posy, *self.max_size
+        )
+
+        pr.draw_texture_pro(
+            self.texture, src_rect, dest_rect, pr.Vector2(0, 0), 0, pr.WHITE
+        )
 
 
 class ClickableIcon(Icon):
@@ -135,10 +153,11 @@ class ClickableIcon(Icon):
         y: int,
         image_path: str,
         action: tuple[Callable, Any],
-        max_size: tuple[int, int]
+        max_size: tuple[int, int],
+        to_resize: bool = False
     ) -> None:
 
-        super().__init__(x, y, image_path, max_size)
+        super().__init__(x, y, image_path, max_size, to_resize)
         self.action: tuple[Callable, Any] = action
         self.was_in: bool = False
 

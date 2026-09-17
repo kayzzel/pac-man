@@ -29,7 +29,8 @@ class Main_menu(View):
             (
                 self.w - int(self.w * 0.2),
                 self.h // 4
-            )
+            ),
+            True
         )
         self.outline: tuple[int, int, int, int] = (
             BORDER_PADDING,

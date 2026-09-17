@@ -91,7 +91,8 @@ class Pause_menu(View):
             -2,
             LOCK_CLOSED_PATH,
             (self.show_input_box, None),
-            (lock_width, lock_width)
+            (lock_width, lock_width),
+            True
         )
 
         input_width: int = self.w // 2 - self.w // 8
