@@ -123,6 +123,29 @@ class Game_view(View):
             (pac_man_size, pac_man_size),
             True
         )
+        self.calculate_cell_size()
+
+    def calculate_cell_size(self) -> None:
+
+        ver_walls: int = 0
+        hor_walls: int = 0
+        nb_cells: int = len(self.game.map.cells)
+
+        for cell in self.game.map.cells:
+
+            if cell.walls["north"]:
+                ver_walls += 1
+            if cell.walls["south"]:
+                ver_walls += 1
+            if cell.walls["west"]:
+                hor_walls += 1
+            if cell.walls["east"]:
+                hor_walls += 1
+
+        map_width: int = nb_cells + hor_walls
+        map_height: int = nb_cells + ver_walls
+
+        self.cell_size: int = min(self.map_size // map_width, self.map_size // map_height)
 
     def _update(self) -> None:
 
