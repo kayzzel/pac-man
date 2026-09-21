@@ -11,7 +11,6 @@ class ConfigValidate(BaseModel):
     highscore_filename: str = Field(default="highscore.json", min_length=1)
     nb_level: int = Field(default=10, ge=10)
     lives: int = Field(default=3, ge=1)
-    pacgum: int = Field(default=42, ge=0)
     point_per_pacgum: int = Field(default=10, ge=0)
     point_per_super_pacgum: int = Field(default=50, ge=0)
     point_per_ghost: int = Field(default=200, ge=0)
@@ -24,7 +23,6 @@ class Config:
         self.__highscore_filename: str = "highscore.json"
         self.__nb_level: int = 10
         self.__lives: int = 3
-        self.__pacgum: int = 42
         self.__point_per_pacgum: int = 10
         self.__point_per_super_pacgum: int = 50
         self.__point_per_ghost: int = 200
@@ -65,7 +63,6 @@ class Config:
         self.__highscore_filename = config.highscore_filename
         self.__nb_level = config.nb_level
         self.__lives = config.lives
-        self.__pacgum = config.pacgum
         self.__point_per_pacgum = config.point_per_pacgum
         self.__point_per_super_pacgum = config.point_per_super_pacgum
         self.__point_per_ghost = config.point_per_ghost
@@ -83,10 +80,6 @@ class Config:
     @property
     def lives(self) -> int:
         return self.__lives
-
-    @property
-    def pacgum(self) -> int:
-        return self.__pacgum
 
     @property
     def point_per_pacgum(self) -> int:
