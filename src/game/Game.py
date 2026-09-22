@@ -6,6 +6,9 @@ from ..utils.maze_utils import convert_maze_to_map
 
 from mazegenerator import MazeGenerator
 
+import os
+import contextlib
+
 
 class Game:
     def __init__(self, config: Config) -> None:
@@ -25,11 +28,18 @@ class Game:
     def game_loop(self) -> None:
         ...
 
-    def generate_map(self, widht: int, height: int, seed: int = 0) -> Map:
-        generator: MazeGenerator = MazeGenerator(
-                    (widht, height), False
+    def generate_map(self, width: int, height: int, seed: int = 0) -> Map:
+        if width < 2 or height < 2:
+            raise ValueError(f"Invalid map size: {width}x{height}")
+
+        with (
+            open(os.devnull, "w") as devnull,
+            contextlib.redirect_stdout(devnull),
+        ):
+            generator: MazeGenerator = MazeGenerator(
+                    (width, height), False, seed=seed
                 )
 
-        generator.generate(seed)
+            new_map = convert_maze_to_map(generator.maze, self.config)
 
-        return convert_maze_to_map(generator.maze, self.config)
+        return new_map
