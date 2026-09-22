@@ -1,5 +1,9 @@
+from src.App import App
+
+
 def main() -> None:
-    print("test")
+    app = App()
+    app.load_config("config.json")
 
 
 if __name__ == "__main__":
