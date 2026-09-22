@@ -5,3 +5,4 @@ class Map:
     def __init__(self) -> None:
         self.cells: list[Cell] = []
         self.collectible_count: int = 0
+        self.spawn: tuple[int, int] = (0, 0)
