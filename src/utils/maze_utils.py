@@ -48,6 +48,7 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
         return (x == 0 or x == width - 1) and (y == 0 or y == height - 1)
 
     for y in range(height):
+        cell_row = []
         for x in range(width):
             cell = Cell(x, y)
             cell.walls = convert_nbr_to_cell(maze[y][x])
@@ -65,6 +66,7 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
                         )
                 new_map.collectible_count += 1
 
-            new_map.cells.append(cell)
+            cell_row.append(cell)
+        new_map.cells.append(cell_row)
 
     return new_map
