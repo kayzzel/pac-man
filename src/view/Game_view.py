@@ -7,6 +7,7 @@ from .Texture_pack import Texture_pack
 
 
 LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
+LUIGI_TEXTURE_PACK: str = "src/view/assets/luigi_texture_pack"
 
 MIDDLE_LINE_THICKNESS: int = 10
 
@@ -14,7 +15,11 @@ DIRECTIONS: dict[str, str] = {
     "N": "up",
     "S": "down",
     "W": "left",
-    "E": "right"
+    "E": "right",
+    "NR": "upright",
+    "NL": "upleft",
+    "SR": "downright",
+    "SL": "downleft"
 }
 
 DIR_KEYS: list = [
@@ -49,7 +54,8 @@ class Game_view(View):
         self.modal_view: View = modal_view
         self.show_as_modal: bool = False
 
-        self.texture_pack: Texture_pack = Texture_pack()
+        self.texture_pack: Texture_pack = Texture_pack(LUIGI_TEXTURE_PACK)
+        self.cur_dir: tuple[str, str] = ("E", "R")
 
     def _update_score_panel(self) -> None:
 
@@ -114,16 +120,55 @@ class Game_view(View):
 
         return (self.h - self.map_height) // 2
 
+    def get_entity_texture(self, entity: str) -> str:
+
+        texture_to_get: str = entity + "_" + DIRECTIONS[self.cur_dir[0]]
+
+        if self.cur_dir[0] in ["N", "S"]:
+
+            spe_texture: str = entity + "_" + DIRECTIONS[
+                self.cur_dir[0] + self.cur_dir[1]
+            ]
+            if spe_texture in self.texture_pack.all_textures.keys():
+                texture_to_get = spe_texture
+
+        return self.texture_pack.get_texture(texture_to_get)
+
+    def set_correct_dir(self, direction: str) -> tuple[str, str]:
+
+        if self.cur_dir[0] == direction:
+            return self.cur_dir
+
+        alignment: str = ""
+
+        match direction:
+
+            case "N":
+                alignment = "L" if self.cur_dir[1] == "R" else "R"
+
+            case "S":
+                alignment = self.cur_dir[1]
+                if self.cur_dir[0] == "N":
+                    alignment = "L" if self.cur_dir[1] == "R" else "R"
+
+            case "E":
+                alignment = "R"
+
+            case "W":
+                alignment = "L"
+
+        return (direction, alignment)
+
     def _update_map_panel(self) -> None:
 
         if pr.is_key_pressed(pr.KEY_UP) or pr.is_key_pressed(pr.KEY_W):
-            self.game.player.direction = "N"
+            self.cur_dir = self.set_correct_dir("N")
         elif pr.is_key_pressed(pr.KEY_DOWN) or pr.is_key_pressed(pr.KEY_S):
-            self.game.player.direction = "S"
+            self.cur_dir = self.set_correct_dir("S")
         elif pr.is_key_pressed(pr.KEY_LEFT) or pr.is_key_pressed(pr.KEY_A):
-            self.game.player.direction = "W"
+            self.cur_dir = self.set_correct_dir("W")
         elif pr.is_key_pressed(pr.KEY_RIGHT) or pr.is_key_pressed(pr.KEY_D):
-            self.game.player.direction = "E"
+            self.cur_dir = self.set_correct_dir("E")
 
         self.map_panel_width: int = self.w - self.left_panel_width - 10
         self.map_width: int = min(
@@ -136,25 +181,23 @@ class Game_view(View):
         self.pacman_sprite: AnimIcon = AnimIcon(
             self.map_startx + (self.map_width - pac_man_size) // 2,
             -2,
-            self.texture_pack.get_texture(
-                "pac-man_" + DIRECTIONS[self.game.player.direction]
-            ),
+            self.get_entity_texture("pac-man"),
             (pac_man_size, pac_man_size),
             True
         )
-        self.grid: list[list] = self.game.map.cells
-        self.insert_rows()
-        self.insert_cols()
+        # self.grid: list[list] = self.game.map.cells
+        # self.insert_rows()
+        # self.insert_cols()
 
-        nb_cells_row: int = self.map_width // len(self.grid[0])
-        nb_cells_col: int = self.map_height // len(self.grid)
+        # nb_cells_row: int = self.map_width // len(self.grid[0])
+        # nb_cells_col: int = self.map_height // len(self.grid)
 
-        if nb_cells_row > nb_cells_col:
-            self.cell_size: int = nb_cells_row
-            self.map_height = self.cell_size * len(self.grid)
-        else:
-            self.cell_size = nb_cells_col
-            self.map_width = self.cell_size * len(self.grid[0])
+        # if nb_cells_row > nb_cells_col:
+        #     self.cell_size: int = nb_cells_row
+        #     self.map_height = self.cell_size * len(self.grid)
+        # else:
+        #     self.cell_size = nb_cells_col
+        #     self.map_width = self.cell_size * len(self.grid[0])
 
         self.map_outline: tuple[int, int, int, int] = (
             self.map_startx,
@@ -320,7 +363,7 @@ class Game_view(View):
 
         self.pacman_sprite.display_widget()
 
-        self.draw_grid()
+        # self.draw_grid()
 
         for label, coor in self.labels_data.items():
 
