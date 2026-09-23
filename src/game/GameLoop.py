@@ -14,7 +14,7 @@ class GameLoop:
     ) -> None:
         self.__update = update
         self.__dt: float = 1.0 / min(tick_rate, 100.0)
-        self.__duration = duration       # active (unpaused) seconds; None = no limit
+        self.__duration = duration
         self.__elapsed_active: float = 0.0
         self.__paused = False
         self.__running = False
@@ -67,8 +67,10 @@ class GameLoop:
 
     @staticmethod
     def __precise_sleep(seconds: float) -> None:
-        """time.sleep() alone can overshoot by several ms on some OSes.
-        Sleep the bulk of the wait, then busy-spin the last ~1ms for accuracy."""
+        """
+        time.sleep() alone can overshoot by several ms on some OSes.
+        Sleep the bulk of the wait, then busy-spin the last ~1ms for accuracy.
+        """
         target = time.perf_counter() + seconds
         margin = 0.001
         if seconds > margin:
