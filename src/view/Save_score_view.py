@@ -11,9 +11,6 @@ MSG_DISPLAY_TIME: int = 120
 NAME_CHAR_RANGE: tuple[int, int] = [32, 125]
 SCORE_CHAR_RANGE: tuple[int, int] = [48, 57]
 
-BUTTON_FONT_SIZE: int = 20
-RECT_PANEL_PADDING: int = BUTTON_FONT_SIZE - 5
-
 
 class Save_score_view(View):
 
