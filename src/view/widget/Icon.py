@@ -26,19 +26,23 @@ class Icon(Widget):
 
         super().__init__(x, y, self.i_w, self.i_h)
 
-    def _resize_image(self, max_width: int, max_height: int) -> None:
+    def _resize_image(
+        self, max_w: int,
+        max_h: int,
+        resize_needed: bool = False
+    ) -> None:
 
         new_width: int = self.image.width
-        if new_width > max_width:
-            new_width = max_width
+        if new_width > max_w or resize_needed:
+            new_width = max_w
 
         new_height: int = self.image.height
-        if new_height > max_height:
-            new_height = max_height
+        if new_height > max_h or resize_needed:
+            new_height = max_h
 
         pr.image_resize(self.image, new_width, new_height)
 
-    def _load_image(self, image_path: str, to_resize: bool = False) -> None:
+    def _load_image(self, image_path: str) -> None:
 
         self.image: pr.Image = pr.load_image(image_path)
 
@@ -168,16 +172,20 @@ class ClickableIcon(Icon):
             self.was_in = False
             self._resize_image(
                 self.max_size[0],
-                self.max_size[1]
+                self.max_size[1],
+                True
             )
+            self.texture = pr.load_texture_from_image(self.image)
 
         elif not self.was_in and self.is_in:
 
             self.was_in = True
             self._resize_image(
                 self.max_size[0] + self.max_size[0] // 10,
-                self.max_size[1] + self.max_size[1] // 10
+                self.max_size[1] + self.max_size[1] // 10,
+                True
             )
+            self.texture = pr.load_texture_from_image(self.image)
 
         if self.is_pressed:
             self.call_action()

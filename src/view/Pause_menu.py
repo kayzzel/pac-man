@@ -9,7 +9,6 @@ from .widget import RectPanel, ClickableIcon, Input_box
 CHEAT_PASSWORD: str = "password"
 PASSWORD_MSG_TIME: int = 120
 
-
 BUTTON_FONT_SIZE: int = 20
 PANEL_PADDING: int = BUTTON_FONT_SIZE - 5
 
@@ -18,6 +17,11 @@ LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
 
 
 class Pause_menu(View):
+
+    def __init__(self, app) -> None:
+
+        super().__init__(app)
+        self.show_right_panel: bool = False
 
     @property
     def w(self) -> int:
@@ -39,7 +43,7 @@ class Pause_menu(View):
             "Scores": (lambda: print(
                 "Action for button 'scores' not yet coded\n"
             ), None),
-            "Save and exit": (self.app.change_view, "main_menu"),
+            "Save and exit": (self.app.change_view, "save_score_view"),
             "Exit": (self.app.change_view, "main_menu")
         }
 
@@ -103,15 +107,11 @@ class Pause_menu(View):
             input_width,
             self.h // 8,
             20,
-            self.validate_password
+            (self.validate_password, None)
         )
 
         self.show_input: bool = False
         self.show_message: str = ""
-
-    def _update_right_panel(self) -> None:
-
-        self.show_right_panel: bool = False
 
     def show_input_box(self) -> None:
 
@@ -150,7 +150,6 @@ class Pause_menu(View):
             return
 
         self._update_left_panel()
-        self._update_right_panel()
         self._update_lock_and_password()
         self.is_init = True
 

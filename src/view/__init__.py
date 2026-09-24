@@ -3,6 +3,7 @@ from .Main_menu import Main_menu
 from .Map_choice_menu import Map_choice_menu
 from .Pause_menu import Pause_menu
 from .Game_view import Game_view
+from .Save_score_view import Save_score_view
 from .widget import Widget, Icon, Button
 
 __all__: list[str] = [
@@ -11,6 +12,7 @@ __all__: list[str] = [
     "Map_choice_menu",
     "Pause_menu",
     "Game_view",
+    "Save_score_view",
     "Widget",
     "Icon",
     "Button"
