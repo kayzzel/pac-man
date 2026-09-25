@@ -3,19 +3,38 @@ from ..Entity import Entity
 from abc import ABC, abstractmethod
 from random import choice
 from math import modf
+from enum import Enum
+
+
+class Ghost_state(Enum):
+
+    CHASE = "chase"
+    EATEN = "eaten"
+    SCATTER = "scatter"
+    FRIGHTENED = "frightened"
 
 
 class Ghost(Entity, ABC):
     def __init__(self) -> None:
         super().__init__()
-        self.state = "Normal"
+        self.state: Ghost_state = Ghost_state.CHASE
         self.target: tuple[int, int] = (0, 0)
         self.spawn_point: tuple[int, int] = (0, 0)
-        self.scater_point: tuple[int, int] = (0, 0)
+        self.scatter_point: tuple[int, int] = (0, 0)
 
     @abstractmethod
-    def define_target(self, entitys: dict[str, Entity]) -> None:
-        ...
+    def define_target(self, entitys: dict[str, Entity]) -> int:
+        if self.state == Ghost_state.FRIGHTENED:
+            return 1
+
+        if self.state == Ghost_state.EATEN:
+            self.target = self.spawn_point
+            return 1
+
+        if self.state == Ghost_state.SCATTER:
+            self.target = self.scatter_point
+            return 1
+        return 0
 
     def __chose_direction(self, walls: dict[str, bool]) -> None:
 
