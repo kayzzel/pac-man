@@ -1,5 +1,6 @@
+ut_box.py 
 import pyray as pr
-from typing import Callable
+from typing import Callable, Any
 from .Widget import Widget
 
 
@@ -19,7 +20,8 @@ class Input_box(Widget):
         width: int,
         height: int,
         max_chars: int = MAX_INPUT_CHARS,
-        action: Callable = lambda: 0,
+        char_range: tuple[int, int] = (32, 125),
+        action: tuple[Callable, Any] = (lambda: 0, None),
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
             DEFAULT_COLOR,
             TEXT_COLOR,
@@ -30,9 +32,10 @@ class Input_box(Widget):
         super().__init__(x, y, width, height)
 
         self.textbox: tuple[int, int, int, int] = (
-            self.x, self.y, self.w, self.h
+            self.posx, self.posy, self.w, self.h
         )
         self.font_size: int = self.h - 5
+        self.char_range: tuple[int, int] = char_range
         self.max_chars: int = max_chars
         self.standin_input: str = "h" * max_chars
         self.base_colors: tuple[pr.Color, pr.Color, pr.Color] = colors
@@ -45,7 +48,7 @@ class Input_box(Widget):
         self.enter_input: bool = False
         self.frame_counter: int = 0
 
-        self.action: Callable = action
+        self.action: tuple[Callable, Any] = action
 
         self.calculate_font_size()
 
@@ -77,8 +80,9 @@ class Input_box(Widget):
 
             while key > 0:
 
-                if key >= 32 and (
-                    key <= 125 and len(self.input) < self.max_chars
+                if key >= self.char_range[0] and (
+                    key <= self.char_range[1]
+                    and len(self.input) < self.max_chars
                 ):
                     self.input += chr(key)
 
@@ -91,7 +95,7 @@ class Input_box(Widget):
                 self.enter_input = False
 
             if pr.is_key_pressed(pr.KEY_ENTER):
-                self.action()
+                self.call_action()
 
         else:
 
@@ -115,8 +119,8 @@ class Input_box(Widget):
         text_padding: int = (
             self.w + 5 - pr.measure_text(self.standin_input, self.font_size)
         )
-        text_startx: int = self.x + text_padding
-        text_starty: int = self.y + (self.h - self.font_size) // 2
+        text_startx: int = self.posx + text_padding
+        text_starty: int = self.posy + (self.h - self.font_size) // 2
 
         pr.draw_text(
             self.input,
