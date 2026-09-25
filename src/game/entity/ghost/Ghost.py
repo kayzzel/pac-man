@@ -63,10 +63,8 @@ class Ghost(Entity, ABC):
             self.direction = possibles[0]
             return
 
-        try:
+        if (OPOSITE[self.direction] in possibles):
             possibles.remove(OPOSITE[self.direction])
-        except:
-            pass
 
         if len(possibles) == 1:
             self.direction = possibles[0]
