@@ -34,6 +34,7 @@ class Ghost(Entity, ABC):
         if self.state == Ghost_state.SCATTER:
             self.target = self.scatter_point
             return 1
+
         return 0
 
     def __chose_direction(self, walls: dict[str, bool]) -> None:
