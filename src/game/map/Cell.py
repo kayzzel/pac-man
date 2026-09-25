@@ -7,8 +7,8 @@ class Cell:
         self.pos_y: int = pos_y
         self.collectible: Collectible | None = None
         self.walls: dict[str, bool] = {
-                "north": False,
-                "south": False,
-                "east": False,
-                "west": False,
+                "N": False,
+                "S": False,
+                "E": False,
+                "W": False,
         }
