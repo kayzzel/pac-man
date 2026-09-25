@@ -52,6 +52,10 @@ class Ghost(Entity, ABC):
             self.direction = possibles[0]
             return
 
+        if self.state == "frightened":
+            self.direction = choice(possibles)
+            return
+
         distances = []
         for possible in possibles:
             new_x, new_y = VECTORS[possible]
