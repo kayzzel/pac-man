@@ -92,6 +92,20 @@ class Icon(Widget):
 
 class AnimIcon(Icon):
 
+    def __init__(
+        self,
+        x: int,
+        y: int,
+        image_path: str,
+        max_size: tuple[int, int],
+        to_resize: bool = False,
+        frame_delay: int = BASE_FRAME_DELAY
+    ) -> None:
+
+        super().__init__(x, y, image_path, max_size, to_resize)
+
+        self.frame_delay: int = frame_delay
+
     def _load_image(self, image_path: str) -> None:
 
         self.frames: Any = pr.ffi.new('int *', 0)
@@ -99,7 +113,6 @@ class AnimIcon(Icon):
         self.frames_value = self.frames[0]
 
         self.cur_frame: int = 0
-        self.frame_delay: int = BASE_FRAME_DELAY
         self.frame_counter: int = 0
 
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)

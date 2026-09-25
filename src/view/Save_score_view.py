@@ -1,15 +1,15 @@
 import pyray as pr
 from typing import Callable, Any
 from .View import View
-from .widget import Input_box, RectPanel
+from .widget import Input_box, Panel
 
 
 MAX_INPUT_LENGTH: int = 20
 
 MSG_DISPLAY_TIME: int = 120
 
-NAME_CHAR_RANGE: tuple[int, int] = [32, 125]
-SCORE_CHAR_RANGE: tuple[int, int] = [48, 57]
+NAME_CHAR_RANGE: tuple[int, int] = (32, 125)
+SCORE_CHAR_RANGE: tuple[int, int] = (48, 57)
 
 
 class Save_score_view(View):
@@ -43,14 +43,14 @@ class Save_score_view(View):
         ) + back_padding
         back_height: int = back_font_sz + back_padding
 
-        self.back_button: RectPanel = RectPanel(
+        self.back_button: Panel = Panel(
             self.w - back_width - 10,
             self.h - back_height - 10,
             back_width,
             back_height,
             {back_label: (self.app.return_to_prev_view, None)},
             back_font_sz,
-            back_padding
+            (back_padding, 2, 0.1)
         )
 
     def _update_input_box(self) -> None:

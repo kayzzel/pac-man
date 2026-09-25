@@ -18,7 +18,7 @@ class Panel(Widget):
         height: int,
         buttons: dict[str, tuple[Callable, Any]],
         button_size: int = 10,
-        padding: int = 10,
+        shape_params: tuple[int, int, float] = (10, 2, 0.1),
         panel_colors: tuple[pr.Color, pr.Color] = (
             PANEL_OUTLINE_COLOR,
             PANEL_FILL_COLOR
@@ -31,20 +31,23 @@ class Panel(Widget):
 
         super().__init__(x, y, width, height)
 
+        self.padding: int
+        self.thickness: int
+        self.roundness: float
+        self.padding, self.thickness, self.roundness = shape_params
         self.outline_color: pr.Color
         self.fill_color: pr.Color
         self.outline_color, self.fill_color = panel_colors
         self.button_colors: tuple[pr.Color, pr.Color] = button_colors
-        self.init_buttons(buttons, button_size, padding)
+        self.init_buttons(buttons, button_size)
 
     def calculate_button_spacing(
         self,
-        padding: int,
         button_size: int,
         labels: list[str]
     ) -> None:
 
-        self.int_pad: int = padding
+        self.int_pad: int = self.padding
 
         self.font_size: int = button_size
 
@@ -80,12 +83,10 @@ class Panel(Widget):
     def init_buttons(
         self,
         button_actions: dict[str, tuple[Callable, Any]],
-        button_size: int,
-        padding: int
+        button_size: int
     ) -> None:
 
         self.calculate_button_spacing(
-            padding,
             button_size,
             list(button_actions.keys())
         )
@@ -104,46 +105,25 @@ class Panel(Widget):
 
     def display_widget(self) -> None:
 
-        for button in self.buttons.values():
-
-            button.display_widget()
-
-
-class RectPanel(Panel):
-
-    def display_widget(self) -> None:
-
-        thickness: int = 2
         pr.draw_rectangle_rounded_lines_ex(
             (self.posx, self.posy, self.w, self.h),
-            0.1,
+            self.roundness,
             4,
-            thickness,
+            self.thickness,
             self.outline_color
         )
         pr.draw_rectangle_rounded(
             (
-                self.posx + thickness,
-                self.posy + thickness,
-                self.w - thickness * 2,
-                self.h - thickness * 2
+                self.posx + self.thickness,
+                self.posy + self.thickness,
+                self.w - self.thickness * 2,
+                self.h - self.thickness * 2
             ),
-            0.1,
+            self.roundness,
             4,
             self.fill_color
         )
-        super().display_widget()
 
+        for button in self.buttons.values():
 
-class OvalPanel(Panel):
-
-    def display_widget(self) -> None:
-
-        pr.draw_ellipse_lines(
-            self.posx + (self.w // 2),
-            self.posy + (self.h // 2),
-            self.w // 2,
-            self.h // 2,
-            self.outline_color
-        )
-        super().display_widget()
+            button.display_widget()

@@ -19,7 +19,7 @@ class Input_box(Widget):
         width: int,
         height: int,
         max_chars: int = MAX_INPUT_CHARS,
-        char_range: tuple[int, int] = [32, 125],
+        char_range: tuple[int, int] = (32, 125),
         action: tuple[Callable, Any] = (lambda: 0, None),
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
             DEFAULT_COLOR,

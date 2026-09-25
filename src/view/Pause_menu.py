@@ -3,7 +3,7 @@ from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
-from .widget import RectPanel, ClickableIcon, Input_box
+from .widget import Panel, ClickableIcon, Input_box
 
 
 CHEAT_PASSWORD: str = "password"
@@ -50,14 +50,14 @@ class Pause_menu(View):
         self.calculate_panel_spacing()
         vertical_padding: int = self.h // 12
 
-        self.left_panel: RectPanel = RectPanel(
+        self.left_panel: Panel = Panel(
             self.x + (self.w // 2 - self.left_panel_w) // 2,
             self.y + vertical_padding,
             self.left_panel_w,
             (self.h - vertical_padding * 2),
             self.button_actions,
             self.but_font_sz,
-            self.panel_pad
+            (self.panel_pad, 2, 0.1)
         )
 
     def calculate_panel_spacing(self) -> None:
@@ -107,6 +107,7 @@ class Pause_menu(View):
             input_width,
             self.h // 8,
             20,
+            (32, 125),
             (self.validate_password, None)
         )
 
@@ -133,7 +134,7 @@ class Pause_menu(View):
         if self.input_password.input == CHEAT_PASSWORD:
 
             self.show_right_panel = True
-            self.show_message: str = "Well done, little cheater :)"
+            self.show_message = "Well done, little cheater :)"
             self.input_password.text_color = pr.GREEN
             self.input_password.cursor_color = pr.DARKGREEN
             self.lock_icon._load_image(LOCK_OPEN_PATH)
