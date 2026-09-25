@@ -34,6 +34,14 @@ class Main_menu(View):
             ),
             True
         )
+        self.background: AnimIcon = AnimIcon(
+            -2,
+            self.menu_icon.posy + self.h // 15,
+            BACKGROUND_IMAGE_PATH,
+            (self.w, self.h),
+            False,
+            5
+        )
         self.outline: tuple[int, int, int, int] = (
             BORDER_PADDING,
             BORDER_PADDING,
@@ -63,6 +71,7 @@ class Main_menu(View):
             ), None),
             "exit": (pr.close_window, None),
         }
+        button_font_sz: int = self.h // 20
 
         self.panel: Panel = Panel(
             panel_x,
@@ -70,7 +79,7 @@ class Main_menu(View):
             panel_width,
             panel_height,
             button_actions,
-            20,
+            button_font_sz,
             (10, 2, 0.1),
             (pr.RED, pr.BLANK),
             (pr.GRAY, pr.GOLD)

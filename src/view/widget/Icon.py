@@ -47,7 +47,7 @@ class Icon(Widget):
         self.image: pr.Image = pr.load_image(image_path)
 
         if self.to_resize:
-            self._resize_image(*self.max_size)
+            self._resize_image(*self.max_size, True)
 
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
 
