@@ -1,5 +1,8 @@
-import time
+from .Game import Game
+
 from typing import Callable
+
+import time
 
 
 class GameLoop:
@@ -8,7 +11,7 @@ class GameLoop:
 
     def __init__(
         self,
-        update: Callable[[float], None],
+        update: Callable[[Game, float], None],
         tick_rate: float = 100.0,
         duration: float = 90,
     ) -> None:
@@ -32,7 +35,7 @@ class GameLoop:
     def stop(self) -> None:
         self.__running = False
 
-    def run(self) -> None:
+    def run(self, game: Game) -> None:
         self.__running = True
         accumulator = 0.0
         last_time = time.perf_counter()
@@ -43,16 +46,14 @@ class GameLoop:
             last_time = now
 
             if self.__paused:
-                time.sleep(self.__dt)   # avoid a busy spin while idle
+                time.sleep(self.__dt)
                 continue
 
-            # clamp: prevents a "spiral of death" after a long stall
-            # (breakpoint, OS scheduling hiccup, window drag, etc.)
             frame_time = min(frame_time, 0.25)
             accumulator += frame_time
 
             while accumulator >= self.__dt:
-                self.__update(self.__dt)
+                self.__update(game, self.__dt)
                 accumulator -= self.__dt
                 self.__elapsed_active += self.__dt
 
