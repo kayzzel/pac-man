@@ -3,12 +3,11 @@ from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
-from .widget import RectPanel, ClickableIcon, Input_box
+from .widget import Panel, ClickableIcon, Input_box
 
 
 CHEAT_PASSWORD: str = "password"
 PASSWORD_MSG_TIME: int = 120
-
 
 BUTTON_FONT_SIZE: int = 20
 PANEL_PADDING: int = BUTTON_FONT_SIZE - 5
@@ -46,14 +45,14 @@ class Pause_menu(View):
         self.calculate_panel_spacing()
         vertical_padding: int = self.h // 12
 
-        self.left_panel: RectPanel = RectPanel(
+        self.left_panel: Panel = Panel(
             self.x + (self.w // 2 - self.left_panel_w) // 2,
             self.y + vertical_padding,
             self.left_panel_w,
             (self.h - vertical_padding * 2),
             self.button_actions,
             self.but_font_sz,
-            self.panel_pad
+            (self.panel_pad, 2, 0.1)
         )
 
     def calculate_panel_spacing(self) -> None:
@@ -103,7 +102,8 @@ class Pause_menu(View):
             input_width,
             self.h // 8,
             20,
-            self.validate_password
+            (32, 125),
+            (self.validate_password, None)
         )
 
         self.show_input: bool = False
