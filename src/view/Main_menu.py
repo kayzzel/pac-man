@@ -5,7 +5,7 @@ from .widget.Panel import Panel
 from .widget.Icon import Icon, AnimIcon
 
 
-BACKGROUND_IMAGE_PATH: str = "src/view/assets/gifs/pac-man_bg_gif.gif"
+BACKGROUND_IMAGE_PATH: str = "src/view/assets/gifs/pac-man_bg.gif"
 TITLE_IMAGE_PATH: str = "src/view/assets/icons/pac-man_title.png"
 
 BORDER_THICKNESS: int = 7
@@ -16,17 +16,9 @@ class Main_menu(View):
 
     def _update_icons(self) -> None:
 
-        self.background: AnimIcon = AnimIcon(
-            -2,
-            -2,
-            BACKGROUND_IMAGE_PATH,
-            (self.w, self.h),
-            False,
-            5
-        )
         self.menu_icon: Icon = Icon(
             -2,
-            min(self.h // 5, 50),
+            min(self.h // 15, 50),
             TITLE_IMAGE_PATH,
             (
                 self.w - int(self.w * 0.2),
@@ -36,10 +28,10 @@ class Main_menu(View):
         )
         self.background: AnimIcon = AnimIcon(
             -2,
-            self.menu_icon.posy + self.h // 15,
+            self.menu_icon.lower_bounds[1] + self.h // 20,
             BACKGROUND_IMAGE_PATH,
-            (self.w, self.h),
-            False,
+            (self.w - self.w // 3, self.h // 6),
+            True,
             5
         )
         self.outline: tuple[int, int, int, int] = (
@@ -51,15 +43,14 @@ class Main_menu(View):
 
     def _update_panel(self) -> None:
 
-        icon_bottom: int = self.menu_icon.get_lower_bounds[1] + 100
+        icon_bottom: int = self.background.lower_bounds[1]
 
-        panel_height: int = self.h - icon_bottom
+        height_remaining: int = self.h - BORDER_PADDING * 2 - icon_bottom
+        panel_height: int = height_remaining - height_remaining // 4
         panel_width: int = self.w // 3
 
-        panel_y: int = icon_bottom + panel_height // 6
+        panel_y: int = icon_bottom + (height_remaining - panel_height) // 2
         panel_x: int = (self.w - panel_width) // 2
-
-        panel_height -= panel_height // 3
 
         button_actions: dict[str, tuple[Callable, Any]] = {
             "start game": (self.app.change_view, "map_choice_menu"),

@@ -27,7 +27,8 @@ class Icon(Widget):
         super().__init__(x, y, self.i_w, self.i_h)
 
     def _resize_image(
-        self, max_w: int,
+        self,
+        max_w: int,
         max_h: int,
         resize_needed: bool = False
     ) -> None:
@@ -54,12 +55,12 @@ class Icon(Widget):
     @property
     def i_w(self) -> int:
 
-        return self.texture.width
+        return self.texture.width if not self.to_resize else self.max_size[0]
 
     @property
     def i_h(self) -> int:
 
-        return self.texture.height
+        return self.texture.height if not self.to_resize else self.max_size[1]
 
     @property
     def posx(self) -> int:
@@ -80,7 +81,7 @@ class Icon(Widget):
         )
 
     @property
-    def get_lower_bounds(self) -> tuple[int, int]:
+    def lower_bounds(self) -> tuple[int, int]:
 
         return (self.posx + self.i_w, self.posy + self.i_h)
 
@@ -102,7 +103,8 @@ class AnimIcon(Icon):
         frame_delay: int = BASE_FRAME_DELAY
     ) -> None:
 
-        super().__init__(x, y, image_path, max_size, to_resize)
+        super().__init__(x, y, image_path, max_size)
+        self.to_resize = to_resize
 
         self.frame_delay: int = frame_delay
 
