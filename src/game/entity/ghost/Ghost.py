@@ -1,6 +1,7 @@
 from ..Entity import Entity
 
 from abc import ABC, abstractmethod
+from random import choice
 from math import modf
 
 
@@ -9,6 +10,8 @@ class Ghost(Entity, ABC):
         super().__init__()
         self.state = "Normal"
         self.target: tuple[int, int] = (0, 0)
+        self.spawn_point: tuple[int, int] = (0, 0)
+        self.scater_point: tuple[int, int] = (0, 0)
 
     @abstractmethod
     def define_target(self, entitys: dict[str, Entity]) -> None:
