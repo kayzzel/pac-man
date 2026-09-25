@@ -1,7 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .View import View
-from .widget.Panel import RectPanel
+from .widget.Panel import Panel
 from .widget.Icon import Icon, AnimIcon
 
 
@@ -20,7 +20,9 @@ class Main_menu(View):
             -2,
             -2,
             BACKGROUND_IMAGE_PATH,
-            (self.w, self.h)
+            (self.w, self.h),
+            False,
+            5
         )
         self.menu_icon: Icon = Icon(
             -2,
@@ -62,14 +64,14 @@ class Main_menu(View):
             "exit": (pr.close_window, None),
         }
 
-        self.panel: RectPanel = RectPanel(
+        self.panel: Panel = Panel(
             panel_x,
             panel_y,
             panel_width,
             panel_height,
             button_actions,
             20,
-            10,
+            (10, 2, 0.1),
             (pr.RED, pr.BLANK),
             (pr.GRAY, pr.GOLD)
         )
