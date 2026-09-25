@@ -1,5 +1,5 @@
 from ..Entity import Entity
-from .Ghost import Ghost, Ghost_state
+from .Ghost import Ghost
 
 class Blinky(Ghost):
     def __init__(self):
