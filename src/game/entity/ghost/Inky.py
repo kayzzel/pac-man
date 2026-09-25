@@ -1,20 +1,21 @@
 from ..Entity import Entity
 from .Ghost import Ghost
 
+
 class Inky(Ghost):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def define_target(self, entitys: dict[str, Entity]) -> None:
+    def define_target(self, entitys: dict[str, Entity]) -> int:
 
         if super().define_target(entitys):
-            return
+            return 1
 
         VECTORS: dict[str, tuple[int, int]] = {
-                "N": (-2,-2),
-                "S": (0,2),
-                "E": (2,0),
-                "W": (-2,0)
+                "N": (-2, -2),
+                "S": (0, 2),
+                "E": (2, 0),
+                "W": (-2, 0)
         }
 
         pacman = entitys["pacman"]
@@ -29,3 +30,4 @@ class Inky(Ghost):
             2 * central_y - int(blinky.pos_y),
         )
 
+        return 0

@@ -47,12 +47,11 @@ class Ghost(Entity, ABC):
         }
 
         VECTORS: dict[str, tuple[int, int]] = {
-                "N": (0,-1),
-                "S": (0,1),
-                "E": (1,0),
-                "W": (-1,0)
+                "N": (0, -1),
+                "S": (0, 1),
+                "E": (1, 0),
+                "W": (-1, 0)
         }
-
 
         possibles = [key for key, value in walls.items() if not value]
 
@@ -70,7 +69,7 @@ class Ghost(Entity, ABC):
             self.direction = possibles[0]
             return
 
-        if self.state == "frightened":
+        if self.state == Ghost_state.FRIGHTENED:
             self.direction = choice(possibles)
             return
 
@@ -84,16 +83,16 @@ class Ghost(Entity, ABC):
             distances.append((possible, distance))
 
         self.direction = min(distances, key=(lambda d: d[1]))[0]
-    
+
     def update(
-            self,
-            entitys: dict[str, Entity],
-            walls: dict[str, bool],
-            can_change: bool = True,
-        ) -> None:
+                self,
+                entitys: dict[str, Entity],
+                walls: dict[str, bool],
+                can_change: bool = True,
+            ) -> None:
 
         self.walk()
-        
+
         if (modf(self.pos_x)[0] != 0.5 or modf(self.pos_y)[0] != 0.5):
             return
 

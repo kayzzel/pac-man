@@ -1,13 +1,14 @@
-from Ghost import Ghost
+from .Ghost import Ghost
 from ..Entity import Entity
 
+
 class Clyde(Ghost):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def define_target(self, entitys: dict[str, Entity]) -> None:
-        if (super().define_target):
-            return
+    def define_target(self, entitys: dict[str, Entity]) -> int:
+        if (super().define_target(entitys)):
+            return 0
 
         pacman = entitys["pacman"]
 
@@ -20,3 +21,5 @@ class Clyde(Ghost):
 
         else:
             self.target = self.scatter_point
+
+        return 0
