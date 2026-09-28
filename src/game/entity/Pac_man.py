@@ -9,3 +9,4 @@ class Pac_man(Entity):
         self.score = 0
         self.nb_lives = config.lives
         self.collectible: list[None | Collectible] = []
+        self.last_super_pacgum_time: int = -1
