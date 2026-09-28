@@ -12,3 +12,4 @@ class Cell:
                 "E": False,
                 "W": False,
         }
+        self.special: bool = False
