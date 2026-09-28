@@ -1,4 +1,6 @@
 from ..Entity import Entity
+from ..Pac_man import Pac_man
+from ...map.Cell import Cell
 
 from abc import ABC, abstractmethod
 from random import choice
@@ -7,7 +9,6 @@ from enum import Enum
 
 
 class Ghost_state(Enum):
-
     CHASE = "chase"
     EATEN = "eaten"
     SCATTER = "scatter"
@@ -36,6 +37,31 @@ class Ghost(Entity, ABC):
             return 1
 
         return 0
+
+    def __chose_state(self, pacman: Pac_man, timer: int) -> None:
+        if (
+                pacman.last_super_pacgum_time >= 0 and
+                timer - pacman.last_super_pacgum_time < 7
+                ):
+            self.state = Ghost_state.FRIGHTENED
+            return
+
+        if timer < 7:     # 7"
+            self.state = Ghost_state.SCATTER
+        elif timer < 27:  # 20"
+            self.state = Ghost_state.CHASE
+        elif timer < 34:  # 7"
+            self.state = Ghost_state.SCATTER
+        elif timer < 54:  # 20"
+            self.state = Ghost_state.CHASE
+        elif timer < 59:  # 5"
+            self.state = Ghost_state.SCATTER
+        elif timer < 79:  # 20"
+            self.state = Ghost_state.CHASE
+        elif timer < 84:  # 5"
+            self.state = Ghost_state.SCATTER
+        else:             # -
+            self.state = Ghost_state.CHASE
 
     def __chose_direction(self, walls: dict[str, bool]) -> None:
 
@@ -87,16 +113,21 @@ class Ghost(Entity, ABC):
     def update(
                 self,
                 entitys: dict[str, Entity],
-                walls: dict[str, bool],
-                can_change: bool = True,
+                cell: Cell,
+                timer: int
             ) -> None:
+
+        if isinstance(entitys["pacman"], Pac_man):
+            self.__chose_state(entitys["pacman"], timer)
+        else:
+            raise ValueError("There must be a pacman key in the entitys")
 
         self.walk()
 
         if (modf(self.pos_x)[0] != 0.5 or modf(self.pos_y)[0] != 0.5):
             return
 
-        if (can_change):
+        if (cell.special):
             self.define_target(entitys)
 
-        self.__chose_direction(walls)
+        self.__chose_direction(cell.walls)
