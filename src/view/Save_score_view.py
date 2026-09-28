@@ -76,6 +76,9 @@ class Save_score_view(View):
 
     def _update(self) -> None:
 
+        if pr.is_key_pressed(pr.KEY_ESCAPE) and not self.show_message:
+            self.app.return_to_prev_view()
+
         if not pr.is_window_resized() and self.is_init:
             return
 

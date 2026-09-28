@@ -1,10 +1,13 @@
 import pyray as pr
 from .View import View
+from .widget import Panel
 
 
 class Scores_view(View):
 
-    def __init__(self, scores: dict[str, int]) -> None:
+    def __init__(self, app, scores: dict[str, int]) -> None:
+
+        super().__init__(app)
 
         self.title: str = "BEST SCORES"
         self.scores: list[str] = [
@@ -27,7 +30,28 @@ class Scores_view(View):
 
         return self.h // 15
 
-    def calculate_score_spacing(self) -> None:
+    def _update_back_button(self) -> None:
+
+        back_label: str = "back <-|"
+        back_font_sz: int = self.h // 20
+        back_padding: int = back_font_sz - 5
+
+        back_width: int = (
+            pr.measure_text(back_label, back_font_sz)
+        ) + back_padding
+        back_height: int = back_font_sz + back_padding
+
+        self.back_button: Panel = Panel(
+            self.w - back_width - 10,
+            self.h - back_height - 10,
+            back_width,
+            back_height,
+            {back_label: (self.app.return_to_prev_view, None)},
+            back_font_sz,
+            (back_padding, 2, 0.1)
+        )
+
+    def _update_scores(self) -> None:
 
         scores_start: int = self.title_y * 2 + self.title_size
 
@@ -50,7 +74,23 @@ class Scores_view(View):
         ):
             self.score_font_sz -= 1
 
+        self.score_y -= self.score_font_sz
+
+    def _update(self) -> None:
+
+        if pr.is_key_pressed(pr.KEY_ESCAPE):
+            self.app.return_to_prev_view()
+
+        if not pr.is_window_resized() and self.is_init:
+            return
+
+        self._update_back_button()
+        self._update_scores()
+        self.is_init = True
+
     def display_view(self) -> None:
+
+        self._update()
 
         pr.draw_text(
             self.title,
@@ -59,9 +99,7 @@ class Scores_view(View):
             self.title_size,
             pr.RAYWHITE
         )
-
-        self.calculate_score_spacing()
-        self.score_y -= self.score_font_sz
+        self.back_button.display_widget()
 
         for i, score in enumerate(self.scores):
 

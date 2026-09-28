@@ -54,7 +54,7 @@ class Pause_menu(View):
             ), None),
             "Scores": (
                 self.app.change_view,
-                Scores_view(TEST_SCORES)
+                Scores_view(self.app, TEST_SCORES)
             ),
             "Save and exit": (self.app.change_view, Save_score_view(self.app, self.game)),
             "Exit": (self.app.change_view, "main_menu")
