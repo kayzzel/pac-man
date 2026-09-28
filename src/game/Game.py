@@ -1,4 +1,5 @@
 from .map.Map import Map
+from .map.Map_scores import Map_scores
 from .entity.Pac_man import Pac_man
 from .entity.ghost.Ghost import Ghost
 from ..Config import Config
@@ -13,6 +14,7 @@ import contextlib
 class Game:
     def __init__(self, config: Config) -> None:
         self.map: list[Map] = []
+        self.scores: Map_scores = Map_scores()
         self.config = config
         self.player = Pac_man(config)
         self.ghosts: dict[str, Ghost] = {}
