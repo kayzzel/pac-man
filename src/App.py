@@ -1,6 +1,8 @@
 from .Config import Config
 from .view.View import View
 
+from sys import stderr
+
 
 class App:
     def __init__(self) -> None:
@@ -10,8 +12,14 @@ class App:
         self.__previous_views: list[View | None] = []
         self.__is_running = False
 
-    def load_config(self, filename: str) -> None:
-        self.__config.load_config(filename)
+    def load_config(self, filename: str) -> int:
+        try:
+            self.__config.load_config(filename)
+        except ValueError as err:
+            print(err, file=stderr)
+            return (1)
+
+        return (0)
 
     def add_view(self, new_view: dict[str, View]) -> None:
         self.views.update(new_view)
