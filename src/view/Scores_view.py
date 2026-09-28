@@ -2,16 +2,14 @@ import pyray as pr
 from .View import View
 
 
-class Scores_menu(View):
+class Scores_view(View):
 
-    def __init__(self, app, scores: list[tuple[str, int]]) -> None:
-
-        super().__init__(app)
+    def __init__(self, scores: dict[str, int]) -> None:
 
         self.title: str = "BEST SCORES"
         self.scores: list[str] = [
             pl_name + ": " + str(pl_score)
-            for pl_name, pl_score in scores
+            for pl_name, pl_score in scores.items()
         ]
 
     @property
@@ -33,7 +31,7 @@ class Scores_menu(View):
 
         scores_start: int = self.title_y * 2 + self.title_size
 
-        scores_height: int = self.h - self.scores_start
+        scores_height: int = self.h - scores_start
 
         padding: int = scores_height // 8
         space_remaining: int = scores_height - padding * 2

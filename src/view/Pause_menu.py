@@ -3,6 +3,8 @@ from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
+from .Scores_view import Scores_view
+from .Save_score_view import Save_score_view
 from .widget import Panel, ClickableIcon, Input_box
 
 
@@ -15,12 +17,22 @@ PANEL_PADDING: int = BUTTON_FONT_SIZE - 5
 LOCK_CLOSED_PATH: str = "src/view/assets/icons/lock_closed.jpg"
 LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
 
+TEST_SCORES: dict[str, int] = {
+    "figue": 123456789,
+    "banane": 12345678,
+    "mirabelle": 1234567,
+    "pomme": 123456,
+    "pêche": 12345,
+    "abricot": 1234
+}
+
 
 class Pause_menu(View):
 
-    def __init__(self, app) -> None:
+    def __init__(self, app, game) -> None:
 
         super().__init__(app)
+        self.game = game
         self.show_right_panel: bool = False
 
     @property
@@ -40,10 +52,11 @@ class Pause_menu(View):
             "Options": (lambda: print(
                 "Action for button 'options' not yet coded\n"
             ), None),
-            "Scores": (lambda: print(
-                "Action for button 'scores' not yet coded\n"
-            ), None),
-            "Save and exit": (self.app.change_view, "save_score_view"),
+            "Scores": (
+                self.app.change_view,
+                Scores_view(TEST_SCORES)
+            ),
+            "Save and exit": (self.app.change_view, Save_score_view(self.app, self.game)),
             "Exit": (self.app.change_view, "main_menu")
         }
 

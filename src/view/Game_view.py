@@ -1,6 +1,7 @@
 import pyray as pr
 from typing import Any
 from .View import View
+from .Pause_menu import Pause_menu
 from .widget import Icon, AnimIcon
 from ..game.Game import Game
 from .Texture_pack import Texture_pack
@@ -46,12 +47,12 @@ class Wall:
 
 class Game_view(View):
 
-    def __init__(self, app: Any, game: Game, modal_view: View) -> None:
+    def __init__(self, app: Any, game: Game) -> None:
 
         super().__init__(app)
 
         self.game: Game = game
-        self.modal_view: View = modal_view
+        self.modal_view: Pause_menu = Pause_menu(app, game)
         self.show_as_modal: bool = False
 
         self.texture_pack: Texture_pack = Texture_pack(LUIGI_TEXTURE_PACK)

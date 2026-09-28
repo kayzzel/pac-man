@@ -1,5 +1,4 @@
 import pyray as pr
-from typing import Callable, Any
 from .View import View
 from .widget import Input_box, Panel
 
@@ -14,13 +13,11 @@ SCORE_CHAR_RANGE: tuple[int, int] = (48, 57)
 
 class Save_score_view(View):
 
-    def __init__(self, app) -> None:
+    def __init__(self, app, game) -> None:
 
         super().__init__(app)
+        self.game = game
 
-        self.cur_input: str = "enter name :"
-        self.cur_input_func: tuple[Callable, Any] = (self.save_name, None)
-        self.cur_char_range: tuple[int, int] = NAME_CHAR_RANGE
         self.show_message: list[str] = []
 
     def _update_title(self) -> None:
@@ -61,18 +58,19 @@ class Save_score_view(View):
             self.w // 3,
             self.h // 8,
             MAX_INPUT_LENGTH,
-            self.cur_char_range,
-            self.cur_input_func
+            NAME_CHAR_RANGE,
+            (self.save_name, None)
         )
+        self.input_text: str = "enter name : "
         self.input_box.enter_input = True
-        self.cur_input_font_sz: int = self.h // 16
-        self.cur_input_x: int = (self.w - pr.measure_text(
-            self.cur_input,
-            self.cur_input_font_sz
+        self.input_font_sz: int = self.h // 16
+        self.input_x: int = (self.w - pr.measure_text(
+            self.input_text,
+            self.input_font_sz
         )) // 2
-        self.cur_input_y: int = (
+        self.input_y: int = (
             self.input_box.posy
-            - self.cur_input_font_sz
+            - self.input_font_sz
             - self.h // 20
         )
 
@@ -89,20 +87,13 @@ class Save_score_view(View):
     def save_name(self) -> None:
 
         self.player_name: str = self.input_box.input
-        self.cur_input_func = (self.save_score, None)
-        self.cur_input = "enter score :"
-        self.cur_char_range = SCORE_CHAR_RANGE
-        self._update_input_box()
-
-    def save_score(self) -> None:
-
-        self.player_score: int = int(self.input_box.input)
+        self.game.scores.add_scores(self.player_name, self.game.player.score)
+        self.input_text = ""
         self.show_message = [
-            f"Score {self.player_score}",
-            f"for player {self.player_name}",
-            "successfully saved!"
+            "Successfully saved ",
+            f"the score {self.game.player.score}",
+            f" for player {self.player_name}!"
         ]
-        self.cur_input = ""
         self.msg_frame_counter: int = 0
 
     def display_view(self) -> None:
@@ -117,12 +108,12 @@ class Save_score_view(View):
             pr.RAYWHITE
         )
 
-        if self.cur_input:
+        if self.input_text:
             pr.draw_text(
-                self.cur_input,
-                self.cur_input_x,
-                self.cur_input_y,
-                self.cur_input_font_sz,
+                self.input_text,
+                self.input_x,
+                self.input_y,
+                self.input_font_sz,
                 pr.LIGHTGRAY
             )
 
