@@ -42,6 +42,9 @@ class App:
 
     def change_view(self, view: View | str) -> None:
 
+        if self.__current_view:
+            self.__current_view.is_init = False
+
         if isinstance(view, View):
             self.__previous_views.append(self.__current_view)
             self.__current_view = view

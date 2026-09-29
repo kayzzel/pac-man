@@ -30,32 +30,45 @@ class Scores_view(View):
 
         return self.h // 15
 
-    def _update_back_button(self) -> None:
+    def _update_buttons(self) -> None:
 
         back_label: str = "back <-|"
-        back_font_sz: int = self.h // 20
-        back_padding: int = back_font_sz - 5
+        load_label: str = "Select a map"
+        button_font_sz: int = self.h // 20
+        button_padding: int = button_font_sz - 5
 
         back_width: int = (
-            pr.measure_text(back_label, back_font_sz)
-        ) + back_padding
-        back_height: int = back_font_sz + back_padding
+            pr.measure_text(back_label, button_font_sz)
+        ) + button_padding
+        load_width: int = (
+            pr.measure_text(load_label, button_font_sz)
+        ) + button_padding
+        button_height: int = button_font_sz + button_padding
 
         self.back_button: Panel = Panel(
             self.w - back_width - 10,
-            self.h - back_height - 10,
+            self.h - button_height - 10,
             back_width,
-            back_height,
+            button_height,
             {back_label: (self.app.return_to_prev_view, None)},
-            back_font_sz,
-            (back_padding, 2, 0.1)
+            button_font_sz,
+            (button_padding, 2, 0.1)
+        )
+        self.load_button: Panel = Panel(
+            -2,
+            self.title_y + self.title_size + self.h // 25,
+            load_width,
+            button_height,
+            {load_label: (lambda: print(f"function not yet coded for button {load_label}"), None)},
+            button_font_sz,
+            (button_padding, 2, 0.1)
         )
 
     def _update_scores(self) -> None:
 
-        scores_start: int = self.title_y * 2 + self.title_size
+        scores_start: int = self.load_button.posy + self.load_button.h
 
-        scores_height: int = self.h - scores_start
+        scores_height: int = self.h - scores_start - self.back_button.h - 10
 
         padding: int = scores_height // 8
         space_remaining: int = scores_height - padding * 2
@@ -84,7 +97,7 @@ class Scores_view(View):
         if not pr.is_window_resized() and self.is_init:
             return
 
-        self._update_back_button()
+        self._update_buttons()
         self._update_scores()
         self.is_init = True
 
@@ -99,6 +112,7 @@ class Scores_view(View):
             self.title_size,
             pr.RAYWHITE
         )
+        self.load_button.display_widget()
         self.back_button.display_widget()
 
         for i, score in enumerate(self.scores):
