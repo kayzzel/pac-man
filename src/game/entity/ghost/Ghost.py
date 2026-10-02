@@ -44,7 +44,7 @@ class Ghost(Entity, ABC):
             self.speed *= 2
 
     def __respawned(self) -> None:
-        self.speed /=2
+        self.speed /= 2
 
     def __chose_state(self, pacman: Pac_man, timer: int) -> None:
         OPOSITE: dict[str, str] = {
@@ -54,7 +54,7 @@ class Ghost(Entity, ABC):
                 "W": "E"
         }
 
-        if self.state == Ghost_state.EATEN :
+        if self.state == Ghost_state.EATEN:
             if (int(self.pos_x), int(self.pos_y)) != self.spawn_point:
                 return
             else:
