@@ -14,7 +14,7 @@ class Clyde(Ghost):
 
         distance = (
             abs(int(self.pos_x) - int(pacman.pos_x))
-            + abs((self.pos_y) - int(pacman.pos_y))
+            + abs(int(self.pos_y) - int(pacman.pos_y))
         )
         if distance > 8:
             self.target = (int(pacman.pos_x), int(pacman.pos_y))
