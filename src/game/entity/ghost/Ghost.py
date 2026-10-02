@@ -38,30 +38,61 @@ class Ghost(Entity, ABC):
 
         return 0
 
+    def set_eaten(self) -> None:
+        if self.state != Ghost_state.EATEN:
+            self.state = Ghost_state.EATEN
+            self.speed *= 2
+
+    def __respawned(self) -> None:
+        self.speed /=2
+
     def __chose_state(self, pacman: Pac_man, timer: int) -> None:
+        OPOSITE: dict[str, str] = {
+                "N": "S",
+                "S": "N",
+                "E": "W",
+                "W": "E"
+        }
+
+        if self.state == Ghost_state.EATEN :
+            if (int(self.pos_x), int(self.pos_y)) != self.spawn_point:
+                return
+            else:
+                self.__respawned()
+
         if (
                 pacman.last_super_pacgum_time >= 0 and
                 timer - pacman.last_super_pacgum_time < 7
                 ):
-            self.state = Ghost_state.FRIGHTENED
+            if self.state != Ghost_state.FRIGHTENED:
+                self.direction = OPOSITE[self.direction]
+                self.state = Ghost_state.FRIGHTENED
             return
 
-        if timer < 7:     # 7"
+        if timer < 7 and self.state != Ghost_state.SCATTER:     # 7"
             self.state = Ghost_state.SCATTER
-        elif timer < 27:  # 20"
+            self.direction = OPOSITE[self.direction]
+        elif timer < 27 and self.state != Ghost_state.CHASE:  # 20"
             self.state = Ghost_state.CHASE
-        elif timer < 34:  # 7"
+            self.direction = OPOSITE[self.direction]
+        elif timer < 34 and self.state != Ghost_state.SCATTER:  # 7"
             self.state = Ghost_state.SCATTER
-        elif timer < 54:  # 20"
+            self.direction = OPOSITE[self.direction]
+        elif timer < 54 and self.state != Ghost_state.CHASE:  # 20"
             self.state = Ghost_state.CHASE
-        elif timer < 59:  # 5"
+            self.direction = OPOSITE[self.direction]
+        elif timer < 59 and self.state != Ghost_state.SCATTER:  # 5"
             self.state = Ghost_state.SCATTER
-        elif timer < 79:  # 20"
+            self.direction = OPOSITE[self.direction]
+        elif timer < 79 and self.state != Ghost_state.CHASE:  # 20"
             self.state = Ghost_state.CHASE
-        elif timer < 84:  # 5"
+            self.direction = OPOSITE[self.direction]
+        elif timer < 84 and self.state != Ghost_state.SCATTER:  # 5"
             self.state = Ghost_state.SCATTER
-        else:             # -
+            self.direction = OPOSITE[self.direction]
+        elif self.state != Ghost_state.CHASE:             # -
             self.state = Ghost_state.CHASE
+            self.direction = OPOSITE[self.direction]
 
     def __chose_direction(self, walls: dict[str, bool]) -> None:
 
@@ -104,7 +135,7 @@ class Ghost(Entity, ABC):
             new_x, new_y = VECTORS[possible]
             distance = (
                 abs(int(self.pos_x) + new_x - self.target[0])
-                + abs((self.pos_y) + new_y - self.target[1])
+                + abs(int(self.pos_y) + new_y - self.target[1])
             )
             distances.append((possible, distance))
 
@@ -122,12 +153,11 @@ class Ghost(Entity, ABC):
         else:
             raise ValueError("There must be a pacman key in the entitys")
 
+        if (modf(self.pos_x)[0] == 0.5 and modf(self.pos_y)[0] == 0.5):
+
+            if (not cell.special):
+                self.define_target(entitys)
+
+            self.__chose_direction(cell.walls)
+
         self.walk()
-
-        if (modf(self.pos_x)[0] != 0.5 or modf(self.pos_y)[0] != 0.5):
-            return
-
-        if (cell.special):
-            self.define_target(entitys)
-
-        self.__chose_direction(cell.walls)
