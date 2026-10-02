@@ -6,11 +6,11 @@ class Blinky(Ghost):
     def __init__(self) -> None:
         super().__init__()
 
-    def define_target(self, entitys: dict[str, Entity]) -> int:
-        if (super().define_target(entitys)):
+    def define_target(self, entities: dict[str, Entity]) -> int:
+        if (super().define_target(entities)):
             return 0
 
-        pacman = entitys["pacman"]
+        pacman = entities["pacman"]
 
         self.target = (int(pacman.pos_x), int(pacman.pos_y))
 

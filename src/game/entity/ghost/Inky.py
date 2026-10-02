@@ -6,9 +6,9 @@ class Inky(Ghost):
     def __init__(self) -> None:
         super().__init__()
 
-    def define_target(self, entitys: dict[str, Entity]) -> int:
+    def define_target(self, entities: dict[str, Entity]) -> int:
 
-        if super().define_target(entitys):
+        if super().define_target(entities):
             return 0
 
         VECTORS: dict[str, tuple[int, int]] = {
@@ -18,8 +18,8 @@ class Inky(Ghost):
                 "W": (-2, 0)
         }
 
-        pacman = entitys["pacman"]
-        blinky = entitys["blinky"]
+        pacman = entities["pacman"]
+        blinky = entities["blinky"]
         vector = VECTORS[pacman.direction]
 
         central_x = int(pacman.pos_x) + vector[0]

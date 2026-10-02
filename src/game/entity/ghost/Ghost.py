@@ -24,7 +24,7 @@ class Ghost(Entity, ABC):
         self.scatter_point: tuple[int, int] = (0, 0)
 
     @abstractmethod
-    def define_target(self, entitys: dict[str, Entity]) -> int:
+    def define_target(self, entities: dict[str, Entity]) -> int:
         if self.state == Ghost_state.FRIGHTENED:
             return 1
 
@@ -46,8 +46,8 @@ class Ghost(Entity, ABC):
     def __respawned(self) -> None:
         self.speed /= 2
 
-    def __chose_state(self, pacman: Pac_man, timer: int) -> None:
-        OPOSITE: dict[str, str] = {
+    def __choose_state(self, pacman: Pac_man, timer: int) -> None:
+        OPPOSITE: dict[str, str] = {
                 "N": "S",
                 "S": "N",
                 "E": "W",
@@ -65,38 +65,38 @@ class Ghost(Entity, ABC):
                 timer - pacman.last_super_pacgum_time < 7
                 ):
             if self.state != Ghost_state.FRIGHTENED:
-                self.direction = OPOSITE[self.direction]
+                self.direction = OPPOSITE[self.direction]
                 self.state = Ghost_state.FRIGHTENED
             return
 
         if timer < 7 and self.state != Ghost_state.SCATTER:     # 7"
             self.state = Ghost_state.SCATTER
-            self.direction = OPOSITE[self.direction]
+            self.direction = OPPOSITE[self.direction]
         elif timer < 27 and self.state != Ghost_state.CHASE:  # 20"
             self.state = Ghost_state.CHASE
-            self.direction = OPOSITE[self.direction]
+            self.direction = OPPOSITE[self.direction]
         elif timer < 34 and self.state != Ghost_state.SCATTER:  # 7"
             self.state = Ghost_state.SCATTER
-            self.direction = OPOSITE[self.direction]
+            self.direction = OPPOSITE[self.direction]
         elif timer < 54 and self.state != Ghost_state.CHASE:  # 20"
             self.state = Ghost_state.CHASE
-            self.direction = OPOSITE[self.direction]
+            self.direction = OPPOSITE[self.direction]
         elif timer < 59 and self.state != Ghost_state.SCATTER:  # 5"
             self.state = Ghost_state.SCATTER
-            self.direction = OPOSITE[self.direction]
+            self.direction = OPPOSITE[self.direction]
         elif timer < 79 and self.state != Ghost_state.CHASE:  # 20"
             self.state = Ghost_state.CHASE
-            self.direction = OPOSITE[self.direction]
+            self.direction = OPPOSITE[self.direction]
         elif timer < 84 and self.state != Ghost_state.SCATTER:  # 5"
             self.state = Ghost_state.SCATTER
-            self.direction = OPOSITE[self.direction]
+            self.direction = OPPOSITE[self.direction]
         elif self.state != Ghost_state.CHASE:             # -
             self.state = Ghost_state.CHASE
-            self.direction = OPOSITE[self.direction]
+            self.direction = OPPOSITE[self.direction]
 
-    def __chose_direction(self, walls: dict[str, bool]) -> None:
+    def __choose_direction(self, walls: dict[str, bool]) -> None:
 
-        OPOSITE: dict[str, str] = {
+        OPPOSITE: dict[str, str] = {
                 "N": "S",
                 "S": "N",
                 "E": "W",
@@ -119,8 +119,8 @@ class Ghost(Entity, ABC):
             self.direction = possibles[0]
             return
 
-        if (OPOSITE[self.direction] in possibles):
-            possibles.remove(OPOSITE[self.direction])
+        if (OPPOSITE[self.direction] in possibles):
+            possibles.remove(OPPOSITE[self.direction])
 
         if len(possibles) == 1:
             self.direction = possibles[0]
@@ -143,21 +143,21 @@ class Ghost(Entity, ABC):
 
     def update(
                 self,
-                entitys: dict[str, Entity],
+                entities: dict[str, Entity],
                 cell: Cell,
                 timer: int
             ) -> None:
 
-        if isinstance(entitys["pacman"], Pac_man):
-            self.__chose_state(entitys["pacman"], timer)
+        if isinstance(entities["pacman"], Pac_man):
+            self.__choose_state(entities["pacman"], timer)
         else:
-            raise ValueError("There must be a pacman key in the entitys")
+            raise ValueError("There must be a pacman key in the entities")
 
         if (modf(self.pos_x)[0] == 0.5 and modf(self.pos_y)[0] == 0.5):
 
             if (not cell.special):
-                self.define_target(entitys)
+                self.define_target(entities)
 
-            self.__chose_direction(cell.walls)
+            self.__choose_direction(cell.walls)
 
         self.walk()
