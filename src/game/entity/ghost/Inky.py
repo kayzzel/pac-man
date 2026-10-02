@@ -9,7 +9,7 @@ class Inky(Ghost):
     def define_target(self, entitys: dict[str, Entity]) -> int:
 
         if super().define_target(entitys):
-            return 1
+            return 0
 
         VECTORS: dict[str, tuple[int, int]] = {
                 "N": (-2, -2),
