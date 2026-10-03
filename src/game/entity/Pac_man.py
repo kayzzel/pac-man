@@ -33,7 +33,7 @@ class Pac_man(Entity):
             self.direction = self.__next_direciton
             self.__next_direciton = ""
 
-    def set_powered(self, elapsed_time: int) -> None:
+    def set_energized(self, elapsed_time: int) -> None:
         self.__last_super_pacgum_time = elapsed_time
         self.is_energized = True
 
