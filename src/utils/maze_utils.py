@@ -1,7 +1,10 @@
+from contextlib import ContextDecorator
+
 from ..Config import Config
 from ..game.map.Map import Map
 from ..game.map.Cell import Cell
-from ..game.entity.collectible.Collectible import Collectible
+from ..game.entity.collectible.Pacgum import Pacgum
+from ..game.entity.collectible.Super_Pacgum import Super_Pacgum
 
 
 def find_spawn_position(maze: list[list[int]]) -> tuple[int, int]:
@@ -55,14 +58,16 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
 
             if maze[y][x] != 15 and (x, y) != (spawn_x, spawn_y):
                 if is_corner(x, y):
-                    cell.collectible = Collectible(
-                            "super_pacgum",
-                            config.point_per_super_pacgum,
+                    cell.collectible = Pacgum(
+                            config.point_per_pacgum,
+                            x,
+                            y
                         )
                 else:
-                    cell.collectible = Collectible(
-                            "pacgum",
-                            config.point_per_pacgum,
+                    cell.collectible = Super_Pacgum(
+                            config.point_per_super_pacgum,
+                            x,
+                            y
                         )
                 new_map.collectible_count += 1
 
