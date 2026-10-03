@@ -60,10 +60,7 @@ class Ghost(Entity, ABC):
             else:
                 self.__respawned()
 
-        if (
-                pacman.last_super_pacgum_time >= 0 and
-                timer - pacman.last_super_pacgum_time < 7
-                ):
+        if pacman.is_powered:
             if self.state != Ghost_state.FRIGHTENED:
                 self.direction = OPPOSITE[self.direction]
                 self.state = Ghost_state.FRIGHTENED
