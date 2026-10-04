@@ -46,7 +46,7 @@ class Ghost(Entity, ABC):
     def __respawned(self) -> None:
         self.speed /= 2
 
-    def __choose_state(self, pacman: Pac_man, timer: int) -> None:
+    def __choose_state(self, pacman: Pac_man, elapsed_time: int) -> None:
         OPPOSITE: dict[str, str] = {
                 "N": "S",
                 "S": "N",
@@ -60,34 +60,31 @@ class Ghost(Entity, ABC):
             else:
                 self.__respawned()
 
-        if (
-                pacman.last_super_pacgum_time >= 0 and
-                timer - pacman.last_super_pacgum_time < 7
-                ):
+        if pacman.is_energized:
             if self.state != Ghost_state.FRIGHTENED:
                 self.direction = OPPOSITE[self.direction]
                 self.state = Ghost_state.FRIGHTENED
             return
 
-        if timer < 7 and self.state != Ghost_state.SCATTER:     # 7"
+        if elapsed_time < 7 and self.state != Ghost_state.SCATTER:     # 7"
             self.state = Ghost_state.SCATTER
             self.direction = OPPOSITE[self.direction]
-        elif timer < 27 and self.state != Ghost_state.CHASE:  # 20"
+        elif elapsed_time < 27 and self.state != Ghost_state.CHASE:  # 20"
             self.state = Ghost_state.CHASE
             self.direction = OPPOSITE[self.direction]
-        elif timer < 34 and self.state != Ghost_state.SCATTER:  # 7"
+        elif elapsed_time < 34 and self.state != Ghost_state.SCATTER:  # 7"
             self.state = Ghost_state.SCATTER
             self.direction = OPPOSITE[self.direction]
-        elif timer < 54 and self.state != Ghost_state.CHASE:  # 20"
+        elif elapsed_time < 54 and self.state != Ghost_state.CHASE:  # 20"
             self.state = Ghost_state.CHASE
             self.direction = OPPOSITE[self.direction]
-        elif timer < 59 and self.state != Ghost_state.SCATTER:  # 5"
+        elif elapsed_time < 59 and self.state != Ghost_state.SCATTER:  # 5"
             self.state = Ghost_state.SCATTER
             self.direction = OPPOSITE[self.direction]
-        elif timer < 79 and self.state != Ghost_state.CHASE:  # 20"
+        elif elapsed_time < 79 and self.state != Ghost_state.CHASE:  # 20"
             self.state = Ghost_state.CHASE
             self.direction = OPPOSITE[self.direction]
-        elif timer < 84 and self.state != Ghost_state.SCATTER:  # 5"
+        elif elapsed_time < 84 and self.state != Ghost_state.SCATTER:  # 5"
             self.state = Ghost_state.SCATTER
             self.direction = OPPOSITE[self.direction]
         elif self.state != Ghost_state.CHASE:             # -
@@ -145,11 +142,11 @@ class Ghost(Entity, ABC):
                 self,
                 entities: dict[str, Entity],
                 cell: Cell,
-                timer: int
+                elapsed_time: int
             ) -> None:
 
         if isinstance(entities["pacman"], Pac_man):
-            self.__choose_state(entities["pacman"], timer)
+            self.__choose_state(entities["pacman"], elapsed_time)
         else:
             raise ValueError("There must be a pacman key in the entities")
 
