@@ -113,17 +113,17 @@ class Map_renderer:
             for direction in ["north", "south", "east", "west"]
         }
 
-        if cell.posx > 0:
-            cell.neighbors["west"] = self.grid[cell.posy][cell.posx - 1]
+        if cell.pos_x > 0:
+            cell.neighbors["west"] = self.grid[cell.pos_y][cell.pos_x - 1]
 
-        if cell.posx < len(self.grid[0]):
-            cell.neighbors["east"] = self.grid[cell.posy][cell.posx + 1]
+        if cell.pos_x < len(self.grid[0]) - 1:
+            cell.neighbors["east"] = self.grid[cell.pos_y][cell.pos_x + 1]
 
-        if cell.posy > 0:
-            cell.neighbors["north"] = self.grid[cell.posy - 1][cell.posx]
+        if cell.pos_y > 0:
+            cell.neighbors["north"] = self.grid[cell.pos_y - 1][cell.pos_x]
 
-        if cell.posy < len(self.grid):
-            cell.neighbors["south"] = self.grid[cell.posy + 1][cell.posx]
+        if cell.pos_y < len(self.grid) - 1:
+            cell.neighbors["south"] = self.grid[cell.pos_y + 1][cell.pos_x]
 
     def draw_grid(self) -> None:
 

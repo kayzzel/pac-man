@@ -4,6 +4,7 @@ from .View import View
 from .Pause_menu import Pause_menu
 from .widget import Icon, AnimIcon
 from ..game.Game import Game
+from .Map_renderer import Map_renderer
 from .Texture_pack import Texture_pack
 
 
@@ -35,16 +36,6 @@ DIR_KEYS: list = [
 ]
 
 
-class Wall:
-
-    def __init__(self) -> None:
-
-        self.north: bool = False
-        self.south: bool = False
-        self.west: bool = False
-        self.east: bool = False
-
-
 class Game_view(View):
 
     def __init__(self, app: Any, game: Game) -> None:
@@ -57,6 +48,7 @@ class Game_view(View):
 
         self.texture_pack: Texture_pack = Texture_pack(LUIGI_TEXTURE_PACK)
         self.cur_dir: tuple[str, str] = ("E", "R")
+        self.grid_gen = self.game.generate_map(20, 20).cells
 
     def _update_score_panel(self) -> None:
 
@@ -177,29 +169,22 @@ class Game_view(View):
             self.h - self.h // 10
         )
         self.map_height: int = self.map_width
-        pac_man_size: int = self.map_width // 16
 
-        self.pacman_sprite: AnimIcon = AnimIcon(
-            self.map_startx + (self.map_width - pac_man_size) // 2,
-            -2,
-            self.get_entity_texture("pac-man"),
-            (pac_man_size, pac_man_size),
-            True
+        nb_cells_row: int = self.map_width // len(self.grid_gen[0])
+        nb_cells_col: int = self.map_height // len(self.grid_gen)
+
+        if nb_cells_row > nb_cells_col:
+            self.cell_size: int = nb_cells_row
+            self.map_height = self.cell_size * len(self.grid_gen)
+        else:
+            self.cell_size = nb_cells_col
+            self.map_width = self.cell_size * len(self.grid_gen[0])
+
+        self.map_renderer: Map_renderer = Map_renderer(
+            self.grid_gen,
+            (self.map_startx + 3, self.map_starty + 3),
+            self.cell_size
         )
-        # self.grid: list[list] = self.game.map.cells
-        # self.insert_rows()
-        # self.insert_cols()
-
-        # nb_cells_row: int = self.map_width // len(self.grid[0])
-        # nb_cells_col: int = self.map_height // len(self.grid)
-
-        # if nb_cells_row > nb_cells_col:
-        #     self.cell_size: int = nb_cells_row
-        #     self.map_height = self.cell_size * len(self.grid)
-        # else:
-        #     self.cell_size = nb_cells_col
-        #     self.map_width = self.cell_size * len(self.grid[0])
-
         self.map_outline: tuple[int, int, int, int] = (
             self.map_startx,
             self.map_starty,
@@ -207,129 +192,14 @@ class Game_view(View):
             self.map_height
         )
 
-    def insert_rows(self) -> None:
-
-        self.north_rows: list[tuple[list, int]] = []
-        self.south_rows: list[tuple[list, int]] = []
-
-        for r in range(len(self.grid)):
-
-            row = self.grid[r]
-
-            north_row: list = []
-            south_row: list = []
-
-            for cell in range(len(row)):
-
-                if row[cell].walls["N"]:
-                    if not north_row:
-                        north_row = [
-                            Wall()
-                            for _ in range(len(row))
-                        ]
-                    north_row[cell].north = True
-
-                if row[cell].walls["S"]:
-                    if not south_row:
-                        south_row = [
-                            Wall()
-                            for _ in range(len(row))
-                        ]
-                    south_row[cell].south = True
-
-            if north_row:
-                self.north_rows.append((north_row, r))
-            if south_row:
-                self.south_rows.append((south_row, r + 1 + (
-                    1 if north_row else 0
-                )))
-
-        for n_row, index in self.north_rows:
-            self.grid.insert(index, n_row)
-        for s_row, index in self.south_rows:
-            self.grid.insert(index, s_row)
-
-    def insert_cols(self) -> None:
-
-        self.west_cols: list[tuple[list, int]] = []
-        self.east_cols: list[tuple[list, int]] = []
-
-        for c in range(len(self.grid[0])):
-
-            west_col: list = []
-            east_col: list = []
-
-            for r in range(len(self.grid)):
-
-                if any(
-                    isinstance(cell, Wall)
-                    for cell in self.grid[r]
-                ):
-                    continue
-
-                if self.grid[r][c].walls["W"]:
-                    if not west_col:
-                        west_col = [
-                            Wall()
-                            for _ in range(len(self.grid))
-                        ]
-                    west_col[r].west = True
-
-                if self.grid[r][c].walls["E"]:
-                    if not east_col:
-                        east_col = [
-                            Wall()
-                            for _ in range(len(self.grid))
-                        ]
-                    east_col[r].east = True
-
-            if west_col:
-                self.west_cols.append((west_col, c))
-            if east_col:
-                self.east_cols.append((east_col, c + 1 + (
-                    1 if west_col else 0
-                )))
-
-        for w_col, index in self.west_cols:
-            for row_index in range(len(self.grid)):
-                self.grid[row_index].insert(w_col[row_index], index)
-        for e_col, index in self.east_cols:
-            for row_index in range(len(self.grid)):
-                self.grid[row_index].insert(e_col[row_index], index)
-
-    def draw_wall(self) -> None:
-
-        pr.draw_rectangle(
-            self.cur_x,
-            self.cur_y,
-            self.cell_size,
-            self.cell_size,
-            pr.DARKBLUE
+        pac_man_size: int = self.cell_size // 2
+        self.pacman_sprite: AnimIcon = AnimIcon(
+            self.map_startx + (self.map_width - pac_man_size) // 2,
+            self.map_starty + (self.map_height - pac_man_size) // 2,
+            self.get_entity_texture("pac-man"),
+            (pac_man_size, pac_man_size),
+            True
         )
-
-    def draw_cell(self) -> None:
-
-        ...
-
-    def draw_grid(self) -> None:
-
-        self.cur_y: int = self.map_starty
-
-        for row in self.grid:
-
-            self.cur_x: int = self.map_startx
-
-            for square in row:
-
-                if isinstance(square, Wall):
-                    self.draw_wall()
-
-                else:
-                    self.draw_cell()
-
-                self.cur_x += self.cell_size
-
-            self.cur_y += self.cell_size
 
     def _update(self) -> None:
 
@@ -364,7 +234,7 @@ class Game_view(View):
 
         self.pacman_sprite.display_widget()
 
-        # self.draw_grid()
+        self.map_renderer.draw_grid()
 
         for label, coor in self.labels_data.items():
 
