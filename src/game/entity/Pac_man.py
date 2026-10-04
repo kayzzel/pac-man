@@ -10,7 +10,7 @@ class Pac_man(Entity):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.score = 0
-        self.__next_direciton: str = ""
+        self.__next_direction: str = ""
         self.nb_lives = config.lives
         self.collectible: list[None | Collectible] = []
         self.is_energized: bool = False
