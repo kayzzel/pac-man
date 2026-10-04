@@ -10,4 +10,4 @@ class Super_Pacgum(Collectible):
     def collected(self, game: Game) -> None:
         super().collected(game)
 
-        #  game.player.get_energized(int(game.game_loop.elapsed_active))
+        game.player.set_energized(int(game.game_loop.elapsed_time))
