@@ -48,7 +48,7 @@ class Game_view(View):
 
         self.texture_pack: Texture_pack = Texture_pack(LUIGI_TEXTURE_PACK)
         self.cur_dir: tuple[str, str] = ("E", "R")
-        self.grid_gen = self.game.generate_map(20, 20).cells
+        self.grid_gen = self.game.generate_map(10, 10).cells
 
     def _update_score_panel(self) -> None:
 
@@ -170,15 +170,15 @@ class Game_view(View):
         )
         self.map_height: int = self.map_width
 
-        nb_cells_row: int = self.map_width // len(self.grid_gen[0])
-        nb_cells_col: int = self.map_height // len(self.grid_gen)
+        nb_cells_row: int = (self.map_width - 6) // len(self.grid_gen[0])
+        nb_cells_col: int = (self.map_height - 6) // len(self.grid_gen)
 
         if nb_cells_row > nb_cells_col:
             self.cell_size: int = nb_cells_row
-            self.map_height = self.cell_size * len(self.grid_gen)
+            self.map_height = self.cell_size * len(self.grid_gen) + 6
         else:
             self.cell_size = nb_cells_col
-            self.map_width = self.cell_size * len(self.grid_gen[0])
+            self.map_width = self.cell_size * len(self.grid_gen[0]) + 6
 
         self.map_renderer: Map_renderer = Map_renderer(
             self.grid_gen,
@@ -192,7 +192,7 @@ class Game_view(View):
             self.map_height
         )
 
-        pac_man_size: int = self.cell_size // 2
+        pac_man_size: int = self.cell_size // 3 * 2
         self.pacman_sprite: AnimIcon = AnimIcon(
             self.map_startx + (self.map_width - pac_man_size) // 2,
             self.map_starty + (self.map_height - pac_man_size) // 2,
@@ -224,10 +224,8 @@ class Game_view(View):
             pr.RAYWHITE
         )
 
-        pr.draw_rectangle_rounded_lines_ex(
+        pr.draw_rectangle_lines_ex(
             self.map_outline,
-            0.1,
-            4,
             3,
             pr.DARKBLUE
         )

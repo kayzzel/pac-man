@@ -19,6 +19,9 @@ class Map_renderer:
 
     def draw_walls(self, cell: Cell, x: int, y: int) -> None:
 
+        if all(wall for wall in cell.walls.values()):
+            return
+
         end_x: int = x + self.cell_size
         end_y: int = y + self.cell_size
 
@@ -29,11 +32,26 @@ class Map_renderer:
             ex: int = end_x - self.cell_padding
             ey: int = sy
 
-            if cell.neighbors["west"] and cell.neighbors["west"].walls["north"]:
-                sx = x
+            draw_corner_left: bool = False
+            draw_corner_right: bool = False
 
-            if cell.neighbors["east"] and cell.neighbors["east"].walls["north"]:
-                ex = end_x
+            if not cell.walls["west"]:
+
+                if cell.neighbors["west"] and cell.neighbors["west"].walls["north"]:
+                    sx = x
+                elif cell.neighbors["west"] and cell.neighbors["north"] and cell.neighbors["north"].walls["west"]:
+                    sx = x - self.cell_padding + self.line_thickness
+                else:
+                    draw_corner_left = True
+
+            if not cell.walls["east"]:
+
+                if cell.neighbors["east"] and cell.neighbors["east"].walls["north"]:
+                    ex = end_x
+                elif cell.neighbors["east"] and cell.neighbors["north"] and cell.neighbors["north"].walls["east"]:
+                    ex = end_x + self.cell_padding - self.line_thickness
+                else:
+                    draw_corner_right = True
 
             pr.draw_line_ex(
                 (sx, sy),
@@ -41,6 +59,20 @@ class Map_renderer:
                 self.line_thickness,
                 pr.DARKBLUE
             )
+            if draw_corner_left:
+                pr.draw_line_ex(
+                    (sx - self.line_thickness, y),
+                    (sx - self.line_thickness, sy),
+                    self.line_thickness,
+                    pr.DARKBLUE
+                )
+            if draw_corner_right:
+                pr.draw_line_ex(
+                    (ex, y),
+                    (ex, ey),
+                    self.line_thickness,
+                    pr.DARKBLUE
+                )
 
         if cell.walls["south"]:
 
@@ -49,11 +81,26 @@ class Map_renderer:
             ex = end_x - self.cell_padding
             ey = sy
 
-            if cell.neighbors["west"] and cell.neighbors["west"].walls["north"]:
-                sx = x
+            draw_corner_left = False
+            draw_corner_right = False
 
-            if cell.neighbors["east"] and cell.neighbors["east"].walls["north"]:
-                ex = end_x
+            if not cell.walls["west"]:
+
+                if cell.neighbors["west"] and cell.neighbors["west"].walls["south"]:
+                    sx = x
+                elif cell.neighbors["west"] and cell.neighbors["south"] and cell.neighbors["south"].walls["west"]:
+                    sx = x - self.cell_padding + self.line_thickness
+                else:
+                    draw_corner_left = True
+
+            if not cell.walls["east"]:
+
+                if cell.neighbors["east"] and cell.neighbors["east"].walls["south"]:
+                    ex = end_x
+                elif cell.neighbors["east"] and cell.neighbors["south"] and cell.neighbors["south"].walls["east"]:
+                    ex = end_x + self.cell_padding - self.line_thickness
+                else:
+                    draw_corner_right = True
 
             pr.draw_line_ex(
                 (sx, sy),
@@ -61,19 +108,48 @@ class Map_renderer:
                 self.line_thickness,
                 pr.DARKBLUE
             )
+            if draw_corner_left:
+                pr.draw_line_ex(
+                    (sx - self.line_thickness, end_y),
+                    (sx - self.line_thickness, sy + self.line_thickness),
+                    self.line_thickness,
+                    pr.DARKBLUE
+                )
+            if draw_corner_right:
+                pr.draw_line_ex(
+                    (ex, end_y),
+                    (ex, ey + self.line_thickness),
+                    self.line_thickness,
+                    pr.DARKBLUE
+                )
 
         if cell.walls["west"]:
 
             sx = x + self.cell_padding - self.line_thickness
             sy = y + self.cell_padding
-            ex = x + self.cell_padding
+            ex = sx
             ey = end_y - self.cell_padding
 
-            if cell.neighbors["north"] and cell.neighbors["north"].walls["west"]:
-                sy = y
+            draw_corner_up = False
+            draw_corner_down = False
 
-            if cell.neighbors["south"] and cell.neighbors["south"].walls["west"]:
-                ey = end_y
+            if not cell.walls["north"]:
+
+                if cell.neighbors["north"] and cell.neighbors["north"].walls["west"]:
+                    sy = y
+                elif cell.neighbors["north"] and cell.neighbors["west"] and cell.neighbors["west"].walls["north"]:
+                    sy = y - self.cell_padding + self.line_thickness
+                else:
+                    draw_corner_up = True
+
+            if not cell.walls["south"]:
+
+                if cell.neighbors["south"] and cell.neighbors["south"].walls["west"]:
+                    ey = end_y
+                elif cell.neighbors["south"] and cell.neighbors["west"] and cell.neighbors["west"].walls["south"]:
+                    ey = end_y + self.cell_padding - self.line_thickness
+                else:
+                    draw_corner_down = True
 
             pr.draw_line_ex(
                 (sx, sy),
@@ -81,19 +157,48 @@ class Map_renderer:
                 self.line_thickness,
                 pr.DARKBLUE
             )
+            if draw_corner_up:
+                pr.draw_line_ex(
+                    (x, sy),
+                    (sx, sy),
+                    self.line_thickness,
+                    pr.DARKBLUE
+                )
+            if draw_corner_down:
+                pr.draw_line_ex(
+                    (x, ey),
+                    (sx, ey),
+                    self.line_thickness,
+                    pr.DARKBLUE
+                )
 
         if cell.walls["east"]:
 
             sx = end_x - self.cell_padding
             sy = y + self.cell_padding
-            ex = end_x - self.cell_padding + self.line_thickness
+            ex = sx
             ey = end_y - self.cell_padding
 
-            if cell.neighbors["north"] and cell.neighbors["north"].walls["east"]:
-                sy = y
+            draw_corner_up = False
+            draw_corner_down = False
 
-            if cell.neighbors["south"] and cell.neighbors["south"].walls["east"]:
-                ey = end_y
+            if not cell.walls["north"]:
+
+                if cell.neighbors["north"] and cell.neighbors["north"].walls["east"]:
+                    sy = y
+                elif cell.neighbors["north"] and cell.neighbors["east"] and cell.neighbors["east"].walls["north"]:
+                    sy = y - self.cell_padding + self.line_thickness
+                else:
+                    draw_corner_up = True
+
+            if not cell.walls["south"]:
+
+                if cell.neighbors["south"] and cell.neighbors["south"].walls["east"]:
+                    ey = end_y
+                elif cell.neighbors["south"] and cell.neighbors["east"] and cell.neighbors["east"].walls["south"]:
+                    ey = end_y + self.cell_padding - self.line_thickness
+                else:
+                    draw_corner_down = True
 
             pr.draw_line_ex(
                 (sx, sy),
@@ -101,6 +206,20 @@ class Map_renderer:
                 self.line_thickness,
                 pr.DARKBLUE
             )
+            if draw_corner_up:
+                pr.draw_line_ex(
+                    (ex + self.line_thickness, sy),
+                    (end_x, sy),
+                    self.line_thickness,
+                    pr.DARKBLUE
+                )
+            if draw_corner_down:
+                pr.draw_line_ex(
+                    (ex + self.line_thickness, ey),
+                    (end_x, ey),
+                    self.line_thickness,
+                    pr.DARKBLUE
+                )
 
     def draw_cell(self, cell: Cell) -> None:
 
