@@ -10,7 +10,7 @@ class Pac_man(Entity):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.score = 0
-        self.__next_direciton: str = ""
+        self.__next_direction: str = ""
         self.nb_lives = config.lives
         self.collectible: list[None | Collectible] = []
         self.is_energized: bool = False
@@ -20,18 +20,18 @@ class Pac_man(Entity):
         if direction not in ["N", "S", "W", "E"]:
             return
 
-        self.__next_direciton = direction
+        self.__next_direction = direction
 
     def __select_next_dir(self, cell: Cell) -> None:
-        if not self.__next_direciton:
+        if not self.__next_direction:
             return
 
-        if self.__next_direciton == self.direction:
+        if self.__next_direction == self.direction:
             return
 
-        if not cell.walls[self.__next_direciton]:
-            self.direction = self.__next_direciton
-            self.__next_direciton = ""
+        if not cell.walls[self.__next_direction]:
+            self.direction = self.__next_direction
+            self.__next_direction = ""
 
     def set_energized(self, elapsed_time: int) -> None:
         self.__last_super_pacgum_time = elapsed_time
