@@ -57,15 +57,15 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
             if maze[y][x] != 15 and (x, y) != (spawn_x, spawn_y):
                 if is_corner(x, y):
                     cell.collectible = Super_Pacgum(
-                            config.point_per_super_pacgum,
                             x,
-                            y
+                            y,
+                            config.point_per_super_pacgum,
                         )
                 else:
                     cell.collectible = Pacgum(
-                            config.point_per_pacgum,
                             x,
-                            y
+                            y,
+                            config.point_per_pacgum,
                         )
                 new_map.collectible_count += 1
 
