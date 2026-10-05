@@ -1,5 +1,19 @@
 import pyray as pr
 from ..game.map.Cell import Cell
+from .Texture_pack import Texture_pack
+
+DEFAULT_TEXTURE_PACK: str = "src/view/assets/default_texture_pack"
+
+DIRECTIONS: dict[str, str] = {
+    "N": "up",
+    "S": "down",
+    "W": "left",
+    "E": "right",
+    "NR": "upright",
+    "NL": "upleft",
+    "SR": "downright",
+    "SL": "downleft"
+}
 
 
 class Map_renderer:
@@ -8,7 +22,8 @@ class Map_renderer:
         self,
         grid: list[list[Cell]],
         map_coor: tuple[int, int],
-        cell_size: int
+        cell_size: int,
+        entities: list[Entity]
     ) -> None:
 
         self.grid: list[list[Cell]] = grid
@@ -16,6 +31,54 @@ class Map_renderer:
         self.cell_size: int = cell_size
         self.line_thickness: int = 2
         self.cell_padding: int = cell_size // 6 + self.line_thickness
+        self.texture_size: int = cell_size // 3
+        self.texture_pack: Texture_pack = Texture_pack(DEFAULT_TEXTURE_PACK)
+
+    def set_correct_dir(self, entity: Entity) -> None:
+
+        match entity.next_direction:
+
+            case "N":
+                entity.alignment = "L" if entity.alignment == "R" else "R"
+
+            case "S":
+                if entity.next_direction == "N":
+                    entity.alignment = "L" if entity.alignment == "R" else "R"
+
+            case "E":
+                entity.alignment = "R"
+
+            case "W":
+                entity.alignment = "L"
+
+    def get_pacman_texture(self, pac_man: Pac_man) -> str:
+
+        return self.get_entity_texture(pac_man)
+
+    def get_ghost_texture(self, ghost: Ghost) -> str:
+
+        if ghost_state == Ghost_state.EATEN:
+            return "eyes_" + DIRECTIONS[ghost.next_direction]
+
+        elif ghost_state == Ghost_state.FRIGHTENED:
+            return "afraid_blue_" + DIRECTIONS[ghost.next_direction]
+
+        return self.get_entity_texture(ghost)
+
+    def get_entity_texture(self, entity: Entity) -> str:
+
+        self.set_correct_dir(entity)
+        texture_to_get: str = entity.name + "_" + DIRECTIONS[entity.next_direction]
+
+        if entity.next_direction in ["N", "S"]:
+
+            spe_texture: str = entity.name + "_" + DIRECTIONS[
+                entity.next_direction + entity.alignment
+            ]
+            if spe_texture in self.texture_pack.all_textures.keys():
+                texture_to_get = spe_texture
+
+        return texture_to_get
 
     def draw_walls(self, cell: Cell, x: int, y: int) -> None:
 
@@ -25,7 +88,7 @@ class Map_renderer:
         end_x: int = x + self.cell_size
         end_y: int = y + self.cell_size
 
-        if cell.walls["north"]:
+        if cell.walls["N"]:
 
             sx: int = x + self.cell_padding
             sy: int = y + self.cell_padding - self.line_thickness
@@ -35,20 +98,20 @@ class Map_renderer:
             draw_corner_left: bool = False
             draw_corner_right: bool = False
 
-            if not cell.walls["west"]:
+            if not cell.walls["W"]:
 
-                if cell.neighbors["west"] and cell.neighbors["west"].walls["north"]:
+                if cell.neighbors["W"] and cell.neighbors["W"].walls["N"]:
                     sx = x
-                elif cell.neighbors["west"] and cell.neighbors["north"] and cell.neighbors["north"].walls["west"]:
+                elif cell.neighbors["W"] and cell.neighbors["N"] and cell.neighbors["N"].walls["W"]:
                     sx = x - self.cell_padding + self.line_thickness
                 else:
                     draw_corner_left = True
 
-            if not cell.walls["east"]:
+            if not cell.walls["E"]:
 
-                if cell.neighbors["east"] and cell.neighbors["east"].walls["north"]:
+                if cell.neighbors["E"] and cell.neighbors["E"].walls["N"]:
                     ex = end_x
-                elif cell.neighbors["east"] and cell.neighbors["north"] and cell.neighbors["north"].walls["east"]:
+                elif cell.neighbors["E"] and cell.neighbors["N"] and cell.neighbors["N"].walls["E"]:
                     ex = end_x + self.cell_padding - self.line_thickness
                 else:
                     draw_corner_right = True
@@ -74,7 +137,7 @@ class Map_renderer:
                     pr.DARKBLUE
                 )
 
-        if cell.walls["south"]:
+        if cell.walls["S"]:
 
             sx = x + self.cell_padding
             sy = end_y - self.cell_padding
@@ -84,20 +147,20 @@ class Map_renderer:
             draw_corner_left = False
             draw_corner_right = False
 
-            if not cell.walls["west"]:
+            if not cell.walls["W"]:
 
-                if cell.neighbors["west"] and cell.neighbors["west"].walls["south"]:
+                if cell.neighbors["W"] and cell.neighbors["W"].walls["S"]:
                     sx = x
-                elif cell.neighbors["west"] and cell.neighbors["south"] and cell.neighbors["south"].walls["west"]:
+                elif cell.neighbors["W"] and cell.neighbors["S"] and cell.neighbors["S"].walls["W"]:
                     sx = x - self.cell_padding + self.line_thickness
                 else:
                     draw_corner_left = True
 
-            if not cell.walls["east"]:
+            if not cell.walls["E"]:
 
-                if cell.neighbors["east"] and cell.neighbors["east"].walls["south"]:
+                if cell.neighbors["E"] and cell.neighbors["E"].walls["S"]:
                     ex = end_x
-                elif cell.neighbors["east"] and cell.neighbors["south"] and cell.neighbors["south"].walls["east"]:
+                elif cell.neighbors["E"] and cell.neighbors["S"] and cell.neighbors["S"].walls["E"]:
                     ex = end_x + self.cell_padding - self.line_thickness
                 else:
                     draw_corner_right = True
@@ -123,7 +186,7 @@ class Map_renderer:
                     pr.DARKBLUE
                 )
 
-        if cell.walls["west"]:
+        if cell.walls["W"]:
 
             sx = x + self.cell_padding - self.line_thickness
             sy = y + self.cell_padding
@@ -133,20 +196,20 @@ class Map_renderer:
             draw_corner_up = False
             draw_corner_down = False
 
-            if not cell.walls["north"]:
+            if not cell.walls["N"]:
 
-                if cell.neighbors["north"] and cell.neighbors["north"].walls["west"]:
+                if cell.neighbors["N"] and cell.neighbors["N"].walls["W"]:
                     sy = y
-                elif cell.neighbors["north"] and cell.neighbors["west"] and cell.neighbors["west"].walls["north"]:
+                elif cell.neighbors["N"] and cell.neighbors["W"] and cell.neighbors["W"].walls["N"]:
                     sy = y - self.cell_padding + self.line_thickness
                 else:
                     draw_corner_up = True
 
-            if not cell.walls["south"]:
+            if not cell.walls["S"]:
 
-                if cell.neighbors["south"] and cell.neighbors["south"].walls["west"]:
+                if cell.neighbors["S"] and cell.neighbors["S"].walls["W"]:
                     ey = end_y
-                elif cell.neighbors["south"] and cell.neighbors["west"] and cell.neighbors["west"].walls["south"]:
+                elif cell.neighbors["S"] and cell.neighbors["W"] and cell.neighbors["W"].walls["S"]:
                     ey = end_y + self.cell_padding - self.line_thickness
                 else:
                     draw_corner_down = True
@@ -172,7 +235,7 @@ class Map_renderer:
                     pr.DARKBLUE
                 )
 
-        if cell.walls["east"]:
+        if cell.walls["E"]:
 
             sx = end_x - self.cell_padding
             sy = y + self.cell_padding
@@ -182,20 +245,20 @@ class Map_renderer:
             draw_corner_up = False
             draw_corner_down = False
 
-            if not cell.walls["north"]:
+            if not cell.walls["N"]:
 
-                if cell.neighbors["north"] and cell.neighbors["north"].walls["east"]:
+                if cell.neighbors["N"] and cell.neighbors["N"].walls["E"]:
                     sy = y
-                elif cell.neighbors["north"] and cell.neighbors["east"] and cell.neighbors["east"].walls["north"]:
+                elif cell.neighbors["N"] and cell.neighbors["E"] and cell.neighbors["E"].walls["N"]:
                     sy = y - self.cell_padding + self.line_thickness
                 else:
                     draw_corner_up = True
 
-            if not cell.walls["south"]:
+            if not cell.walls["S"]:
 
-                if cell.neighbors["south"] and cell.neighbors["south"].walls["east"]:
+                if cell.neighbors["S"] and cell.neighbors["S"].walls["E"]:
                     ey = end_y
-                elif cell.neighbors["south"] and cell.neighbors["east"] and cell.neighbors["east"].walls["south"]:
+                elif cell.neighbors["S"] and cell.neighbors["E"] and cell.neighbors["E"].walls["S"]:
                     ey = end_y + self.cell_padding - self.line_thickness
                 else:
                     draw_corner_down = True
@@ -221,28 +284,53 @@ class Map_renderer:
                     pr.DARKBLUE
                 )
 
-    def draw_cell(self, cell: Cell) -> None:
+    def draw_cell(self, cell: Cell, x: int, y: int) -> None:
 
-        ...
+        self.get_neighbors(cell)
+        self.draw_walls(cell, x, y)
+
+        if cell.collectible:
+            collectible_image = pr.load_image(self.texture_pack.get_texture(cell.collectible.name))
+            pr.image_resize(collectible_image, self.texture_size, self.texture_size)
+            collectible_texture = pr.load_texture_from_image(collectible_image)
+            pr.draw_texture(collectible_texture, self.text_x, self.text_y)
+
+        for entity in self.entities:
+
+            if not self.entity_is_in(entity, cell_x, cell_y):
+                continue
+
+            entity_texture = (
+                self.get_pacman_texture(entity)
+                if isinstance(entity, Pac_man)
+                else self.get_ghost_texture(entity)
+            )
 
     def get_neighbors(self, cell: Cell) -> None:
 
         cell.neighbors: dict[str, Cell | None] = {
             direction: None
-            for direction in ["north", "south", "east", "west"]
+            for direction in ["N", "S", "E", "W"]
         }
 
         if cell.pos_x > 0:
-            cell.neighbors["west"] = self.grid[cell.pos_y][cell.pos_x - 1]
+            cell.neighbors["W"] = self.grid[cell.pos_y][cell.pos_x - 1]
 
         if cell.pos_x < len(self.grid[0]) - 1:
-            cell.neighbors["east"] = self.grid[cell.pos_y][cell.pos_x + 1]
+            cell.neighbors["E"] = self.grid[cell.pos_y][cell.pos_x + 1]
 
         if cell.pos_y > 0:
-            cell.neighbors["north"] = self.grid[cell.pos_y - 1][cell.pos_x]
+            cell.neighbors["N"] = self.grid[cell.pos_y - 1][cell.pos_x]
 
         if cell.pos_y < len(self.grid) - 1:
-            cell.neighbors["south"] = self.grid[cell.pos_y + 1][cell.pos_x]
+            cell.neighbors["S"] = self.grid[cell.pos_y + 1][cell.pos_x]
+
+    def entity_is_in(self, entity: Entity, x: int, y: int) -> bool:
+
+        return (
+            x <= entity.pos_x < x + self.cell_size
+            and y <= entity_pos_y < y + self.cell_size
+        )
 
     def draw_grid(self) -> None:
 
@@ -254,9 +342,12 @@ class Map_renderer:
 
             for cell in row:
 
-                self.get_neighbors(cell)
-                self.draw_walls(cell, cell_x, cell_y)
+                self.draw_cell(cell, cell_x, cell_y)
 
                 cell_x += self.cell_size
 
             cell_y += self.cell_size
+
+        for entity in self.entities:
+
+

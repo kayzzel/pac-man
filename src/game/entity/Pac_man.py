@@ -22,6 +22,10 @@ class Pac_man(Entity):
 
         self.__next_direction = direction
 
+    @property
+    def next_direction(self) -> str:
+        return self.__next_direction
+
     def __select_next_dir(self, cell: Cell) -> None:
         if not self.__next_direction:
             return
