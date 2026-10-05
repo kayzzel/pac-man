@@ -7,7 +7,7 @@ from .Collectible import Collectible
 from enum import Enum
 
 
-class Consumable_type(Enum):
+class Consumable_type(str, Enum):
     CHERRY = "cherry"
     STRAWBERRY = "strawberry"
     ORANGE = "orange"
@@ -26,8 +26,7 @@ class Consumable(Collectible):
                 y: int,
                 points: int
             ) -> None:
-        super().__init__(x, y, points)
-        self.name = name
+        super().__init__(name, x, y, points)
 
     def collected(self, game: "Game") -> None:
         super().collected(game)
