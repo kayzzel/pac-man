@@ -1,5 +1,3 @@
-from contextlib import ContextDecorator
-
 from ..Config import Config
 from ..game.map.Map import Map
 from ..game.map.Cell import Cell
