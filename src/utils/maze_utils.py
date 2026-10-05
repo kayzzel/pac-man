@@ -73,13 +73,13 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
         new_map.cells.append(cell_row)
 
     new_map.ghosts_spawn["PINKY"] = (0, 0)
-    new_map.ghosts_spawn["BLINKY"] = (0, width - 1)
-    new_map.ghosts_spawn["CLYDE"] = (height - 1, 0)
-    new_map.ghosts_spawn["INKY"] = (height - 1, width - 1)
+    new_map.ghosts_spawn["BLINKY"] = (width - 1, 0)
+    new_map.ghosts_spawn["CLYDE"] = (0, height - 1)
+    new_map.ghosts_spawn["INKY"] = (width - 1, height - 1)
 
     new_map.ghosts_scatter["PINKY"] = (0, 0)
-    new_map.ghosts_scatter["BLINKY"] = (0, width - 1)
-    new_map.ghosts_scatter["CLYDE"] = (height - 1, 0)
-    new_map.ghosts_scatter["INKY"] = (height - 1, width - 1)
+    new_map.ghosts_scatter["BLINKY"] = (width - 1, 0)
+    new_map.ghosts_scatter["CLYDE"] = (0, height - 1)
+    new_map.ghosts_scatter["INKY"] = (width - 1, height - 1)
 
     return new_map
