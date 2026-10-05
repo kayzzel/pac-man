@@ -4,7 +4,7 @@ from .Ghost import Ghost
 
 class Blinky(Ghost):
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__("blinky")
 
     def define_target(self, entities: dict[str, Entity]) -> int:
         if (super().define_target(entities)):

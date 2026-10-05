@@ -4,7 +4,7 @@ from .Ghost import Ghost
 
 class Inky(Ghost):
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__("inky")
 
     def define_target(self, entities: dict[str, Entity]) -> int:
 

@@ -3,7 +3,8 @@ from math import modf
 
 
 class Entity(ABC):
-    def __init__(self) -> None:
+    def __init__(self, name: str) -> None:
+        self.name: str = name
         self.pos_x: float = 0.0
         self.pos_y: float = 0.0
         self.speed = 0.02

@@ -16,8 +16,8 @@ class Ghost_state(Enum):
 
 
 class Ghost(Entity, ABC):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, name: str) -> None:
+        super().__init__(name)
         self.state: Ghost_state = Ghost_state.CHASE
         self.target: tuple[int, int] = (0, 0)
         self.spawn_point: tuple[int, int] = (0, 0)

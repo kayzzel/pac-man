@@ -4,7 +4,7 @@ from .Ghost import Ghost
 
 class Pinky(Ghost):
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__("pinky")
 
     def define_target(self, entities: dict[str, Entity]) -> int:
 
