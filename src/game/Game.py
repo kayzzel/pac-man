@@ -37,19 +37,19 @@ class Game:
         self.timer: int = 0
 
         self.game_loop = GameLoop(update_game)
-        self.is_paused = False
+        self.is_paused: int = 0  # -1 dead / not paused / 1 normal
         self.is_won: int = 0  # -1 lost / 0 not finished / 1 won
 
     def stop(self, status: int) -> None:
         self.is_won = status
         self.game_loop.stop()
 
-    def pause(self) -> None:
-        self.is_paused = True
+    def pause(self, status: int) -> None:
+        self.is_paused = status
         self.game_loop.pause()
 
     def resume(self) -> None:
-        self.is_paused = False
+        self.is_paused = 0
         self.game_loop.resume()
 
     def start(self) -> None:
@@ -144,4 +144,4 @@ def update_game(game: Game) -> None:
             return
 
         game.start_position()
-        game.pause()
+        game.pause(-1)
