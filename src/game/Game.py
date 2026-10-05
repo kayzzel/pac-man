@@ -73,16 +73,16 @@ def calculate_collision(game: Game) -> bool:
     for ghost in game.ghosts.values():
         if (
                 ghost.state == Ghost_state.EATEN
-                or (x, y) != (ghost.pos_x, ghost.pos_y)
+                or (x, y) != (int(ghost.pos_x), int(ghost.pos_y))
                 ):
             continue
 
         if pacman.is_energized:
             ghost.set_eaten()
             pacman.score += game.config.point_per_ghost
-        
+
         else:
             pacman.nb_lives -= 1
             return True
-    
+
     return False
