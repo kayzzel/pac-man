@@ -1,4 +1,6 @@
-from .Game import Game
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .Game import Game   # only imported by type checkers, not at runtime
 
 from typing import Callable
 
@@ -11,7 +13,7 @@ class GameLoop:
 
     def __init__(
         self,
-        update: Callable[[Game, float], None],
+        update: Callable[["Game"], None],
         tick_rate: float = 100.0,
         duration: float = 90,
     ) -> None:
@@ -26,6 +28,10 @@ class GameLoop:
     def timer(self) -> int:
         return int(self.__duration - self.__elapsed_active)
 
+    @property
+    def elapsed_time(self) -> float:
+        return self.__elapsed_active
+
     def pause(self) -> None:
         self.__paused = True
 
@@ -35,7 +41,7 @@ class GameLoop:
     def stop(self) -> None:
         self.__running = False
 
-    def run(self, game: Game) -> None:
+    def run(self, game: "Game") -> None:
         self.__running = True
         accumulator = 0.0
         last_time = time.perf_counter()
@@ -53,7 +59,7 @@ class GameLoop:
             accumulator += frame_time
 
             while accumulator >= self.__dt:
-                self.__update(game, self.__dt)
+                self.__update(game)
                 accumulator -= self.__dt
                 self.__elapsed_active += self.__dt
 
