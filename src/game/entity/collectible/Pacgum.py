@@ -1,5 +1,4 @@
 from .Collectible import Collectible
-from ...Game import Game
 
 
 class Pacgum(Collectible):
