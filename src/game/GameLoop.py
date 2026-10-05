@@ -26,6 +26,10 @@ class GameLoop:
     def timer(self) -> int:
         return int(self.__duration - self.__elapsed_active)
 
+    @property
+    def elapsed_time(self) -> float:
+        return self.__elapsed_active
+
     def pause(self) -> None:
         self.__paused = True
 
