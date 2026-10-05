@@ -13,7 +13,7 @@ class GameLoop:
 
     def __init__(
         self,
-        update: Callable[["Game", float], None],
+        update: Callable[["Game"], None],
         tick_rate: float = 100.0,
         duration: float = 90,
     ) -> None:
@@ -59,7 +59,7 @@ class GameLoop:
             accumulator += frame_time
 
             while accumulator >= self.__dt:
-                self.__update(game, self.__dt)
+                self.__update(game)
                 accumulator -= self.__dt
                 self.__elapsed_active += self.__dt
 
