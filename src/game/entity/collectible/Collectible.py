@@ -1,6 +1,6 @@
 from ...Game import Game
 
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class Collectible(ABC):
