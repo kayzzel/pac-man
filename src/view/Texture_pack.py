@@ -14,11 +14,11 @@ class Texture_pack:
             "collectibles_sprites"
         ]
         self.pacman_needed: list[str] = [
-            "pac-man_up",
-            "pac-man_down",
-            "pac-man_right",
-            "pac-man_left",
-            "pac-man_death"
+            "pacman_up",
+            "pacman_down",
+            "pacman_right",
+            "pacman_left",
+            "pacman_death"
         ]
         self.ghosts_needed: list[str] = [
             "blinky_right",
@@ -53,8 +53,8 @@ class Texture_pack:
             "galaxian",
             "bell",
             "key",
-            "pellet",
-            "power_pellet"
+            "pacgum",
+            "super_pacgum"
         ]
         self.textures_needed: list[str] = (
             self.pacman_needed +

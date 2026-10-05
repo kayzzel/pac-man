@@ -1,5 +1,6 @@
 import pyray as pr
 from ..game.map.Cell import Cell
+from ..game.Game import Game
 from .Texture_pack import Texture_pack
 from .widget import AnimIcon
 from ..game.entity.Pac_man import Pac_man
@@ -24,14 +25,22 @@ class Map_renderer:
 
     def __init__(
         self,
+        game: Game,
         grid: list[list[Cell]],
         map_coor: tuple[int, int],
         cell_size: int,
         entities: list[Entity]
     ) -> None:
 
+        self.game: Game = game
         self.grid: list[list[Cell]] = grid
         self.map_x, self.map_y = map_coor
+        self.entities: list[Entity] = entities
+        self.sprites: dict[str, AnimIcon] = {}
+        self.saved_dirs: dict[str, tuple[str, str, tuple[int, int]]] = {
+            entity.name: (entity.direction, "R", (entity.pos_x, entity.pos_y))
+            for entity in entities
+        }
         self.cell_size: int = cell_size
         self.line_thickness: int = 2
         self.cell_padding: int = cell_size // 6 + self.line_thickness
@@ -41,44 +50,57 @@ class Map_renderer:
 
     def set_correct_dir(self, entity: Entity) -> None:
 
-        match entity.next_direction:
+        if self.game.is_paused == -1:
+            return
+
+        alignment: str = self.saved_dirs[entity.name][1]
+
+        match entity.direction:
 
             case "N":
-                entity.alignment = "L" if entity.alignment == "R" else "R"
+                alignment = "L" if alignment == "R" else "R"
 
             case "S":
-                if entity.next_direction == "N":
-                    entity.alignment = "L" if entity.alignment == "R" else "R"
+                if entity.direction == "N":
+                    alignment = "L" if entity.alignment == "R" else "R"
 
             case "E":
-                entity.alignment = "R"
+                alignment = "R"
 
             case "W":
-                entity.alignment = "L"
+                alignment = "L"
+
+        self.saved_dirs[entity.name] = (entity.direction, alignment, (entity.pos_x, entity.pos_y))
 
     def get_pacman_texture(self, pac_man: Pac_man) -> str:
 
+        self.set_correct_dir(pac_man)
+        if self.game.is_paused == -1:
+            return "pacman_death"
         return self.get_entity_texture(pac_man)
 
     def get_ghost_texture(self, ghost: Ghost) -> str:
 
+        self.set_correct_dir(ghost)
         if ghost.state == Ghost_state.EATEN:
-            return "eyes_" + DIRECTIONS[ghost.next_direction]
+            return "eyes_" + DIRECTIONS[self.saved_dirs[ghost.name][0]]
 
         elif ghost.state == Ghost_state.FRIGHTENED:
-            return "afraid_blue" 
+            return "afraid_blue"
 
         return self.get_entity_texture(ghost)
 
     def get_entity_texture(self, entity: Entity) -> str:
 
-        self.set_correct_dir(entity)
-        texture_to_get: str = entity.name + "_" + DIRECTIONS[entity.next_direction]
+        direction = self.saved_dirs[entity.name][0]
+        alignment = self.saved_dirs[entity.name][1]
 
-        if entity.next_direction in ["N", "S"]:
+        texture_to_get: str = entity.name + "_" + DIRECTIONS[direction]
+
+        if direction in ["N", "S"]:
 
             spe_texture: str = entity.name + "_" + DIRECTIONS[
-                entity.next_direction + entity.alignment
+                direction + alignment
             ]
             if spe_texture in self.texture_pack.all_textures.keys():
                 texture_to_get = spe_texture
@@ -312,22 +334,37 @@ class Map_renderer:
             if not self.entity_is_in(entity, x, y):
                 continue
 
-            entity_texture = (
+            en_posx: int
+            en_posy: int
+            en_posx, en_posy = self.saved_dirs[entity.name][2]
+            entity_offset_x: int = int(float(cell.pos_x + 1) - en_posx) * 10
+            entity_offset_y: int = int(float(cell.pos_y + 1) - en_posy) * 10
+
+            en_posx = entity_base_x + (self.cell_size - self.cell_padding * 2) // entity_offset_x
+            en_posy = entity_base_y + (self.cell_size - self.cell_padding * 2) // entity_offset_y
+
+            texture = (
                 self.get_pacman_texture(entity)
                 if isinstance(entity, Pac_man)
                 else self.get_ghost_texture(entity)
             )
-            entity_offset_x: int = int(float(cell.pos_x + 1) - entity.pos_x) * 10
-            entity_offset_y: int = int(float(cell.pos_y + 1) - entity.pos_y) * 10
-            entity_icon: AnimIcon = AnimIcon(
-                entity_base_x + (self.cell_size - self.cell_padding * 2) // entity_offset_x,
-                entity_base_y + (self.cell_size - self.cell_padding * 2) // entity_offset_y,
-                self.texture_pack.get_texture(entity_texture),
-                (self.entity_size, self.entity_size),
-                True,
-                5
-            )
-            entity_icon.display_widget()
+
+            if entity.name not in self.sprites.keys() or texture != self.sprites[entity.name].image_path:
+                self.sprites[entity.name] = AnimIcon(
+                    en_posx,
+                    en_posy,
+                    texture,
+                    (self.entity_size, self.entity_size),
+                    True,
+                    5
+                )
+            else:
+                self.sprites[entity.name].x = en_posx
+                self.sprites[entity.name].y = en_posy
+
+            self.sprites[entity.name].display_widget()
+            if self.game.is_paused and "pac-man" in self.sprites.keys() and self.sprites["pacman"].loop_finished:
+                self.game.resume()
 
     def get_neighbors(self, cell: Cell) -> None:
 
@@ -351,8 +388,8 @@ class Map_renderer:
     def entity_is_in(self, entity: Entity, x: int, y: int) -> bool:
 
         return (
-            x <= entity.pos_x < x + self.cell_size
-            and y <= entity.pos_y < y + self.cell_size
+            x <= self.saved_dirs[entity.name][2][0] < x + self.cell_size
+            and y <= self.saved_dirs[entity.name][2][1] < y + self.cell_size
         )
 
     def draw_grid(self) -> None:

@@ -98,7 +98,7 @@ class Game_view(View):
 
         return (self.h - self.map_height) // 2
 
-    def _update_map_panel(self) -> None:
+    def catch_player_input(self) -> None:
 
         if pr.is_key_pressed(pr.KEY_UP) or pr.is_key_pressed(pr.KEY_W):
             self.game.player.set_next_direction("N")
@@ -108,6 +108,8 @@ class Game_view(View):
             self.game.player.set_next_direction("W")
         elif pr.is_key_pressed(pr.KEY_RIGHT) or pr.is_key_pressed(pr.KEY_D):
             self.game.player.set_next_direction("E")
+
+    def _update_map_panel(self) -> None:
 
         self.map_panel_width: int = self.w - self.left_panel_width - 10
         self.map_width: int = min(
@@ -127,6 +129,7 @@ class Game_view(View):
             self.map_width = self.cell_size * len(self.grid_gen[0]) + 6
 
         self.map_renderer: Map_renderer = Map_renderer(
+            self.game,
             self.grid_gen,
             (self.map_startx + 3, self.map_starty + 3),
             self.cell_size,
@@ -142,7 +145,7 @@ class Game_view(View):
     def _update(self) -> None:
 
         if pr.get_key_pressed() in DIR_KEYS:
-            self._update_map_panel()
+            self.catch_player_input()
 
         if not pr.is_window_resized() and self.is_init:
             return

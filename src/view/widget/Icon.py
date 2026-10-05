@@ -116,6 +116,7 @@ class AnimIcon(Icon):
 
         self.cur_frame: int = 0
         self.frame_counter: int = 0
+        self.loop_finished: bool = False
 
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
 
@@ -126,9 +127,11 @@ class AnimIcon(Icon):
         if self.frame_counter >= self.frame_delay:
 
             self.cur_frame += 1
+            self.loop_finished = False
 
             if self.cur_frame >= self.frames_value:
                 self.cur_frame = 0
+                self.loop_finished = True
 
             nx_frame_offset: int = (
                 self.image.width * self.image.height * 4 * self.cur_frame
