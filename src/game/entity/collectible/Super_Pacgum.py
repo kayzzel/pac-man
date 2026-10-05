@@ -7,7 +7,7 @@ from .Collectible import Collectible
 
 class Super_Pacgum(Collectible):
     def __init__(self, x: int, y: int, points: int) -> None:
-        super().__init__(x, y, points)
+        super().__init__("super_pacgum", x, y, points)
 
     def collected(self, game: "Game") -> None:
         super().collected(game)

@@ -8,7 +8,7 @@ from math import modf
 
 class Pac_man(Entity):
     def __init__(self, config: Config) -> None:
-        super().__init__()
+        super().__init__("pacman")
         self.score = 0
         self.__next_direction: str = ""
         self.nb_lives = config.lives

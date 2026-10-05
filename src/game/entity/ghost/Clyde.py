@@ -4,7 +4,7 @@ from ..Entity import Entity
 
 class Clyde(Ghost):
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__("clyde")
 
     def define_target(self, entities: dict[str, Entity]) -> int:
         if (super().define_target(entities)):

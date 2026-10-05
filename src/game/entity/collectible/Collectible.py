@@ -6,7 +6,14 @@ from abc import ABC
 
 
 class Collectible(ABC):
-    def __init__(self, x: int, y: int, points: int) -> None:
+    def __init__(
+                self,
+                name: str,
+                x: int,
+                y: int,
+                points: int
+            ) -> None:
+        self.name = name
         self.pos_x: int = x
         self.pos_y: int = y
         self.points = points
