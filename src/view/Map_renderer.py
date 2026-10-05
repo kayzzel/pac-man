@@ -66,7 +66,7 @@ class Map_renderer:
             return "eyes_" + DIRECTIONS[ghost.next_direction]
 
         elif ghost.state == Ghost_state.FRIGHTENED:
-            return "afraid_blue_" + DIRECTIONS[ghost.next_direction]
+            return "afraid_blue" 
 
         return self.get_entity_texture(ghost)
 
