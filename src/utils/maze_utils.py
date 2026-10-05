@@ -38,10 +38,10 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
 
     def convert_nbr_to_cell(nbr: int) -> dict[str, bool]:
         return {
-                "north": bool(nbr & 1),
-                "east": bool(nbr & 2),
-                "south": bool(nbr & 4),
-                "west": bool(nbr & 8),
+                "N": bool(nbr & 1),
+                "E": bool(nbr & 2),
+                "S": bool(nbr & 4),
+                "W": bool(nbr & 8),
         }
 
     def is_corner(x: int, y: int) -> bool:
