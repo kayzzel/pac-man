@@ -1,5 +1,8 @@
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ...Game import Game
+
 from .Collectible import Collectible
-from ...Game import Game
 
 from enum import Enum
 
@@ -26,7 +29,7 @@ class Consumable(Collectible):
         super().__init__(x, y, points)
         self.name = name
 
-    def collected(self, game: Game) -> None:
+    def collected(self, game: "Game") -> None:
         super().collected(game)
 
         game.consumables.append(self)

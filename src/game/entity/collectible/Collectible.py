@@ -1,4 +1,6 @@
-from ...Game import Game
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ...Game import Game
 
 from abc import ABC
 
@@ -9,9 +11,8 @@ class Collectible(ABC):
         self.pos_y: int = y
         self.points = points
 
-    def collected(self, game: Game) -> None:
+    def collected(self, game: "Game") -> None:
         game.player.score += self.points
-
         current_map = game.map[game.map_index]
         current_map.collectible_count -= 1
         current_map.cells[self.pos_y][self.pos_x].collectible = None
