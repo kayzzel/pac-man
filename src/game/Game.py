@@ -3,6 +3,7 @@ from .map.Map import Map
 from .map.Map_scores import Map_scores
 from .entity.Pac_man import Pac_man
 from .entity.ghost.Ghost import Ghost
+from .entity.collectible.Consumable import Consumable
 from ..Config import Config
 from ..utils.maze_utils import convert_maze_to_map
 
@@ -23,6 +24,7 @@ class Game:
         self.timer: int = 0
         self.is_paused = False
         self.game_loop = GameLoop(update_game)
+        self.consumables: list[Consumable] = []
 
     def pause(self) -> None:
         self.is_paused = True
