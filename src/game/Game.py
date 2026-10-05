@@ -2,7 +2,7 @@ from .GameLoop import GameLoop
 from .map.Map import Map
 from .map.Map_scores import Map_scores
 from .entity.Pac_man import Pac_man
-from .entity.ghost.Ghost import Ghost
+from .entity.ghost.Ghost import Ghost, Ghost_state
 from .entity.collectible.Consumable import Consumable
 from ..Config import Config
 from ..utils.maze_utils import convert_maze_to_map
@@ -56,3 +56,33 @@ class Game:
 
 def update_game(game: Game, dt: float) -> None:
     ...
+
+
+def calculate_collision(game: Game) -> bool:
+
+    pacman = game.player
+
+    x = int(pacman.pos_x)
+    y = int(pacman.pos_y)
+
+    cell = game.map[game.map_index].cells[y][x]
+
+    if (cell.collectible):
+        cell.collectible.collected(game)
+
+    for ghost in game.ghosts.values():
+        if (
+                ghost.state == Ghost_state.EATEN
+                or (x, y) != (ghost.pos_x, ghost.pos_y)
+                ):
+            continue
+
+        if pacman.is_energized:
+            ghost.set_eaten()
+            pacman.score += game.config.point_per_ghost
+        
+        else:
+            pacman.nb_lives -= 1
+            return True
+    
+    return False
