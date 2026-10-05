@@ -35,7 +35,7 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
     height = len(maze)
 
     spawn_x, spawn_y = find_spawn_position(maze)
-    new_map.spawn = (spawn_x, spawn_y)
+    new_map.pacman_spawn = (spawn_x, spawn_y)
 
     def convert_nbr_to_cell(nbr: int) -> dict[str, bool]:
         return {
@@ -71,5 +71,15 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
 
             cell_row.append(cell)
         new_map.cells.append(cell_row)
+
+    new_map.ghosts_spawn["PINKY"] = (0, 0)
+    new_map.ghosts_spawn["BLINKY"] = (0, width - 1)
+    new_map.ghosts_spawn["CLYDE"] = (height - 1, 0)
+    new_map.ghosts_spawn["INKY"] = (height - 1, width - 1)
+
+    new_map.ghosts_scatter["PINKY"] = (0, 0)
+    new_map.ghosts_scatter["BLINKY"] = (0, width - 1)
+    new_map.ghosts_scatter["CLYDE"] = (height - 1, 0)
+    new_map.ghosts_scatter["INKY"] = (height - 1, width - 1)
 
     return new_map
