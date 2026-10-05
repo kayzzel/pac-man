@@ -2,10 +2,9 @@ import pyray as pr
 from typing import Any
 from .View import View
 from .Pause_menu import Pause_menu
-from .widget import Icon, AnimIcon
+from .widget import Icon
 from ..game.Game import Game
 from .Map_renderer import Map_renderer
-from .Texture_pack import Texture_pack
 
 
 LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
@@ -34,7 +33,6 @@ class Game_view(View):
         self.modal_view: Pause_menu = Pause_menu(app, game)
         self.show_as_modal: bool = False
 
-        self.texture_pack: Texture_pack = Texture_pack(LUIGI_TEXTURE_PACK)
         self.grid_gen = self.game.generate_map(10, 10).cells
 
     def _update_score_panel(self) -> None:
@@ -132,7 +130,7 @@ class Game_view(View):
             self.grid_gen,
             (self.map_startx + 3, self.map_starty + 3),
             self.cell_size,
-
+            [self.game.player, list(self.game.ghosts.values())]
         )
         self.map_outline: tuple[int, int, int, int] = (
             self.map_startx,
@@ -169,8 +167,6 @@ class Game_view(View):
             3,
             pr.DARKBLUE
         )
-
-        self.pacman_sprite.display_widget()
 
         self.map_renderer.draw_grid()
 

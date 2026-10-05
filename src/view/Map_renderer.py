@@ -1,6 +1,10 @@
 import pyray as pr
 from ..game.map.Cell import Cell
 from .Texture_pack import Texture_pack
+from .widget import AnimIcon
+from ..game.entity.Pac_man import Pac_man
+from ..game.entity.Entity import Entity
+from ..game.entity.ghost.Ghost import Ghost_state, Ghost
 
 DEFAULT_TEXTURE_PACK: str = "src/view/assets/default_texture_pack"
 
@@ -31,7 +35,8 @@ class Map_renderer:
         self.cell_size: int = cell_size
         self.line_thickness: int = 2
         self.cell_padding: int = cell_size // 6 + self.line_thickness
-        self.texture_size: int = cell_size // 3
+        self.collectible_size: int = cell_size // 4
+        self.entity_size: int = cell_size // 2
         self.texture_pack: Texture_pack = Texture_pack(DEFAULT_TEXTURE_PACK)
 
     def set_correct_dir(self, entity: Entity) -> None:
@@ -57,10 +62,10 @@ class Map_renderer:
 
     def get_ghost_texture(self, ghost: Ghost) -> str:
 
-        if ghost_state == Ghost_state.EATEN:
+        if ghost.state == Ghost_state.EATEN:
             return "eyes_" + DIRECTIONS[ghost.next_direction]
 
-        elif ghost_state == Ghost_state.FRIGHTENED:
+        elif ghost.state == Ghost_state.FRIGHTENED:
             return "afraid_blue_" + DIRECTIONS[ghost.next_direction]
 
         return self.get_entity_texture(ghost)
@@ -291,13 +296,20 @@ class Map_renderer:
 
         if cell.collectible:
             collectible_image = pr.load_image(self.texture_pack.get_texture(cell.collectible.name))
-            pr.image_resize(collectible_image, self.texture_size, self.texture_size)
+            pr.image_resize(collectible_image, self.collectible_size, self.collectible_size)
             collectible_texture = pr.load_texture_from_image(collectible_image)
-            pr.draw_texture(collectible_texture, self.text_x, self.text_y)
+            pr.draw_texture(
+                collectible_texture,
+                x + (self.cell_size - self.collectible_size) // 2,
+                y + (self.cell_size - self.collectible_size) // 2
+            )
+
+        entity_base_x: int = x + (self.cell_size - self.cell_padding - self.entity_size) // 2 - self.entity_size // 2
+        entity_base_y: int = y + (self.cell_size - self.cell_padding - self.entity_size) // 2 - self.entity_size // 2
 
         for entity in self.entities:
 
-            if not self.entity_is_in(entity, cell_x, cell_y):
+            if not self.entity_is_in(entity, x, y):
                 continue
 
             entity_texture = (
@@ -305,6 +317,17 @@ class Map_renderer:
                 if isinstance(entity, Pac_man)
                 else self.get_ghost_texture(entity)
             )
+            entity_offset_x: int = int(float(cell.pos_x + 1) - entity.pos_x) * 10
+            entity_offset_y: int = int(float(cell.pos_y + 1) - entity.pos_y) * 10
+            entity_icon: AnimIcon = AnimIcon(
+                entity_base_x + (self.cell_size - self.cell_padding * 2) // entity_offset_x,
+                entity_base_y + (self.cell_size - self.cell_padding * 2) // entity_offset_y,
+                self.texture_pack.get_texture(entity_texture),
+                (self.entity_size, self.entity_size),
+                True,
+                5
+            )
+            entity_icon.display_widget()
 
     def get_neighbors(self, cell: Cell) -> None:
 
@@ -329,7 +352,7 @@ class Map_renderer:
 
         return (
             x <= entity.pos_x < x + self.cell_size
-            and y <= entity_pos_y < y + self.cell_size
+            and y <= entity.pos_y < y + self.cell_size
         )
 
     def draw_grid(self) -> None:
@@ -347,7 +370,3 @@ class Map_renderer:
                 cell_x += self.cell_size
 
             cell_y += self.cell_size
-
-        for entity in self.entities:
-
-
