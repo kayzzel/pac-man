@@ -1,7 +1,7 @@
 from .utils.json_utils import get_json_from_file
 
 from sys import stderr
-from typing import Any
+from typing import Any, Annotated
 from pydantic import BaseModel, Field, ValidationError
 
 
@@ -10,6 +10,9 @@ class ConfigValidate(BaseModel):
 
     highscore_filename: str = Field(default="highscore.json", min_length=1)
     nb_level: int = Field(default=10, ge=10)
+    levels_dimensions: tuple[
+        Annotated[int, Field(ge=10, le=50)], Annotated[int, Field(ge=10, le=50)]
+    ]
     lives: int = Field(default=3, ge=1)
     point_per_pacgum: int = Field(default=10, ge=0)
     point_per_super_pacgum: int = Field(default=50, ge=0)
@@ -22,6 +25,7 @@ class Config:
     def __init__(self) -> None:
         self.__highscore_filename: str = "highscore.json"
         self.__nb_level: int = 10
+        self.__levels_dimensions: tuple[int, int] = (20, 20)
         self.__lives: int = 3
         self.__point_per_pacgum: int = 10
         self.__point_per_super_pacgum: int = 50
@@ -62,6 +66,7 @@ class Config:
         config = ConfigValidate(**result)
         self.__highscore_filename = config.highscore_filename
         self.__nb_level = config.nb_level
+        self.__levels_dimensions = config.levels_dimensions
         self.__lives = config.lives
         self.__point_per_pacgum = config.point_per_pacgum
         self.__point_per_super_pacgum = config.point_per_super_pacgum
@@ -76,6 +81,10 @@ class Config:
     @property
     def nb_level(self) -> int:
         return self.__nb_level
+
+    @property
+    def levels_dimensions(self) -> tuple[int, int]:
+        return self.__levels_dimensions
 
     @property
     def lives(self) -> int:
