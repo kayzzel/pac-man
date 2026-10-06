@@ -19,6 +19,7 @@ class Icon(Widget):
         to_resize: bool = False
     ) -> None:
 
+        self.image_path: str = image_path
         self.max_size: tuple[int, int] = max_size
         self.to_resize: bool = to_resize
 

@@ -128,12 +128,14 @@ class Game_view(View):
             self.cell_size = nb_cells_col
             self.map_width = self.cell_size * len(self.grid_gen[0]) + 6
 
+        self.game.player.pos_x = 2
+        self.game.player.pos_y = 2
         self.map_renderer: Map_renderer = Map_renderer(
             self.game,
             self.grid_gen,
             (self.map_startx + 3, self.map_starty + 3),
             self.cell_size,
-            [self.game.player, list(self.game.ghosts.values())]
+            [self.game.player] + list(self.game.ghosts.values())
         )
         self.map_outline: tuple[int, int, int, int] = (
             self.map_startx,

@@ -2,7 +2,7 @@ import pyray as pr
 from ..game.map.Cell import Cell
 from ..game.Game import Game
 from .Texture_pack import Texture_pack
-from .widget import AnimIcon
+from .widget import Icon, AnimIcon
 from ..game.entity.Pac_man import Pac_man
 from ..game.entity.Entity import Entity
 from ..game.entity.ghost.Ghost import Ghost_state, Ghost
@@ -36,6 +36,7 @@ class Map_renderer:
         self.grid: list[list[Cell]] = grid
         self.map_x, self.map_y = map_coor
         self.entities: list[Entity] = entities
+        print(f"\n\npac man start position: {entities[0].pos_x, entities[0].pos_y}\n\n")
         self.sprites: dict[str, AnimIcon] = {}
         self.saved_dirs: dict[str, tuple[str, str, tuple[int, int]]] = {
             entity.name: (entity.direction, "R", (entity.pos_x, entity.pos_y))
@@ -317,31 +318,36 @@ class Map_renderer:
         self.draw_walls(cell, x, y)
 
         if cell.collectible:
-            collectible_image = pr.load_image(self.texture_pack.get_texture(cell.collectible.name))
-            pr.image_resize(collectible_image, self.collectible_size, self.collectible_size)
-            collectible_texture = pr.load_texture_from_image(collectible_image)
-            pr.draw_texture(
-                collectible_texture,
+            collectible: Icon = Icon(
                 x + (self.cell_size - self.collectible_size) // 2,
-                y + (self.cell_size - self.collectible_size) // 2
+                y + (self.cell_size - self.collectible_size) // 2,
+                self.texture_pack.get_texture(cell.collectible.name),
+                (self.collectible_size, self.collectible_size),
+                True
             )
+            collectible.display_widget()
 
         entity_base_x: int = x + (self.cell_size - self.cell_padding - self.entity_size) // 2 - self.entity_size // 2
         entity_base_y: int = y + (self.cell_size - self.cell_padding - self.entity_size) // 2 - self.entity_size // 2
 
         for entity in self.entities:
 
-            if not self.entity_is_in(entity, x, y):
+            if not self.entity_is_in(entity, cell):
                 continue
 
+            print(f"\n\nfound entity {entity.name} in cell {entity.pos_x, entity.pos_y}\n\n")
             en_posx: int
             en_posy: int
             en_posx, en_posy = self.saved_dirs[entity.name][2]
             entity_offset_x: int = int(float(cell.pos_x + 1) - en_posx) * 10
             entity_offset_y: int = int(float(cell.pos_y + 1) - en_posy) * 10
 
-            en_posx = entity_base_x + (self.cell_size - self.cell_padding * 2) // entity_offset_x
-            en_posy = entity_base_y + (self.cell_size - self.cell_padding * 2) // entity_offset_y
+            en_posx = entity_base_x
+            if entity_offset_x > 0:
+                en_posx += (self.cell_size - self.cell_padding * 2) // entity_offset_x
+            en_posy = entity_base_y
+            if entity_offset_y > 0:
+                en_posy += (self.cell_size - self.cell_padding * 2) // entity_offset_y
 
             texture = (
                 self.get_pacman_texture(entity)
@@ -385,11 +391,11 @@ class Map_renderer:
         if cell.pos_y < len(self.grid) - 1:
             cell.neighbors["S"] = self.grid[cell.pos_y + 1][cell.pos_x]
 
-    def entity_is_in(self, entity: Entity, x: int, y: int) -> bool:
+    def entity_is_in(self, entity: Entity, cell: Cell) -> bool:
 
         return (
-            x <= self.saved_dirs[entity.name][2][0] < x + self.cell_size
-            and y <= self.saved_dirs[entity.name][2][1] < y + self.cell_size
+            cell.pos_x <= self.saved_dirs[entity.name][2][0] < cell.pos_x + 1
+            and cell.pos_y <= self.saved_dirs[entity.name][2][1] < cell.pos_y + 1
         )
 
     def draw_grid(self) -> None:
