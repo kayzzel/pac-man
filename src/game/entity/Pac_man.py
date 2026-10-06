@@ -22,10 +22,6 @@ class Pac_man(Entity):
 
         self.__next_direction = direction
 
-    @property
-    def next_direction(self) -> str:
-        return self.__next_direction
-
     def __select_next_dir(self, cell: Cell) -> None:
         if not self.__next_direction:
             return
@@ -36,6 +32,11 @@ class Pac_man(Entity):
         if not cell.walls[self.__next_direction]:
             self.direction = self.__next_direction
             self.__next_direction = ""
+
+    def test_update(self, cell: Cell) -> None:
+
+        self.__select_next_dir(cell)
+        self.walk()
 
     def set_energized(self, elapsed_time: int) -> None:
         self.__last_super_pacgum_time = elapsed_time

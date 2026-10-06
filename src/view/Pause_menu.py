@@ -29,10 +29,11 @@ TEST_SCORES: dict[str, int] = {
 
 class Pause_menu(View):
 
-    def __init__(self, app, game) -> None:
+    def __init__(self, app, game, global_view: View) -> None:
 
         super().__init__(app)
         self.game = game
+        self.global_view: View = global_view
         self.show_right_panel: bool = False
 
     @property
@@ -48,7 +49,7 @@ class Pause_menu(View):
     def _update_left_panel(self) -> None:
 
         self.button_actions: dict[str, tuple[Callable, Any]] = {
-            "Resume": (self.app.return_to_prev_view, None),
+            "Resume": (self.global_view.pause_or_resume, None),
             "Options": (lambda: print(
                 "Action for button 'options' not yet coded\n"
             ), None),

@@ -36,15 +36,14 @@ class Map_renderer:
         self.grid: list[list[Cell]] = grid
         self.map_x, self.map_y = map_coor
         self.entities: list[Entity] = entities
-        print(f"\n\npac man start position: {entities[0].pos_x, entities[0].pos_y}\n\n")
         self.sprites: dict[str, AnimIcon] = {}
-        self.saved_dirs: dict[str, tuple[str, str, tuple[int, int]]] = {
+        self.saved_dirs: dict[str, tuple[str, str, tuple[float, float]]] = {
             entity.name: (entity.direction, "R", (entity.pos_x, entity.pos_y))
             for entity in entities
         }
         self.cell_size: int = cell_size
         self.line_thickness: int = 2
-        self.cell_padding: int = cell_size // 6 + self.line_thickness
+        self.cell_padding: int = cell_size // 8 + self.line_thickness
         self.collectible_size: int = cell_size // 4
         self.entity_size: int = cell_size // 2
         self.texture_pack: Texture_pack = Texture_pack(DEFAULT_TEXTURE_PACK)
@@ -327,8 +326,8 @@ class Map_renderer:
             )
             collectible.display_widget()
 
-        entity_base_x: int = x + (self.cell_size - self.cell_padding - self.entity_size) // 2 - self.entity_size // 2
-        entity_base_y: int = y + (self.cell_size - self.cell_padding - self.entity_size) // 2 - self.entity_size // 2
+        entity_base_x: int = x + self.cell_padding
+        entity_base_y: int = y + self.cell_padding
 
         for entity in self.entities:
 
@@ -359,7 +358,7 @@ class Map_renderer:
                 self.sprites[entity.name] = AnimIcon(
                     en_posx,
                     en_posy,
-                    texture,
+                    self.texture_pack.get_texture(texture),
                     (self.entity_size, self.entity_size),
                     True,
                     5
@@ -368,6 +367,7 @@ class Map_renderer:
                 self.sprites[entity.name].x = en_posx
                 self.sprites[entity.name].y = en_posy
 
+            print(f"\n\ndisplaying entity {entity.name} at position {self.saved_dirs[entity.name][2]}, direction {self.saved_dirs[entity.name][0]} and alignment {self.saved_dirs[entity.name][1]}\n\n")
             self.sprites[entity.name].display_widget()
             if self.game.is_paused and "pac-man" in self.sprites.keys() and self.sprites["pacman"].loop_finished:
                 self.game.resume()

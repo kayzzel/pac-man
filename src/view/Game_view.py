@@ -4,6 +4,7 @@ from .View import View
 from .Pause_menu import Pause_menu
 from .widget import Icon
 from ..game.Game import Game
+from ..game.map.Cell import Cell
 from .Map_renderer import Map_renderer
 
 
@@ -30,10 +31,11 @@ class Game_view(View):
         super().__init__(app)
 
         self.game: Game = game
-        self.modal_view: Pause_menu = Pause_menu(app, game)
+        self.modal_view: Pause_menu = Pause_menu(app, game, self)
         self.show_as_modal: bool = False
 
-        self.grid_gen = self.game.generate_map(10, 10).cells
+        self.game.map.append(self.game.generate_map(10, 10))
+        self.game.start_position()
 
     def _update_score_panel(self) -> None:
 
@@ -108,9 +110,13 @@ class Game_view(View):
             self.game.player.set_next_direction("W")
         elif pr.is_key_pressed(pr.KEY_RIGHT) or pr.is_key_pressed(pr.KEY_D):
             self.game.player.set_next_direction("E")
+        cur_x = int(self.game.player.pos_x)
+        cur_y = int(self.game.player.pos_y)
+        self.game.player.test_update(self.game.map[self.game.map_index].cells[cur_y][cur_x])
 
     def _update_map_panel(self) -> None:
 
+        self.grid: list[list[Cell]] = self.game.map[self.game.map_index].cells
         self.map_panel_width: int = self.w - self.left_panel_width - 10
         self.map_width: int = min(
             self.map_panel_width - self.map_panel_width // 10,
@@ -118,21 +124,21 @@ class Game_view(View):
         )
         self.map_height: int = self.map_width
 
-        nb_cells_row: int = (self.map_width - 6) // len(self.grid_gen[0])
-        nb_cells_col: int = (self.map_height - 6) // len(self.grid_gen)
+        nb_cells_row: int = (self.map_width - 6) // len(self.grid[0])
+        nb_cells_col: int = (self.map_height - 6) // len(self.grid)
 
         if nb_cells_row > nb_cells_col:
             self.cell_size: int = nb_cells_row
-            self.map_height = self.cell_size * len(self.grid_gen) + 6
+            self.map_height = self.cell_size * len(self.grid) + 6
         else:
             self.cell_size = nb_cells_col
-            self.map_width = self.cell_size * len(self.grid_gen[0]) + 6
+            self.map_width = self.cell_size * len(self.grid[0]) + 6
 
         self.game.player.pos_x = 2
         self.game.player.pos_y = 2
         self.map_renderer: Map_renderer = Map_renderer(
             self.game,
-            self.grid_gen,
+            self.grid,
             (self.map_startx + 3, self.map_starty + 3),
             self.cell_size,
             [self.game.player] + list(self.game.ghosts.values())
@@ -144,12 +150,25 @@ class Game_view(View):
             self.map_height
         )
 
+    def pause_or_resume(self) -> None:
+
+        self.show_as_modal = not self.show_as_modal
+
+        if self.show_as_modal:
+            if self.game.is_paused == 1:
+                self.game.resume()
+            else:
+                self.game.pause(1)
+
     def _update(self) -> None:
 
         if pr.get_key_pressed() in DIR_KEYS:
             self.catch_player_input()
 
-        if not pr.is_window_resized() and self.is_init:
+        if pr.is_key_pressed(pr.KEY_ESCAPE):
+            self.pause_or_resume()
+
+        if not pr.is_window_resized() and self.is_init or self.show_as_modal:
             return
 
         self._update_score_panel()
@@ -159,6 +178,9 @@ class Game_view(View):
     def display_view(self) -> None:
 
         self._update()
+
+        if self.show_as_modal:
+            self.modal_view.display_view()
 
         pr.draw_line_ex(
             (self.left_panel_width, 0),
@@ -182,9 +204,3 @@ class Game_view(View):
         for icon in self.life_icons:
 
             icon.display_widget()
-
-        if pr.is_key_pressed(pr.KEY_ESCAPE):
-            self.show_as_modal = not self.show_as_modal
-
-        if self.show_as_modal:
-            self.modal_view.display_view()

@@ -29,14 +29,14 @@ class App:
         if not self.previous_view:
             return
 
-        if (
-            hasattr(self.current_view, "show_as_modal")
-        ) and (
-            self.current_view.show_as_modal
-        ):
+        # if (
+        #     hasattr(self.current_view, "show_as_modal")
+        # ) and (
+        #     self.current_view.show_as_modal
+        # ):
 
-            self.current_view.show_as_modal = False
-            return
+        #     self.current_view.show_as_modal = False
+        #     return
 
         self.change_view(self.previous_view)
 
