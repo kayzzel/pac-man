@@ -51,11 +51,11 @@ class Game:
         self.game_loop = GameLoop(update_game, duration=config.level_max_time)
         self.state: Game_state = Game_state.NOT_RUNNING
 
-    def stop(self, status: Game_state) -> None:
+    def stop(self, status: Game_state = Game_state.LOST) -> None:
         self.state = status
         self.game_loop.stop()
 
-    def pause(self, status: Game_state) -> None:
+    def pause(self, status: Game_state = Game_state.PAUSED) -> None:
         self.state = status
         self.game_loop.pause()
 
@@ -71,7 +71,7 @@ class Game:
             self.game_loop.reset()
             self.timer = self.game_loop.timer
 
-            sleep(2)
+            self.pause(Game_state.PAUSED)
             self.game_loop.run(self)
 
             if self.state == Game_state.LOST:
@@ -177,3 +177,19 @@ def update_game(game: Game) -> None:
 
     if cur_map.collectible_count <= 0:
         game.stop(Game_state.FINISHED_MAP)
+
+
+def mandatory_game(config: Config) -> Game:
+    game = Game(config)
+    first = True
+
+    width, height = config.levels_dimensions
+
+    for _ in range(config.nb_level):
+        if first:
+            game.map.append(game.generate_map(width, height, config.seed))
+            first = False
+        else:
+            game.map.append(game.generate_map(width, height, config.seed))
+
+    return game
