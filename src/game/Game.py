@@ -74,7 +74,7 @@ class Game:
             sleep(2)
             self.game_loop.run(self)
 
-            if self.game_loop.timer < 0:
+            if self.state == Game_state.LOST:
                 self.stop(Game_state.LOST)
                 return
 

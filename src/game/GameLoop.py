@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .Game import Game   # only imported by type checkers, not at runtime
+from .Game import Game_state
 
 from typing import Callable
 
@@ -68,8 +69,8 @@ class GameLoop:
 
                 if self.__duration is not None \
                         and self.__elapsed_active >= self.__duration:
-                    self.__elapsed_active = self.__duration + 1
                     self.__running = False
+                    game.state = Game_state.LOST
                     break
 
             sleep_time = self.__dt - accumulator
