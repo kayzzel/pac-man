@@ -12,9 +12,21 @@ from ..Config import Config
 from ..utils.maze_utils import convert_maze_to_map
 
 from mazegenerator import MazeGenerator
+from time import sleep
+from enum import Enum
 
 import os
 import contextlib
+
+
+class Game_state(str, Enum):
+    NOT_RUNNING = "not_running"
+    RUNNING = "running"
+    PAUSED = "paused"
+    DIED = "died"
+    FINISHED_MAP = "finished_map"
+    WON = "won"
+    LOST = "lost"
 
 
 class Game:
@@ -36,24 +48,39 @@ class Game:
 
         self.timer: int = 0
 
-        self.game_loop = GameLoop(update_game)
-        self.is_paused: int = 0  # -1 dead / not paused / 1 normal
-        self.is_won: int = 0  # -1 lost / 0 not finished / 1 won
+        self.game_loop = GameLoop(update_game, duration=config.level_max_time)
+        self.state: Game_state = Game_state.NOT_RUNNING
 
-    def stop(self, status: int) -> None:
-        self.is_won = status
+    def stop(self, status: Game_state) -> None:
+        self.state = status
         self.game_loop.stop()
 
-    def pause(self, status: int) -> None:
-        self.is_paused = status
+    def pause(self, status: Game_state) -> None:
+        self.state = status
         self.game_loop.pause()
 
     def resume(self) -> None:
-        self.is_paused = 0
+        self.state = Game_state.RUNNING
         self.game_loop.resume()
 
     def start(self) -> None:
-        ...
+
+        for _ in self.map:
+
+            self.start_position()
+            self.game_loop.reset()
+            self.timer = self.game_loop.timer
+
+            sleep(2)
+            self.game_loop.run(self)
+
+            if self.game_loop.timer < 0:
+                self.stop(Game_state.LOST)
+                return
+
+            self.map_index += 1
+
+        self.stop(Game_state.WON)
 
     def generate_map(self, width: int, height: int, seed: int = 0) -> Map:
         if width < 2 or height < 2:
@@ -88,6 +115,8 @@ class Game:
 
             ghost.pos_x, ghost.pos_y = ghost.spawn_point
 
+            if ghost.state == Ghost_state.EATEN:
+                ghost.speed /= 2
             ghost.state = Ghost_state.SCATTER
 
 
@@ -140,8 +169,11 @@ def update_game(game: Game) -> None:
 
     if calculate_collision(game):
         if pacman.nb_lives == 0:
-            game.stop(-1)
+            game.stop(Game_state.LOST)
             return
 
         game.start_position()
-        game.pause(-1)
+        game.pause(Game_state.DIED)
+
+    if cur_map.collectible_count <= 0:
+        game.stop(Game_state.FINISHED_MAP)
