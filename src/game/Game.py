@@ -12,7 +12,6 @@ from ..Config import Config
 from ..utils.maze_utils import convert_maze_to_map
 
 from mazegenerator import MazeGenerator
-from time import sleep
 from enum import Enum
 
 import os
@@ -190,6 +189,8 @@ def mandatory_game(config: Config) -> Game:
             game.map.append(game.generate_map(width, height, config.seed))
             first = False
         else:
-            game.map.append(game.generate_map(width, height, config.seed))
+            game.map.append(game.generate_map(width, height))
+    
+    game.start()
 
     return game
