@@ -1,13 +1,13 @@
 import pyray as pr
 from ..game.map.Cell import Cell
-from ..game.Game import Game
+from ..game.Game import Game  # , Game_state
 from .Texture_pack import Texture_pack
 from .widget import Icon, AnimIcon
 from ..game.entity.Pac_man import Pac_man
 from ..game.entity.Entity import Entity
 from ..game.entity.ghost.Ghost import Ghost_state, Ghost
 
-DEFAULT_TEXTURE_PACK: str = "src/view/assets/default_texture_pack"
+TEXTURE_PACK: str = "src/view/assets/default_texture_pack"
 
 DIRECTIONS: dict[str, str] = {
     "N": "up",
@@ -42,15 +42,25 @@ class Map_renderer:
             for entity in entities
         }
         self.cell_size: int = cell_size
-        self.line_thickness: int = 2
+        self.line_thickness: int = 3
         self.cell_padding: int = cell_size // 8 + self.line_thickness
-        self.collectible_size: int = cell_size // 4
-        self.entity_size: int = cell_size // 2
-        self.texture_pack: Texture_pack = Texture_pack(DEFAULT_TEXTURE_PACK)
+        self.collectible_size: int = cell_size // 3
+        self.entity_space: int = self.cell_size - self.cell_padding * 2
+        self.entity_size: int = self.entity_space - self.entity_space // 8
+        self.texture_pack: Texture_pack = Texture_pack(TEXTURE_PACK)
 
     def set_correct_dir(self, entity: Entity) -> None:
 
+        # if self.game.state == Game_state.PAUSED:
         if self.game.is_paused == -1:
+            return
+
+        if entity.direction == self.saved_dirs[entity.name][0]:
+            self.saved_dirs[entity.name] = (
+                entity.direction,
+                self.saved_dirs[entity.name][1],
+                (entity.pos_x, entity.pos_y)
+            )
             return
 
         alignment: str = self.saved_dirs[entity.name][1]
@@ -75,6 +85,7 @@ class Map_renderer:
     def get_pacman_texture(self, pac_man: Pac_man) -> str:
 
         self.set_correct_dir(pac_man)
+        # if self.game.state == Game_state.PAUSED:
         if self.game.is_paused == -1:
             return "pacman_death"
         return self.get_entity_texture(pac_man)
@@ -117,8 +128,8 @@ class Map_renderer:
 
         if cell.walls["N"]:
 
-            sx: int = x + self.cell_padding
-            sy: int = y + self.cell_padding - self.line_thickness
+            sx: int = x + self.cell_padding - 2
+            sy: int = y + self.cell_padding
             ex: int = end_x - self.cell_padding
             ey: int = sy
 
@@ -130,7 +141,7 @@ class Map_renderer:
                 if cell.neighbors["W"] and cell.neighbors["W"].walls["N"]:
                     sx = x
                 elif cell.neighbors["W"] and cell.neighbors["N"] and cell.neighbors["N"].walls["W"]:
-                    sx = x - self.cell_padding + self.line_thickness
+                    sx = x - self.cell_padding
                 else:
                     draw_corner_left = True
 
@@ -151,8 +162,8 @@ class Map_renderer:
             )
             if draw_corner_left:
                 pr.draw_line_ex(
-                    (sx - self.line_thickness, y),
-                    (sx - self.line_thickness, sy),
+                    (sx, y),
+                    (sx, sy),
                     self.line_thickness,
                     pr.DARKBLUE
                 )
@@ -166,7 +177,7 @@ class Map_renderer:
 
         if cell.walls["S"]:
 
-            sx = x + self.cell_padding
+            sx = x + self.cell_padding - 2
             sy = end_y - self.cell_padding
             ex = end_x - self.cell_padding
             ey = sy
@@ -179,7 +190,7 @@ class Map_renderer:
                 if cell.neighbors["W"] and cell.neighbors["W"].walls["S"]:
                     sx = x
                 elif cell.neighbors["W"] and cell.neighbors["S"] and cell.neighbors["S"].walls["W"]:
-                    sx = x - self.cell_padding + self.line_thickness
+                    sx = x - self.cell_padding
                 else:
                     draw_corner_left = True
 
@@ -200,15 +211,15 @@ class Map_renderer:
             )
             if draw_corner_left:
                 pr.draw_line_ex(
-                    (sx - self.line_thickness, end_y),
-                    (sx - self.line_thickness, sy + self.line_thickness),
+                    (sx, end_y),
+                    (sx, sy),
                     self.line_thickness,
                     pr.DARKBLUE
                 )
             if draw_corner_right:
                 pr.draw_line_ex(
                     (ex, end_y),
-                    (ex, ey + self.line_thickness),
+                    (ex, ey),
                     self.line_thickness,
                     pr.DARKBLUE
                 )
@@ -228,7 +239,7 @@ class Map_renderer:
                 if cell.neighbors["N"] and cell.neighbors["N"].walls["W"]:
                     sy = y
                 elif cell.neighbors["N"] and cell.neighbors["W"] and cell.neighbors["W"].walls["N"]:
-                    sy = y - self.cell_padding + self.line_thickness
+                    sy = y - self.cell_padding
                 else:
                     draw_corner_up = True
 
@@ -237,7 +248,7 @@ class Map_renderer:
                 if cell.neighbors["S"] and cell.neighbors["S"].walls["W"]:
                     ey = end_y
                 elif cell.neighbors["S"] and cell.neighbors["W"] and cell.neighbors["W"].walls["S"]:
-                    ey = end_y + self.cell_padding - self.line_thickness
+                    ey = end_y + self.cell_padding
                 else:
                     draw_corner_down = True
 
@@ -277,7 +288,7 @@ class Map_renderer:
                 if cell.neighbors["N"] and cell.neighbors["N"].walls["E"]:
                     sy = y
                 elif cell.neighbors["N"] and cell.neighbors["E"] and cell.neighbors["E"].walls["N"]:
-                    sy = y - self.cell_padding + self.line_thickness
+                    sy = y - self.cell_padding
                 else:
                     draw_corner_up = True
 
@@ -286,7 +297,7 @@ class Map_renderer:
                 if cell.neighbors["S"] and cell.neighbors["S"].walls["E"]:
                     ey = end_y
                 elif cell.neighbors["S"] and cell.neighbors["E"] and cell.neighbors["E"].walls["S"]:
-                    ey = end_y + self.cell_padding - self.line_thickness
+                    ey = end_y + self.cell_padding
                 else:
                     draw_corner_down = True
 
@@ -298,14 +309,14 @@ class Map_renderer:
             )
             if draw_corner_up:
                 pr.draw_line_ex(
-                    (ex + self.line_thickness, sy),
+                    (ex, sy),
                     (end_x, sy),
                     self.line_thickness,
                     pr.DARKBLUE
                 )
             if draw_corner_down:
                 pr.draw_line_ex(
-                    (ex + self.line_thickness, ey),
+                    (ex, ey),
                     (end_x, ey),
                     self.line_thickness,
                     pr.DARKBLUE
@@ -316,61 +327,62 @@ class Map_renderer:
         self.get_neighbors(cell)
         self.draw_walls(cell, x, y)
 
-        if cell.collectible:
-            collectible: Icon = Icon(
-                x + (self.cell_size - self.collectible_size) // 2,
-                y + (self.cell_size - self.collectible_size) // 2,
-                self.texture_pack.get_texture(cell.collectible.name),
-                (self.collectible_size, self.collectible_size),
-                True
-            )
-            collectible.display_widget()
+        # if cell.collectible:
+        #     collectible: Icon = Icon(
+        #         x + (self.cell_size - self.collectible_size) // 2,
+        #         y + (self.cell_size - self.collectible_size) // 2,
+        #         self.texture_pack.get_texture(cell.collectible.name),
+        #         (self.collectible_size, self.collectible_size),
+        #         True
+        #     )
+        #     collectible.display_widget()
 
-        entity_base_x: int = x + self.cell_padding
-        entity_base_y: int = y + self.cell_padding
+        # entity_base_x: int = x + self.cell_padding
+        # entity_base_y: int = y + self.cell_padding
 
-        for entity in self.entities:
+        # for entity in self.entities:
 
-            if not self.entity_is_in(entity, cell):
-                continue
+        #     if not self.entity_is_in(entity, cell):
+        #         continue
 
-            print(f"\n\nfound entity {entity.name} in cell {entity.pos_x, entity.pos_y}\n\n")
-            en_posx: int
-            en_posy: int
-            en_posx, en_posy = self.saved_dirs[entity.name][2]
-            entity_offset_x: int = int(float(cell.pos_x + 1) - en_posx) * 10
-            entity_offset_y: int = int(float(cell.pos_y + 1) - en_posy) * 10
+        #     en_posx: float
+        #     en_posy: float
+        #     en_posx, en_posy = self.saved_dirs[entity.name][2]
+        #     # print(f"cell pos {x, y}, entity coor : {en_posx, en_posy}")
+        #     entity_offset_x: int = int((en_posx - cell.pos_x) * 10)
+        #     entity_offset_y: int = int((en_posy - cell.pos_y) * 10)
+        #     # print(f"offset before : {entity_offset_x, entity_offset_y}")
 
-            en_posx = entity_base_x
-            if entity_offset_x > 0:
-                en_posx += (self.cell_size - self.cell_padding * 2) // entity_offset_x
-            en_posy = entity_base_y
-            if entity_offset_y > 0:
-                en_posy += (self.cell_size - self.cell_padding * 2) // entity_offset_y
+        #     en_posx = entity_base_x
+        #     if entity_offset_x > 0:
+        #         en_posx += (self.entity_space // 10) * entity_offset_x
+        #     en_posy = entity_base_y
+        #     if entity_offset_y > 0:
+        #         en_posy += (self.entity_space // 10) * entity_offset_y
+        #     # print(f"entity {entity.name}: entity pos {en_posx, en_posy} offset_x: {entity_offset_x} offset_y : {entity_offset_y}\n")
 
-            texture = (
-                self.get_pacman_texture(entity)
-                if isinstance(entity, Pac_man)
-                else self.get_ghost_texture(entity)
-            )
+        #     texture = self.texture_pack.get_texture((
+        #         self.get_pacman_texture(entity)
+        #         if isinstance(entity, Pac_man)
+        #         else self.get_ghost_texture(entity)
+        #     ))
 
-            if entity.name not in self.sprites.keys() or texture != self.sprites[entity.name].image_path:
-                self.sprites[entity.name] = AnimIcon(
-                    en_posx,
-                    en_posy,
-                    self.texture_pack.get_texture(texture),
-                    (self.entity_size, self.entity_size),
-                    True,
-                    5
-                )
-            else:
-                self.sprites[entity.name].x = en_posx
-                self.sprites[entity.name].y = en_posy
+        #     if entity.name not in self.sprites.keys() or texture != self.sprites[entity.name].image_path:
+        #         self.sprites[entity.name] = AnimIcon(
+        #             en_posx,
+        #             en_posy,
+        #             texture,
+        #             (self.entity_size, self.entity_size),
+        #             True,
+        #             6
+        #         )
+        #     else:
+        #         self.sprites[entity.name].x = en_posx
+        #         self.sprites[entity.name].y = en_posy
 
-            print(f"\n\ndisplaying entity {entity.name} at position {self.saved_dirs[entity.name][2]}, direction {self.saved_dirs[entity.name][0]} and alignment {self.saved_dirs[entity.name][1]}\n\n")
-            self.sprites[entity.name].display_widget()
-            if self.game.is_paused and "pac-man" in self.sprites.keys() and self.sprites["pacman"].loop_finished:
-                self.game.resume()
+        #     self.sprites[entity.name].display_widget()
+        #     if self.game.is_paused == 1 and "pacman" in self.sprites.keys() and self.sprites["pacman"].loop_finished:
+        #         self.game.resume()
 
     def get_neighbors(self, cell: Cell) -> None:
 

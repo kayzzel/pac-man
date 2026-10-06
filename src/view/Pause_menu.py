@@ -11,8 +11,7 @@ from .widget import Panel, ClickableIcon, Input_box
 CHEAT_PASSWORD: str = "password"
 PASSWORD_MSG_TIME: int = 120
 
-BUTTON_FONT_SIZE: int = 20
-PANEL_PADDING: int = BUTTON_FONT_SIZE - 5
+BORDER_THICK: int = 5
 
 LOCK_CLOSED_PATH: str = "src/view/assets/icons/lock_closed.jpg"
 LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
@@ -31,10 +30,10 @@ class Pause_menu(View):
 
     def __init__(self, app, game, global_view: View) -> None:
 
-        super().__init__(app)
         self.game = game
         self.global_view: View = global_view
         self.show_right_panel: bool = False
+        super().__init__(app)
 
     @property
     def w(self) -> int:
@@ -48,7 +47,10 @@ class Pause_menu(View):
 
     def _update_left_panel(self) -> None:
 
-        self.button_actions: dict[str, tuple[Callable, Any]] = {
+        panel_width: int = self.w // 2 - self.w // 8
+        panel_height: int = self.h - self.h // 3
+
+        button_actions: dict[str, tuple[Callable, Any]] = {
             "Resume": (self.global_view.pause_or_resume, None),
             "Options": (lambda: print(
                 "Action for button 'options' not yet coded\n"
@@ -60,45 +62,43 @@ class Pause_menu(View):
             "Save and exit": (self.app.change_view, Save_score_view(self.app, self.game)),
             "Exit": (self.app.change_view, "main_menu")
         }
-
-        self.calculate_panel_spacing()
-        vertical_padding: int = self.h // 12
+        button_font_sz: int = panel_height // (len(button_actions.keys()) * 2 - 1)
 
         self.left_panel: Panel = Panel(
-            self.x + (self.w // 2 - self.left_panel_w) // 2,
-            self.y + vertical_padding,
-            self.left_panel_w,
-            (self.h - vertical_padding * 2),
-            self.button_actions,
-            self.but_font_sz,
-            (self.panel_pad, 2, 0.1)
+            self.x + BORDER_THICK + self.w // 20 + (self.w // 2 - panel_width) // 2,
+            -2,
+            panel_width,
+            panel_height,
+            button_actions,
+            button_font_sz,
+            (10, 2, 0.1)
         )
 
-    def calculate_panel_spacing(self) -> None:
+    # def calculate_panel_spacing(self) -> None:
 
-        max_label: str = max(
-            self.button_actions.keys(),
-            key=lambda label: len(label)
-        )
+    #     max_label: str = max(
+    #         self.button_actions.keys(),
+    #         key=lambda label: len(label)
+    #     )
 
-        self.but_font_sz: int = BUTTON_FONT_SIZE
-        self.panel_pad: int = PANEL_PADDING
+    #     self.but_font_sz: int = BUTTON_FONT_SIZE
+    #     self.panel_pad: int = PANEL_PADDING
 
-        self.left_panel_w: int = pr.measure_text(
-            max_label,
-            self.but_font_sz,
-        ) + self.panel_pad
-        while self.left_panel_w >= self.w // 2 and self.but_font_sz >= 5:
-            self.but_font_sz -= 1
-            self.left_panel_w = pr.measure_text(
-                max_label,
-                self.but_font_sz,
-            ) + self.panel_pad
+    #     self.left_panel_w: int = pr.measure_text(
+    #         max_label,
+    #         self.but_font_sz,
+    #     ) + self.panel_pad
+    #     while self.left_panel_w >= self.w // 2 and self.but_font_sz >= 5:
+    #         self.but_font_sz -= 1
+    #         self.left_panel_w = pr.measure_text(
+    #             max_label,
+    #             self.but_font_sz,
+    #         ) + self.panel_pad
 
-        self.left_panel_w = max(
-            self.left_panel_w,
-            self.w // 2 - self.w // 10
-        )
+    #     self.left_panel_w = max(
+    #         self.left_panel_w,
+    #         self.w // 2 - self.w // 10
+    #     )
 
     def _update_lock_and_password(self) -> None:
 
@@ -159,14 +159,13 @@ class Pause_menu(View):
             self.input_password.text_color = pr.RED
             self.input_password.cursor_color = pr.MAROON
 
-    def _update(self) -> None:
+    def _update(self, forced: bool = False) -> None:
 
-        if not pr.is_window_resized() and self.is_init:
+        if not pr.is_window_resized() and not forced:
             return
 
         self._update_left_panel()
         self._update_lock_and_password()
-        self.is_init = True
 
     def display_view(self) -> None:
 
@@ -176,7 +175,7 @@ class Pause_menu(View):
             self.x, self.y, self.w, self.h
         )
         pr.draw_rectangle(*outline, pr.BLACK)
-        pr.draw_rectangle_lines_ex(outline, 5, pr.RAYWHITE)
+        pr.draw_rectangle_lines_ex(outline, BORDER_THICK, pr.RAYWHITE)
 
         self.left_panel.display_widget()
 

@@ -7,13 +7,12 @@ class Scores_view(View):
 
     def __init__(self, app, scores: dict[str, int]) -> None:
 
-        super().__init__(app)
-
         self.title: str = "BEST SCORES"
         self.scores: list[str] = [
             pl_name + ": " + str(pl_score)
             for pl_name, pl_score in scores.items()
         ]
+        super().__init__(app)
 
     @property
     def title_size(self) -> int:
@@ -89,17 +88,16 @@ class Scores_view(View):
 
         self.score_y -= self.score_font_sz
 
-    def _update(self) -> None:
+    def _update(self, forced: bool = False) -> None:
 
         if pr.is_key_pressed(pr.KEY_ESCAPE):
             self.app.return_to_prev_view()
 
-        if not pr.is_window_resized() and self.is_init:
+        if not pr.is_window_resized() and not forced:
             return
 
         self._update_buttons()
         self._update_scores()
-        self.is_init = True
 
     def display_view(self) -> None:
 

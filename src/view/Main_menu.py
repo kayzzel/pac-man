@@ -76,14 +76,13 @@ class Main_menu(View):
             (pr.GRAY, pr.GOLD)
         )
 
-    def _update(self) -> None:
+    def _update(self, forced: bool = False) -> None:
 
-        if not pr.is_window_resized() and self.is_init:
+        if not pr.is_window_resized() and not forced:
             return
 
         self._update_icons()
         self._update_panel()
-        self.is_init = True
 
     def display_view(self) -> None:
 

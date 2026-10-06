@@ -28,14 +28,14 @@ class Game_view(View):
 
     def __init__(self, app: Any, game: Game) -> None:
 
-        super().__init__(app)
-
         self.game: Game = game
         self.modal_view: Pause_menu = Pause_menu(app, game, self)
         self.show_as_modal: bool = False
 
         self.game.map.append(self.game.generate_map(10, 10))
         self.game.start_position()
+
+        super().__init__(app)
 
     def _update_score_panel(self) -> None:
 
@@ -134,8 +134,6 @@ class Game_view(View):
             self.cell_size = nb_cells_col
             self.map_width = self.cell_size * len(self.grid[0]) + 6
 
-        self.game.player.pos_x = 2
-        self.game.player.pos_y = 2
         self.map_renderer: Map_renderer = Map_renderer(
             self.game,
             self.grid,
@@ -155,12 +153,11 @@ class Game_view(View):
         self.show_as_modal = not self.show_as_modal
 
         if self.show_as_modal:
-            if self.game.is_paused == 1:
-                self.game.resume()
-            else:
-                self.game.pause(1)
+            self.game.pause(1)
+        else:
+            self.game.resume()
 
-    def _update(self) -> None:
+    def _update(self, forced: bool = False) -> None:
 
         if pr.get_key_pressed() in DIR_KEYS:
             self.catch_player_input()
@@ -168,12 +165,14 @@ class Game_view(View):
         if pr.is_key_pressed(pr.KEY_ESCAPE):
             self.pause_or_resume()
 
-        if not pr.is_window_resized() and self.is_init or self.show_as_modal:
+        if not pr.is_window_resized() and not forced:
             return
+
+        if not self.show_as_modal:
+            self.modal_view._update(True)
 
         self._update_score_panel()
         self._update_map_panel()
-        self.is_init = True
 
     def display_view(self) -> None:
 
@@ -181,6 +180,7 @@ class Game_view(View):
 
         if self.show_as_modal:
             self.modal_view.display_view()
+            return
 
         pr.draw_line_ex(
             (self.left_panel_width, 0),

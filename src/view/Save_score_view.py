@@ -15,10 +15,9 @@ class Save_score_view(View):
 
     def __init__(self, app, game) -> None:
 
-        super().__init__(app)
         self.game = game
-
         self.show_message: list[str] = []
+        super().__init__(app)
 
     def _update_title(self) -> None:
 
@@ -74,18 +73,17 @@ class Save_score_view(View):
             - self.h // 20
         )
 
-    def _update(self) -> None:
+    def _update(self, forced: bool = False) -> None:
 
         if pr.is_key_pressed(pr.KEY_ESCAPE) and not self.show_message:
             self.app.return_to_prev_view()
 
-        if not pr.is_window_resized() and self.is_init:
+        if not pr.is_window_resized() and not forced:
             return
 
         self._update_title()
         self._update_back_button()
         self._update_input_box()
-        self.is_init = True
 
     def save_name(self) -> None:
 

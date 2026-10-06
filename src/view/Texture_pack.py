@@ -64,21 +64,16 @@ class Texture_pack:
         self.special_movements: list[str] = [
             entity + movement
             for movement in ["_upleft", "_upright", "_downleft", "_downright"]
-            for entity in ["pac-man", "inky", "blinky", "pinky", "clyde"]
+            for entity in ["pacman", "inky", "blinky", "pinky", "clyde"]
         ]
 
         self._load_pack(pack_path)
 
     def _load_pack(self, pack_path: str) -> None:
 
-        self.folders = {
-            f.name: f.path for f in os.scandir(pack_path)
-            if f.is_dir() and f.name in self.folders_needed
-        }
-
         self.all_textures: dict = {}
-        self.fill_textures(self.textures_needed)
-        self.fill_textures(self.special_movements)
+        self.fill_textures(self.textures_needed, pack_path)
+        self.fill_textures(self.special_movements, pack_path)
 
         textures_missing: list = [
             missing_text for missing_text in self.textures_needed
@@ -88,9 +83,14 @@ class Texture_pack:
         if not textures_missing:
             return
 
-        self.fill_textures(textures_missing)
+        self.fill_textures(textures_missing, DEFAULT_PACK)
 
-    def fill_textures(self, textures: list[str]) -> None:
+    def fill_textures(self, textures: list[str], pack_path: str) -> None:
+
+        self.folders = {
+            f.name: f.path for f in os.scandir(pack_path)
+            if f.is_dir() and f.name in self.folders_needed
+        }
 
         for folder in self.folders.values():
             self.all_textures.update({
