@@ -41,6 +41,9 @@ class GameLoop:
     def stop(self) -> None:
         self.__running = False
 
+    def reset(self) -> None:
+        self.__elapsed_active = 0.0
+
     def run(self, game: "Game") -> None:
         self.__running = True
         accumulator = 0.0
@@ -65,6 +68,7 @@ class GameLoop:
 
                 if self.__duration is not None \
                         and self.__elapsed_active >= self.__duration:
+                    self.__elapsed_active = self.__duration + 1
                     self.__running = False
                     break
 
