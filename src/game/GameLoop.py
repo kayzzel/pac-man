@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .Game import Game   # only imported by type checkers, not at runtime
-from .Game import Game_state
+from ..utils.enum_utils import Game_state
 
 from typing import Callable
 

@@ -3,19 +3,7 @@ if TYPE_CHECKING:
     from ...Game import Game
 
 from .Collectible import Collectible
-
-from enum import Enum
-
-
-class Consumable_type(str, Enum):
-    CHERRY = "cherry"
-    STRAWBERRY = "strawberry"
-    ORANGE = "orange"
-    APPLE = "apple"
-    MELON = "melon"
-    GALAXIAN = "galaxian"
-    BELL = "bell"
-    KEY = "key"
+from ....utils.enum_utils import Consumable_type
 
 
 class Consumable(Collectible):

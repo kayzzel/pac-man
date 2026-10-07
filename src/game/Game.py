@@ -2,7 +2,7 @@ from .GameLoop import GameLoop
 from .map.Map import Map
 from .map.Map_scores import Map_scores
 from .entity.Pac_man import Pac_man
-from .entity.ghost.Ghost import Ghost, Ghost_state
+from .entity.ghost.Ghost import Ghost
 from .entity.ghost.Blinky import Blinky
 from .entity.ghost.Pinky import Pinky
 from .entity.ghost.Clyde import Clyde
@@ -10,22 +10,12 @@ from .entity.ghost.Inky import Inky
 from .entity.collectible.Consumable import Consumable
 from ..Config import Config
 from ..utils.maze_utils import convert_maze_to_map
+from ..utils.enum_utils import Game_state, Ghost_state
 
 from mazegenerator import MazeGenerator
-from enum import Enum
 
 import os
 import contextlib
-
-
-class Game_state(str, Enum):
-    NOT_RUNNING = "not_running"
-    RUNNING = "running"
-    PAUSED = "paused"
-    DIED = "died"
-    FINISHED_MAP = "finished_map"
-    WON = "won"
-    LOST = "lost"
 
 
 class Game:
@@ -190,7 +180,7 @@ def mandatory_game(config: Config) -> Game:
             first = False
         else:
             game.map.append(game.generate_map(width, height))
-    
+
     game.start()
 
     return game
