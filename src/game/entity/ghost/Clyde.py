@@ -20,6 +20,9 @@ class Clyde(Ghost):
             self.target = (int(pacman.pos_x), int(pacman.pos_y))
 
         else:
-            self.target = self.scatter_point
+            self.target = (
+                        int(self.scatter_point[0]),
+                        int(self.scatter_point[1])
+                   )
 
         return 0
