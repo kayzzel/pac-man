@@ -11,7 +11,8 @@ class ConfigValidate(BaseModel):
     highscore_filename: str = Field(default="highscore.json", min_length=1)
     nb_level: int = Field(default=10, ge=10)
     levels_dimensions: tuple[
-        Annotated[int, Field(ge=10, le=50)], Annotated[int, Field(ge=10, le=50)]
+        Annotated[int, Field(ge=10, le=50)],
+        Annotated[int, Field(ge=10, le=50)]
     ]
     lives: int = Field(default=3, ge=1)
     point_per_pacgum: int = Field(default=10, ge=0)
