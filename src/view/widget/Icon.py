@@ -177,11 +177,13 @@ class ClickableIcon(Icon):
         image_path: str,
         action: tuple[Callable, Any],
         max_size: tuple[int, int],
-        to_resize: bool = False
+        to_resize: bool = False,
+        magnify: bool = True
     ) -> None:
 
         super().__init__(x, y, image_path, max_size, to_resize)
         self.action: tuple[Callable, Any] = action
+        self.magnify: bool = magnify
         self.was_in: bool = False
 
     def _update_widget(self) -> None:
@@ -189,22 +191,24 @@ class ClickableIcon(Icon):
         if self.was_in and not self.is_in:
 
             self.was_in = False
-            self._resize_image(
-                self.max_size[0],
-                self.max_size[1],
-                True
-            )
-            self.texture = pr.load_texture_from_image(self.image)
+            if self.magnify:
+                self._resize_image(
+                    self.max_size[0],
+                    self.max_size[1],
+                    True
+                )
+                self.texture = pr.load_texture_from_image(self.image)
 
         elif not self.was_in and self.is_in:
 
             self.was_in = True
-            self._resize_image(
-                self.max_size[0] + self.max_size[0] // 10,
-                self.max_size[1] + self.max_size[1] // 10,
-                True
-            )
-            self.texture = pr.load_texture_from_image(self.image)
+            if self.magnify:
+                self._resize_image(
+                    self.max_size[0] + self.max_size[0] // 10,
+                    self.max_size[1] + self.max_size[1] // 10,
+                    True
+                )
+                self.texture = pr.load_texture_from_image(self.image)
 
         if self.is_pressed:
             self.call_action()

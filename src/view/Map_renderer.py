@@ -327,62 +327,62 @@ class Map_renderer:
         self.get_neighbors(cell)
         self.draw_walls(cell, x, y)
 
-        # if cell.collectible:
-        #     collectible: Icon = Icon(
-        #         x + (self.cell_size - self.collectible_size) // 2,
-        #         y + (self.cell_size - self.collectible_size) // 2,
-        #         self.texture_pack.get_texture(cell.collectible.name),
-        #         (self.collectible_size, self.collectible_size),
-        #         True
-        #     )
-        #     collectible.display_widget()
+        if cell.collectible:
+            collectible: Icon = Icon(
+                x + (self.cell_size - self.collectible_size) // 2,
+                y + (self.cell_size - self.collectible_size) // 2,
+                self.texture_pack.get_texture(cell.collectible.name),
+                (self.collectible_size, self.collectible_size),
+                True
+            )
+            collectible.display_widget()
 
-        # entity_base_x: int = x + self.cell_padding
-        # entity_base_y: int = y + self.cell_padding
+        entity_base_x: int = x + self.cell_padding
+        entity_base_y: int = y + self.cell_padding
 
-        # for entity in self.entities:
+        for entity in self.entities:
 
-        #     if not self.entity_is_in(entity, cell):
-        #         continue
+            if not self.entity_is_in(entity, cell):
+                continue
 
-        #     en_posx: float
-        #     en_posy: float
-        #     en_posx, en_posy = self.saved_dirs[entity.name][2]
-        #     # print(f"cell pos {x, y}, entity coor : {en_posx, en_posy}")
-        #     entity_offset_x: int = int((en_posx - cell.pos_x) * 10)
-        #     entity_offset_y: int = int((en_posy - cell.pos_y) * 10)
-        #     # print(f"offset before : {entity_offset_x, entity_offset_y}")
+            en_posx: float
+            en_posy: float
+            en_posx, en_posy = self.saved_dirs[entity.name][2]
+            # print(f"cell pos {x, y}, entity coor : {en_posx, en_posy}")
+            entity_offset_x: int = int((en_posx - cell.pos_x) * 10)
+            entity_offset_y: int = int((en_posy - cell.pos_y) * 10)
+            # print(f"offset before : {entity_offset_x, entity_offset_y}")
 
-        #     en_posx = entity_base_x
-        #     if entity_offset_x > 0:
-        #         en_posx += (self.entity_space // 10) * entity_offset_x
-        #     en_posy = entity_base_y
-        #     if entity_offset_y > 0:
-        #         en_posy += (self.entity_space // 10) * entity_offset_y
-        #     # print(f"entity {entity.name}: entity pos {en_posx, en_posy} offset_x: {entity_offset_x} offset_y : {entity_offset_y}\n")
+            en_posx = entity_base_x
+            if entity_offset_x > 0:
+                en_posx += (self.entity_space // 10) * entity_offset_x
+            en_posy = entity_base_y
+            if entity_offset_y > 0:
+                en_posy += (self.entity_space // 10) * entity_offset_y
+            # print(f"entity {entity.name}: entity pos {en_posx, en_posy} offset_x: {entity_offset_x} offset_y : {entity_offset_y}\n")
 
-        #     texture = self.texture_pack.get_texture((
-        #         self.get_pacman_texture(entity)
-        #         if isinstance(entity, Pac_man)
-        #         else self.get_ghost_texture(entity)
-        #     ))
+            texture = self.texture_pack.get_texture((
+                self.get_pacman_texture(entity)
+                if isinstance(entity, Pac_man)
+                else self.get_ghost_texture(entity)
+            ))
 
-        #     if entity.name not in self.sprites.keys() or texture != self.sprites[entity.name].image_path:
-        #         self.sprites[entity.name] = AnimIcon(
-        #             en_posx,
-        #             en_posy,
-        #             texture,
-        #             (self.entity_size, self.entity_size),
-        #             True,
-        #             6
-        #         )
-        #     else:
-        #         self.sprites[entity.name].x = en_posx
-        #         self.sprites[entity.name].y = en_posy
+            if entity.name not in self.sprites.keys() or texture != self.sprites[entity.name].image_path:
+                self.sprites[entity.name] = AnimIcon(
+                    en_posx,
+                    en_posy,
+                    texture,
+                    (self.entity_size, self.entity_size),
+                    True,
+                    6
+                )
+            else:
+                self.sprites[entity.name].x = en_posx
+                self.sprites[entity.name].y = en_posy
 
-        #     self.sprites[entity.name].display_widget()
-        #     if self.game.is_paused == 1 and "pacman" in self.sprites.keys() and self.sprites["pacman"].loop_finished:
-        #         self.game.resume()
+            self.sprites[entity.name].display_widget()
+            if self.game.is_paused == 1 and "pacman" in self.sprites.keys() and self.sprites["pacman"].loop_finished:
+                self.game.resume()
 
     def get_neighbors(self, cell: Cell) -> None:
 

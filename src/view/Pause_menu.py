@@ -70,7 +70,6 @@ class Pause_menu(View):
             panel_width,
             panel_height,
             button_actions,
-            button_font_sz,
             (10, 2, 0.1)
         )
 

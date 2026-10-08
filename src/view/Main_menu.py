@@ -62,7 +62,6 @@ class Main_menu(View):
             ), None),
             "exit": (pr.close_window, None),
         }
-        button_font_sz: int = self.h // 20
 
         self.panel: Panel = Panel(
             panel_x,
@@ -70,8 +69,8 @@ class Main_menu(View):
             panel_width,
             panel_height,
             button_actions,
-            button_font_sz,
             (10, 2, 0.1),
+            -2,
             (pr.RED, pr.BLANK),
             (pr.GRAY, pr.GOLD)
         )

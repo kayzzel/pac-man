@@ -26,12 +26,24 @@ class Button(Widget):
         self.color: pr.Color = color
         self.hover_color: pr.Color = hover_color
 
+    @property
+    def is_in_area(self) -> bool:
+
+        if not hasattr(self, "area"):
+            return False
+
+        return (
+            self.area[0] <= pr.get_mouse_x() <= self.area[0] + self.area[2]
+        ) and (
+            self.area[1] <= pr.get_mouse_y() <= self.area[1] + self.area[3]
+        )
+
     def display_widget(self) -> None:
 
         self._update_widget()
 
         color: pr.Color = self.color
-        if self.is_in:
+        if self.is_in or self.is_in_area:
             color = self.hover_color
 
         pr.draw_text(self.label, self.posx, self.posy, self.h, color)

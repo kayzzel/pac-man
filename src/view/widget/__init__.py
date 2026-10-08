@@ -3,6 +3,7 @@ from .Icon import Icon, AnimIcon, ClickableIcon
 from .Button import Button
 from .Panel import Panel
 from .Input_box import Input_box
+from .Dropdown import Dropdown
 
 
 __all__: list[str] = [
@@ -12,5 +13,6 @@ __all__: list[str] = [
     "ClickableIcon",
     "Button",
     "Panel",
-    "Input_box"
+    "Input_box",
+    "Dropdown"
 ]

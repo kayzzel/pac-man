@@ -63,8 +63,7 @@ class Map_choice_menu(View):
             self.panel_width,
             self.panel_height,
             {label: action},
-            self.button_font_sz,
-            (self.panel_padding, 3, 4.0)
+            (10, 3, 4.0)
         ) for i, (label, action) in enumerate(self.button_actions.items())
         ]
 
@@ -84,9 +83,7 @@ class Map_choice_menu(View):
             self.h - back_height - 10,
             back_width,
             back_height,
-            {back_label: self.button_actions[back_label]},
-            self.button_font_sz,
-            (self.button_font_sz - 5, 2, 0.1)
+            {back_label: self.button_actions[back_label]}
         ))
 
     def calculate_panel_spacing(self) -> None:

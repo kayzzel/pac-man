@@ -45,7 +45,6 @@ class Save_score_view(View):
             back_width,
             back_height,
             {back_label: (self.app.return_to_prev_view, None)},
-            back_font_sz,
             (back_padding, 2, 0.1)
         )
 

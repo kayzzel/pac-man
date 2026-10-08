@@ -1,6 +1,10 @@
 import pyray as pr
+from typing import Callable, Any
 from .View import View
-from .widget import Panel
+from .widget import Panel, Dropdown
+
+
+DEFAULT_MAPS: list[str] = ["MANDATORY", "ARCADE", "CUSTOM", "ADDONE", "ADDTWO", "ADDTHREE", "ADDFOUR", "ADDFIVE", "ADDSIX"]
 
 
 class Scores_view(View):
@@ -29,6 +33,11 @@ class Scores_view(View):
 
         return self.h // 15
 
+    def load_new_scores(self, map_name: str) -> None:
+
+        print(f"Loading the scores for map '{map_name}'...\n")
+        self.map_dropdown.invert_show()
+
     def _update_buttons(self) -> None:
 
         back_label: str = "back <-|"
@@ -39,9 +48,7 @@ class Scores_view(View):
         back_width: int = (
             pr.measure_text(back_label, button_font_sz)
         ) + button_padding
-        load_width: int = (
-            pr.measure_text(load_label, button_font_sz)
-        ) + button_padding
+        load_width: int = self.w // 5
         button_height: int = button_font_sz + button_padding
 
         self.back_button: Panel = Panel(
@@ -49,23 +56,27 @@ class Scores_view(View):
             self.h - button_height - 10,
             back_width,
             button_height,
-            {back_label: (self.app.return_to_prev_view, None)},
-            button_font_sz,
-            (button_padding, 2, 0.1)
+            {back_label: (self.app.return_to_prev_view, None)}
         )
-        self.load_button: Panel = Panel(
+        main_button: dict[str, tuple[Callable, Any]] = {
+            load_label: (lambda: 0, None)
+        }
+        dropdown_buttons: dict[str, tuple[Callable, Any]] = {
+            map_name: (self.load_new_scores, map_name)
+            for map_name in DEFAULT_MAPS
+        }
+        main_button.update(dropdown_buttons)
+        self.map_dropdown: Dropdown = Dropdown(
             -2,
             self.title_y + self.title_size + self.h // 25,
             load_width,
             button_height,
-            {load_label: (lambda: print(f"function not yet coded for button {load_label}"), None)},
-            button_font_sz,
-            (button_padding, 2, 0.1)
+            main_button
         )
 
     def _update_scores(self) -> None:
 
-        scores_start: int = self.load_button.posy + self.load_button.h
+        scores_start: int = self.map_dropdown.posy + self.map_dropdown.h
 
         scores_height: int = self.h - scores_start - self.back_button.h - 10
 
@@ -110,7 +121,6 @@ class Scores_view(View):
             self.title_size,
             pr.RAYWHITE
         )
-        self.load_button.display_widget()
         self.back_button.display_widget()
 
         for i, score in enumerate(self.scores):
@@ -122,3 +132,5 @@ class Scores_view(View):
                 self.score_font_sz,
                 pr.RAYWHITE
             )
+
+        self.map_dropdown.display_widget()
