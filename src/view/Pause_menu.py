@@ -5,6 +5,7 @@ from typing import Callable, Any
 from .View import View
 from .Scores_view import Scores_view
 from .Save_score_view import Save_score_view
+from .Endgame_view import Endgame_view
 from .widget import Panel, ClickableIcon, Input_box
 
 
@@ -60,7 +61,7 @@ class Pause_menu(View):
                 Scores_view(self.app, TEST_SCORES)
             ),
             "Save and exit": (self.app.change_view, Save_score_view(self.app, self.game)),
-            "Exit": (self.app.change_view, "main_menu")
+            "Exit": (self.app.change_view, Endgame_view(self.app, self.game, TEST_SCORES, True))
         }
         button_font_sz: int = panel_height // (len(button_actions.keys()) * 2 - 1)
 

@@ -1,4 +1,5 @@
 from abc import ABC
+from pyray import measure_text
 from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 
@@ -30,3 +31,10 @@ class View(ABC):
     def y(self) -> int:
 
         return (sh() - self.h) // 2
+
+    @staticmethod
+    def _resize_font(string: str, fontsize: int, width: int) -> int:
+
+        while measure_text(string, fontsize) >= width and fontsize >= 5:
+            fontsize -= 1
+        return fontsize

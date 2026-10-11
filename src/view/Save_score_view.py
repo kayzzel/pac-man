@@ -44,8 +44,7 @@ class Save_score_view(View):
             self.h - back_height - 10,
             back_width,
             back_height,
-            {back_label: (self.app.return_to_prev_view, None)},
-            (back_padding, 2, 0.1)
+            {back_label: (self.app.return_to_prev_view, None)}
         )
 
     def _update_input_box(self) -> None:
