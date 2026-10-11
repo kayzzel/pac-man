@@ -12,6 +12,8 @@ class Blinky(Ghost):
 
         pacman = entities["pacman"]
 
-        self.target = (int(pacman.pos_x), int(pacman.pos_y))
+        if self.target != (int(pacman.pos_x), int(pacman.pos_y)):
+            self.__path = []
+            self.target = (int(pacman.pos_x), int(pacman.pos_y))
 
         return 0
