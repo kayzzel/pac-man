@@ -1,6 +1,7 @@
 from ..Entity import Entity
 from ..Pac_man import Pac_man
 from ...map.Cell import Cell
+from ....utils.path_utils import a_star
 
 from abc import ABC, abstractmethod
 from random import choice
@@ -22,6 +23,8 @@ class Ghost(Entity, ABC):
         self.target: tuple[int, int] = (0, 0)
         self.spawn_point: tuple[int, int] = (0, 0)
         self.scatter_point: tuple[int, int] = (0, 0)
+        self.real_path_finding = False
+        self.__path: list[str] = []
 
     @abstractmethod
     def define_target(self, entities: dict[str, Entity]) -> int:
@@ -91,8 +94,28 @@ class Ghost(Entity, ABC):
             self.state = Ghost_state.CHASE
             self.direction = OPPOSITE[self.direction]
 
-    def __choose_direction(self, walls: dict[str, bool]) -> None:
+    def __choose_direction(
+                self,
+                walls: dict[str, bool],
+                maze: list[list[Cell]]
+            ) -> None:
+        if self.real_path_finding:
+            self.__pacman_real_direction(walls)
+        else:
+            self.__a_star_direction(maze)
 
+    def __a_star_direction(self, maze: list[list[Cell]]):
+
+        if not self.__path:
+            self.__path = a_star(
+                        (self.pos_x, self.pos_y),
+                        self.target,
+                        maze
+                    )
+
+        self.direction = self.__path.pop(0)
+
+    def __pacman_real_direction(self, walls: dict[str, bool]) -> None:
         OPPOSITE: dict[str, str] = {
                 "N": "S",
                 "S": "N",
@@ -141,10 +164,11 @@ class Ghost(Entity, ABC):
     def update(
                 self,
                 entities: dict[str, Entity],
-                cell: Cell,
+                maze: list[list[Cell]],
                 elapsed_time: int
             ) -> None:
 
+        cell = maze[int(self.pos_y)][int(self.pos_x)]
         if isinstance(entities["pacman"], Pac_man):
             self.__choose_state(entities["pacman"], elapsed_time)
         else:
@@ -155,6 +179,6 @@ class Ghost(Entity, ABC):
             if (not cell.special):
                 self.define_target(entities)
 
-            self.__choose_direction(cell.walls)
+            self.__choose_direction(cell.walls, maze)
 
         self.walk()

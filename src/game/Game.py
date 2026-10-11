@@ -88,6 +88,7 @@ class Game:
 
             ghost.pos_x, ghost.pos_y = ghost.spawn_point
 
+            ghost.real_path_finding = cur_map.real_path_finding
             ghost.state = Ghost_state.SCATTER
 
 
@@ -134,7 +135,7 @@ def update_game(game: Game) -> None:
     for ghost in game.ghosts.values():
         ghost.update(
                 {"pacman": pacman, "blinky": game.ghosts["BLINKY"]},
-                cur_map.cells[int(ghost.pos_y)][int(ghost.pos_x)],
+                cur_map.cells,
                 int(game.game_loop.elapsed_time)
              )
 
