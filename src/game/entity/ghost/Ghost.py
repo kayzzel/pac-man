@@ -97,9 +97,9 @@ class Ghost(Entity, ABC):
         if self.real_path_finding:
             self.__pacman_real_direction(walls)
         else:
-            self.__a_star_direction(walls, maze)
+            self.__not_pacman_real_direction(walls, maze)
 
-    def __a_star_direction(
+    def __not_pacman_real_direction(
                 self,
                 walls: dict[str, bool],
                 maze: list[list[Cell]]
