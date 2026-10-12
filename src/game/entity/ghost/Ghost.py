@@ -24,7 +24,7 @@ class Ghost(Entity, ABC):
         self.spawn_point: tuple[int, int] = (0, 0)
         self.scatter_point: tuple[int, int] = (0, 0)
         self.real_path_finding = False
-        self.__path: list[str] = []
+        self.path: list[str] = []
 
     @abstractmethod
     def define_target(self, entities: dict[str, Entity]) -> int:
@@ -99,21 +99,25 @@ class Ghost(Entity, ABC):
                 walls: dict[str, bool],
                 maze: list[list[Cell]]
             ) -> None:
-        if self.real_path_finding:
-            self.__pacman_real_direction(walls)
-        else:
+        if not self.real_path_finding or self.state == Ghost_state.FRIGHTENED:
             self.__a_star_direction(maze)
+        else:
+            self.__pacman_real_direction(walls)
 
     def __a_star_direction(self, maze: list[list[Cell]]):
 
-        if not self.__path:
-            self.__path = a_star(
-                        (self.pos_x, self.pos_y),
+        if not self.path:
+            self.path = a_star(
+                        (int(self.pos_x), int(self.pos_y)),
                         self.target,
                         maze
                     )
 
-        self.direction = self.__path.pop(0)
+        if not self.path:
+            self.direction = ""
+            return
+
+        self.direction = self.path.pop(0)
 
     def __pacman_real_direction(self, walls: dict[str, bool]) -> None:
         OPPOSITE: dict[str, str] = {

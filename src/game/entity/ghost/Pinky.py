@@ -25,7 +25,7 @@ class Pinky(Ghost):
             int(pacman.pos_x) + vector[0],
             int(pacman.pos_y) + vector[1]
                 ):
-            self.__path = []
+            self.path = []
             self.target = (
                 int(pacman.pos_x) + vector[0],
                 int(pacman.pos_y) + vector[1]

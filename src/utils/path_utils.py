@@ -74,7 +74,7 @@ def a_star(
     coord: tuple[int, int],  # (x, y)
     goal: tuple[int, int],  # (x, y)
     maze: list[list[Cell]]
-) -> str | None:
+        ) -> list[str]:
     """
         Description:
     get a maze and find the shortest path from the entry_point
@@ -98,10 +98,10 @@ def a_star(
     # Both tiles must be inside the maze (no wrap-around with negatives)
     for x, y in (coord, goal):
         if not (0 <= x < width and 0 <= y < height):
-            return None
+            return []
 
     if coord == goal:
-        return ""
+        return []
 
     # A list of all the PathCell used to find the exit
     cells: list[list[PathCell]] = []
@@ -179,7 +179,7 @@ def a_star(
         cur_cell = next_cell
 
     if not path_found:
-        return None
+        return []
 
     # Get the path composed of cell and translate it to a path of direction
     return compute_path(path_found, coord)
@@ -311,7 +311,7 @@ def retrace_steps(
 def compute_path(
     path: list[tuple[int, int]],
     entry_point: tuple[int, int]
-) -> str:
+) -> list[str]:
     """
         Description:
     Convert a list of (col, row) coordinates into a string of cardinal
@@ -330,7 +330,7 @@ def compute_path(
     cur_col: int
     cur_col, cur_row = entry_point
 
-    directions: str = ""
+    directions: list[str] = []
 
     for col, row in path:
 
@@ -341,7 +341,7 @@ def compute_path(
                 row == cur_row + dirs[0]
                 and col == cur_col + dirs[1]
             ):
-                directions += wall
+                directions.append(wall)
 
         # Advance the current position to the next cell in the path
         cur_row, cur_col = row, col
