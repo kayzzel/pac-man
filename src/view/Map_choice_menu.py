@@ -1,7 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .View import View
-from .widget import Panel, Icon
+from .widget import Widget, Text, Panel, Icon
 
 
 ICON_PATHS: dict[str, str] = {
@@ -15,24 +15,22 @@ class Map_choice_menu(View):
 
     def _update_title(self) -> None:
 
-        self.title: str = "CHOOSE THE MODE"
-        self.title_font_sz: int = self.h // 8
-        self.title_y: int = self.h // 10
-        self.title_width: int = pr.measure_text(
-            self.title,
-            self.title_font_sz
+        self.title: Text = Text(
+            "CHOOSE THE MODE",
+            -2,
+            self.h // 10,
+            self.h // 8
         )
+        self.widgets.append(self.title)
 
     def _update_icons(self) -> None:
 
         self.icon_width: int = self.w // 5
 
-        title_end: int = self.title_y + self.title_font_sz
-
-        height_remaining: int = self.h - title_end
+        height_remaining: int = self.h - self.title.lowerbound
         self.icon_height: int = 2 * (height_remaining // 3)
 
-        self.icon_y: int = title_end + height_remaining // 10
+        self.icon_y: int = self.title.lowerbound + height_remaining // 10
         icon_spacing: int = (self.w - self.icon_width * 3) // 4
 
         self.icons: dict[str, Icon] = {
@@ -44,6 +42,7 @@ class Map_choice_menu(View):
                 True
             ) for i, (icon_type, icon_path) in enumerate(ICON_PATHS.items())
         }
+        self.widgets += list(self.icons.values())
 
     def _update_panels(self) -> None:
 
@@ -57,7 +56,7 @@ class Map_choice_menu(View):
 
         self.calculate_panel_spacing()
 
-        self.panels: list[Panel] = [Panel(
+        self.widgets += [Panel(
             self.icons[label].posx + (self.icons[label].w - self.panel_width) // 2,
             self.icon_y + (self.icon_height - self.panel_height) // 2,
             self.panel_width,
@@ -78,7 +77,7 @@ class Map_choice_menu(View):
         ) + self.button_font_sz - 5
         back_height: int = self.button_font_sz * 2 - 5
 
-        self.panels.append(Panel(
+        self.widgets.append(Panel(
             self.w - back_width - 10,
             self.h - back_height - 10,
             back_width,
@@ -92,10 +91,7 @@ class Map_choice_menu(View):
             self.button_actions.keys(),
             key=lambda label: len(label)
         )
-        self.button_font_sz: int = self.h // 15
-
-        while pr.measure_text(max_label, self.button_font_sz) > self.w // 5:
-            self.button_font_sz -= 1
+        self.button_font_sz: int = Text._resize_font(max_label, self.h // 15, self.w // 5)
 
         self.panel_padding: int = self.button_font_sz + 10
         self.panel_width: int = pr.measure_text(
@@ -117,22 +113,7 @@ class Map_choice_menu(View):
         if not pr.is_window_resized() and not forced:
             return
 
+        self.widgets: list[Widget] = []
         self._update_title()
         self._update_icons()
         self._update_panels()
-
-    def display_view(self) -> None:
-
-        self._update()
-
-        pr.draw_text(
-            self.title,
-            (self.w - self.title_width) // 2,
-            self.title_y,
-            self.title_font_sz,
-            pr.RAYWHITE
-        )
-        for icon in self.icons.values():
-            icon.display_widget()
-        for panel in self.panels:
-            panel.display_widget()

@@ -1,7 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .View import View
-from .widget import Panel, Dropdown
+from .widget import Widget, Text, Panel, Dropdown
 
 
 DEFAULT_MAPS: list[str] = ["MANDATORY", "ARCADE", "CUSTOM", "ADDONE", "ADDTWO", "ADDTHREE", "ADDFOUR", "ADDFIVE", "ADDSIX"]
@@ -11,27 +11,21 @@ class Scores_view(View):
 
     def __init__(self, app, scores: dict[str, int]) -> None:
 
-        self.title: str = "BEST SCORES"
         self.scores: list[str] = [
             pl_name + ": " + str(pl_score)
             for pl_name, pl_score in scores.items()
         ]
         super().__init__(app)
 
-    @property
-    def title_size(self) -> int:
+    def _update_title(self) -> None:
 
-        return self.h // 10
-
-    @property
-    def title_x(self) -> int:
-
-        return (self.w - pr.measure_text(self.title, self.title_size)) // 2
-
-    @property
-    def title_y(self) -> int:
-
-        return self.h // 15
+        self.title: Text = Text(
+            "BEST SCORES",
+            -2,
+            self.h // 15,
+            self.h // 10
+        )
+        self.widgets.append(self.title)
 
     def load_new_scores(self, map_name: str) -> None:
 
@@ -68,11 +62,12 @@ class Scores_view(View):
         main_button.update(dropdown_buttons)
         self.map_dropdown: Dropdown = Dropdown(
             -2,
-            self.title_y + self.title_size + self.h // 25,
+            self.title.y + self.title.font_size + self.h // 25,
             load_width,
             button_height,
             main_button
         )
+        self.widgets += [self.back_button, self.map_dropdown]
 
     def _update_scores(self) -> None:
 
@@ -83,21 +78,23 @@ class Scores_view(View):
         padding: int = scores_height // 8
         space_remaining: int = scores_height - padding * 2
 
-        self.score_y: int = scores_start + padding
-
-        self.score_font_sz: int = space_remaining // (
-            len(self.scores) * 2 - 1
-        )
+        score_y: int = scores_start + padding
 
         max_score: str = max(self.scores, key=lambda score: len(score))
-        while (
-            pr.measure_text(max_score, self.score_font_sz) >= self.w
-        ) and (
-            self.score_font_sz > 5
-        ):
-            self.score_font_sz -= 1
+        score_font_sz: int = Text._resize_font(
+            max_score,
+            space_remaining // (len(self.scores) * 2 - 1)
+        )
+        score_y -= score_font_sz
 
-        self.score_y -= self.score_font_sz
+        for i, score in enumerate(self.scores):
+
+            self.widgets.append(Text(
+                score,
+                -2,
+                score_y + score_font_sz * i + score_font_sz * (i + 1),
+                score_font_sz
+            ))
 
     def _update(self, forced: bool = False) -> None:
 
@@ -107,30 +104,7 @@ class Scores_view(View):
         if not pr.is_window_resized() and not forced:
             return
 
+        self.widgets: list[Widget] = []
+        self._update_title()
         self._update_buttons()
         self._update_scores()
-
-    def display_view(self) -> None:
-
-        self._update()
-
-        pr.draw_text(
-            self.title,
-            self.title_x,
-            self.title_y,
-            self.title_size,
-            pr.RAYWHITE
-        )
-        self.back_button.display_widget()
-
-        for i, score in enumerate(self.scores):
-
-            pr.draw_text(
-                score,
-                (self.w - pr.measure_text(score, self.score_font_sz)) // 2,
-                self.score_y + self.score_font_sz * i + self.score_font_sz * (i + 1),
-                self.score_font_sz,
-                pr.RAYWHITE
-            )
-
-        self.map_dropdown.display_widget()

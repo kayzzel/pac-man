@@ -11,26 +11,39 @@ class Text(Widget):
         x: int,
         y: int,
         font_size: int,
-        max_w: int = sw(),
+        max_w: int = 0,
         color: pr.Color = pr.RAYWHITE,
-        width: int = sw()
+        width: int = 0
     ) -> None:
+
+        if not max_w:
+            max_w = sw()
+        if not width:
+            width = sw()
 
         self.label: str = label
         self.font_size: int = self._resize_font(label, font_size, max_w)
         self.x: int = (
-            (width - pr.measure_text(self.label, self.font_size)) // 2
-            if x == -2 else x
+            (width - self.w) // (-x)
+            if x < 0 else x
         )
         self.y: int = y
         self.color: pr.Color = color
 
     @staticmethod
-    def _resize_font(string: str, fontsize: int, width: int) -> int:
+    def _resize_font(string: str, fontsize: int, width: int = 0) -> int:
+
+        if not width:
+            width = sw()
 
         while pr.measure_text(string, fontsize) >= width and fontsize >= 5:
             fontsize -= 1
         return fontsize
+
+    @property
+    def w(self) -> int:
+
+        return pr.measure_text(self.label, self.font_size)
 
     @property
     def lowerbound(self) -> int:

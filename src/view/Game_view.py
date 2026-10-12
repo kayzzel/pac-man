@@ -2,7 +2,7 @@ import pyray as pr
 from typing import Any
 from .View import View
 from .Pause_menu import Pause_menu
-from .widget import Icon
+from .widget import Icon, Text, Widget
 from ..game.Game import Game
 from ..game.map.Cell import Cell
 from .Map_renderer import Map_renderer
@@ -39,7 +39,8 @@ class Game_view(View):
 
     def _update_score_panel(self) -> None:
 
-        self.left_panel_width: int = self.w // 4
+        self.left_w: int = self.w // 4
+
         self.labels: list[str] = [
             "Highscore : " + str(0),
             "Score : " + str(self.game.player.score),
@@ -47,41 +48,32 @@ class Game_view(View):
         ]
         max_label: str = max(self.labels, key=lambda label: len(label))
 
-        self.label_font_sz: int = self.h // 10
+        label_font_sz: int = Text._resize_font(max_label, self.h // 10, self.left_w - self.left_w // 3)
 
-        while (
-            pr.measure_text(max_label, self.label_font_sz)
-            >= self.left_panel_width - self.left_panel_width // 3
-        ):
-            self.label_font_sz -= 1
+        self.widgets += [Text(
+            label,
+            -2,
+            self.h // 16 + (label_font_sz + self.h // 10) * i,
+            label_font_sz,
+            self.left_w - self.left_w // 3,
+            pr.RAYWHITE,
+            self.left_w
+        ) for i, label in enumerate(self.labels)]
 
-        label_x: int = (
-            self.left_panel_width
-            - pr.measure_text(max_label, self.label_font_sz)
-        ) // 2
-        label_starty: int = self.h // 16
-        label_spacing: int = self.h // 10
-
-        self.labels_data: dict[str, tuple[int, int]] = {
-            self.labels[label]: (
-                label_x,
-                label_starty + (self.label_font_sz + label_spacing) * label
-            ) for label in range(len(self.labels))
-        }
-
-        life_label_x: int = self.left_panel_width // 10
-        self.labels_data["Lives : "] = (
-            life_label_x,
-            self.h - self.h // 5
+        life_label: Text = Text(
+            "Lives : ",
+            self.left_w // 10,
+            self.h - self.h // 5,
+            label_font_sz
         )
-        life_label_w: int = pr.measure_text("Lives : ", self.label_font_sz)
+        self.widgets.append(life_label)
         life_icon_sz: int = (
-            self.left_panel_width - (life_label_x + life_label_w)
+            self.left_w - (life_label.x + life_label.w)
         ) // 3 - 10
 
-        self.life_icons: list[Icon] = [Icon(
-            10 + life_label_x + life_label_w + life_icon_sz * life,
-            self.h - self.h // 5 - 5,
+        self.widgets += [Icon(
+            10 + life_label.x + life_label.w + life_icon_sz * life,
+            life_label.y - 5,
             LIFE_ICON_PATH,
             (life_icon_sz, life_icon_sz),
             True
@@ -91,7 +83,7 @@ class Game_view(View):
     def map_startx(self) -> int:
 
         return (
-            self.left_panel_width + MIDDLE_LINE_THICKNESS
+            self.left_w + MIDDLE_LINE_THICKNESS
             + (self.map_panel_width - self.map_width) // 2
         )
 
@@ -117,7 +109,7 @@ class Game_view(View):
     def _update_map_panel(self) -> None:
 
         self.grid: list[list[Cell]] = self.game.map[self.game.map_index].cells
-        self.map_panel_width: int = self.w - self.left_panel_width - 10
+        self.map_panel_width: int = self.w - self.left_w - MIDDLE_LINE_THICKNESS - 10
         self.map_width: int = min(
             self.map_panel_width - self.map_panel_width // 10,
             self.h - self.h // 10
@@ -171,6 +163,7 @@ class Game_view(View):
         if not self.show_as_modal:
             self.modal_view._update(True)
 
+        self.widgets: list[Widget] = []
         self._update_score_panel()
         self._update_map_panel()
 
@@ -183,8 +176,8 @@ class Game_view(View):
             return
 
         pr.draw_line_ex(
-            (self.left_panel_width, 0),
-            (self.left_panel_width, self.h),
+            (self.left_w, 0),
+            (self.left_w, self.h),
             MIDDLE_LINE_THICKNESS,
             pr.RAYWHITE
         )
@@ -197,10 +190,5 @@ class Game_view(View):
 
         self.map_renderer.draw_grid()
 
-        for label, coor in self.labels_data.items():
-
-            pr.draw_text(label, *coor, self.label_font_sz, pr.RAYWHITE)
-
-        for icon in self.life_icons:
-
-            icon.display_widget()
+        for widget in self.widgets:
+            widget.display_widget()

@@ -1,7 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .View import View
-from .widget.Panel import Panel
+from .widget.Panel import Widget, Panel
 from .widget.Icon import Icon, AnimIcon
 
 
@@ -40,6 +40,7 @@ class Main_menu(View):
             self.w - BORDER_PADDING * 2,
             self.h - BORDER_PADDING * 2
         )
+        self.widgets += [self.menu_icon, self.background]
 
     def _update_panel(self) -> None:
 
@@ -74,12 +75,14 @@ class Main_menu(View):
             (pr.RED, pr.BLANK),
             (pr.GRAY, pr.GOLD)
         )
+        self.widgets.append(self.panel)
 
     def _update(self, forced: bool = False) -> None:
 
         if not pr.is_window_resized() and not forced:
             return
 
+        self.widgets: list[Widget] = []
         self._update_icons()
         self._update_panel()
 
@@ -92,6 +95,5 @@ class Main_menu(View):
             BORDER_THICKNESS,
             pr.DARKBLUE
         )
-        self.background.display_widget()
-        self.menu_icon.display_widget()
-        self.panel.display_widget()
+        for widget in self.widgets:
+            widget.display_widget()

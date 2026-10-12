@@ -6,7 +6,7 @@ from .View import View
 from .Scores_view import Scores_view
 from .Save_score_view import Save_score_view
 from .Endgame_view import Endgame_view
-from .widget import Panel, ClickableIcon, Input_box
+from .widget import Widget, Text, Panel, ClickableIcon, Input_box
 
 
 CHEAT_PASSWORD: str = "password"
@@ -73,32 +73,6 @@ class Pause_menu(View):
             button_actions,
             (10, 2, 0.1)
         )
-
-    # def calculate_panel_spacing(self) -> None:
-
-    #     max_label: str = max(
-    #         self.button_actions.keys(),
-    #         key=lambda label: len(label)
-    #     )
-
-    #     self.but_font_sz: int = BUTTON_FONT_SIZE
-    #     self.panel_pad: int = PANEL_PADDING
-
-    #     self.left_panel_w: int = pr.measure_text(
-    #         max_label,
-    #         self.but_font_sz,
-    #     ) + self.panel_pad
-    #     while self.left_panel_w >= self.w // 2 and self.but_font_sz >= 5:
-    #         self.but_font_sz -= 1
-    #         self.left_panel_w = pr.measure_text(
-    #             max_label,
-    #             self.but_font_sz,
-    #         ) + self.panel_pad
-
-    #     self.left_panel_w = max(
-    #         self.left_panel_w,
-    #         self.w // 2 - self.w // 10
-    #     )
 
     def _update_lock_and_password(self) -> None:
 

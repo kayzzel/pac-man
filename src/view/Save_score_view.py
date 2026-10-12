@@ -1,6 +1,6 @@
 import pyray as pr
 from .View import View
-from .widget import Input_box, Panel
+from .widget import Widget, Text, Input_box, Panel
 
 
 MAX_INPUT_LENGTH: int = 20
@@ -21,12 +21,13 @@ class Save_score_view(View):
 
     def _update_title(self) -> None:
 
-        self.title: str = "SAVE SCORE"
-        self.title_font_sz: int = self.h // 10
-        self.title_y: int = self.h // 12
-        self.title_x: int = (
-            self.w - pr.measure_text(self.title, self.title_font_sz)
-        ) // 2
+        self.title: Text = Text(
+            "SAVE SCORE",
+            -2,
+            self.h // 12,
+            self.h // 10
+        )
+        self.widgets.append(self.title)
 
     def _update_back_button(self) -> None:
 
@@ -46,6 +47,7 @@ class Save_score_view(View):
             back_height,
             {back_label: (self.app.return_to_prev_view, None)}
         )
+        self.widgets.append(self.back_button)
 
     def _update_input_box(self) -> None:
 
@@ -58,17 +60,20 @@ class Save_score_view(View):
             NAME_CHAR_RANGE,
             (self.save_name, None)
         )
-        self.input_text: str = "enter name : "
         self.input_box.enter_input = True
-        self.input_font_sz: int = self.h // 16
-        self.input_x: int = (self.w - pr.measure_text(
-            self.input_text,
-            self.input_font_sz
-        )) // 2
-        self.input_y: int = (
-            self.input_box.posy
-            - self.input_font_sz
-            - self.h // 20
+        self.widgets.append(self.input_box)
+
+        self.input_text: Text = Text(
+            "enter name : ",
+            -2,
+            (
+                self.input_box.posy
+                - self.h // 16
+                - self.h // 20
+            ),
+            self.h // 16,
+            self.w,
+            pr.LIGHTGRAY
         )
 
     def _update(self, forced: bool = False) -> None:
@@ -79,6 +84,7 @@ class Save_score_view(View):
         if not pr.is_window_resized() and not forced:
             return
 
+        self.widgets: list[Widget] = []
         self._update_title()
         self._update_back_button()
         self._update_input_box()
@@ -87,7 +93,7 @@ class Save_score_view(View):
 
         self.player_name: str = self.input_box.input
         self.game.scores.add_scores(self.player_name, self.game.player.score)
-        self.input_text = ""
+        self.input_text.label = ""
         self.show_message = [
             "Successfully saved ",
             f"the score {self.game.player.score}",
@@ -99,26 +105,11 @@ class Save_score_view(View):
 
         self._update()
 
-        pr.draw_text(
-            self.title,
-            self.title_x,
-            self.title_y,
-            self.title_font_sz,
-            pr.RAYWHITE
-        )
+        if self.input_text.label:
+            self.widgets.append(self.input_text)
 
-        if self.input_text:
-            pr.draw_text(
-                self.input_text,
-                self.input_x,
-                self.input_y,
-                self.input_font_sz,
-                pr.LIGHTGRAY
-            )
-
-        self.back_button.display_widget()
-
-        self.input_box.display_widget()
+        for widget in self.widgets:
+            widget.display_widget()
 
         if self.show_message:
             self.display_message()
@@ -127,14 +118,8 @@ class Save_score_view(View):
 
         if self.msg_frame_counter < MSG_DISPLAY_TIME:
 
-            msg_font_sz: int = self.h // 25
             max_msg: str = max(self.show_message, key=lambda msg: len(msg))
-
-            while (
-                pr.measure_text(max_msg, msg_font_sz) > self.w - self.w // 3
-                and msg_font_sz >= 5
-            ):
-                msg_font_sz -= 1
+            msg_font_sz: int = Text._resize_font(max_msg, self.h // 25, self.w - self.w // 3)
 
             msg_y: int = self.input_box.posy + self.input_box.h + self.h // 15
 
