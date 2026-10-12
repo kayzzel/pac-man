@@ -21,9 +21,13 @@ class Pinky(Ghost):
         pacman = entities["pacman"]
         vector = VECTORS[pacman.direction]
 
-        self.target = (
+        if self.target != (
             int(pacman.pos_x) + vector[0],
             int(pacman.pos_y) + vector[1]
-        )
+                ):
+            self.target = (
+                int(pacman.pos_x) + vector[0],
+                int(pacman.pos_y) + vector[1]
+            )
 
         return 0

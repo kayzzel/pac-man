@@ -4,6 +4,7 @@ from .Cell import Cell
 class Map:
     def __init__(self) -> None:
         self.cells: list[list[Cell]] = []
+        self.real_path_finding = False
         self.collectible_count: int = 0
         self.pacman_spawn: tuple[int, int] = (0, 0)
         self.ghosts_spawn: dict[str, tuple[int, int]] = {

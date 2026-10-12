@@ -25,9 +25,13 @@ class Inky(Ghost):
         central_x = int(pacman.pos_x) + vector[0]
         central_y = int(pacman.pos_y) + vector[1]
 
-        self.target = (
+        if self.target != (
             2 * central_x - int(blinky.pos_x),
             2 * central_y - int(blinky.pos_y),
-        )
+                ):
+            self.target = (
+                2 * central_x - int(blinky.pos_x),
+                2 * central_y - int(blinky.pos_y),
+            )
 
         return 0
