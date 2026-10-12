@@ -29,7 +29,6 @@ class Inky(Ghost):
             2 * central_x - int(blinky.pos_x),
             2 * central_y - int(blinky.pos_y),
                 ):
-            self.path = []
             self.target = (
                 2 * central_x - int(blinky.pos_x),
                 2 * central_y - int(blinky.pos_y),

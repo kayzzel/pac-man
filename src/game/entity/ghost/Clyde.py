@@ -18,12 +18,10 @@ class Clyde(Ghost):
         )
         if distance > 8:
             if self.target != (int(pacman.pos_x), int(pacman.pos_y)):
-                self.path = []
                 self.target = (int(pacman.pos_x), int(pacman.pos_y))
 
         else:
             if self.target != self.scatter_point:
-                self.path = []
                 self.target = self.scatter_point
 
         return 0

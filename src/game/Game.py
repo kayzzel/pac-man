@@ -74,9 +74,8 @@ class Game:
     def start_position(self) -> None:
         cur_map = self.map[self.map_index]
 
-        self.player.pos_x, self.player.pos_y = (
-                cur_map.pacman_spawn
-            )
+        self.player.pos_x = cur_map.pacman_spawn[0] + 0.5
+        self.player.pos_y = cur_map.pacman_spawn[1] + 0.5
 
         self.player.is_energized = False
 
@@ -86,7 +85,8 @@ class Game:
             ghost.spawn_point = cur_map.ghosts_spawn[ghost_name]
             ghost.scatter_point = cur_map.ghosts_scatter[ghost_name]
 
-            ghost.pos_x, ghost.pos_y = ghost.spawn_point
+            ghost.pos_x = ghost.spawn_point[0] + 0.5
+            ghost.pos_y = ghost.spawn_point[1] + 0.5
 
             ghost.real_path_finding = cur_map.real_path_finding
             ghost.state = Ghost_state.SCATTER
