@@ -3,7 +3,12 @@ from pyray import get_screen_width as sw
 from .Widget import Widget
 
 
+PACMAN_FONT = "src/view/assets/fonts/crackman/Crackman.otf"
+
+
 class Text(Widget):
+
+    spacing: float = 2
 
     def __init__(
         self,
@@ -24,26 +29,32 @@ class Text(Widget):
         self.label: str = label
         self.font_size: int = self._resize_font(label, font_size, max_w)
         self.x: int = (
-            (width - self.w) // (-x)
+            (width - self.width) // (-x)
             if x < 0 else x
         )
         self.y: int = y
         self.color: pr.Color = color
 
-    @staticmethod
-    def _resize_font(string: str, fontsize: int, width: int = 0) -> int:
+    @classmethod
+    def _load_font(cls) -> None:
+        cls.font = pr.load_font(PACMAN_FONT)
+
+    @classmethod
+    def _resize_font(cls, string: str, fontsize: int, width: int = 0) -> int:
 
         if not width:
             width = sw()
 
-        while pr.measure_text(string, fontsize) >= width and fontsize >= 5:
+        if not hasattr(cls, "font"):
+            cls._load_font()
+        while int(pr.measure_text_ex(cls.font, string, float(fontsize), cls.spacing).x) >= width and fontsize >= 5:
             fontsize -= 1
         return fontsize
 
     @property
-    def w(self) -> int:
+    def width(self) -> int:
 
-        return pr.measure_text(self.label, self.font_size)
+        return int(pr.measure_text_ex(self.font, self.label, float(self.font_size), self.spacing).x)
 
     @property
     def lowerbound(self) -> int:
@@ -52,10 +63,11 @@ class Text(Widget):
 
     def display_widget(self) -> None:
 
-        pr.draw_text(
+        pr.draw_text_ex(
+            self.font,
             self.label,
-            self.x,
-            self.y,
-            self.font_size,
+            (self.x, self.y),
+            float(self.font_size),
+            self.spacing,
             self.color
         )

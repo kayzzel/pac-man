@@ -1,6 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .Widget import Widget
+from .Text import Text
 
 
 MAX_INPUT_CHARS: int = 10
@@ -33,7 +34,6 @@ class Input_box(Widget):
         self.textbox: tuple[int, int, int, int] = (
             self.posx, self.posy, self.w, self.h
         )
-        self.font_size: int = self.h - 5
         self.char_range: tuple[int, int] = char_range
         self.max_chars: int = max_chars
         self.standin_input: str = "h" * max_chars
@@ -48,19 +48,6 @@ class Input_box(Widget):
         self.frame_counter: int = 0
 
         self.action: tuple[Callable, Any] = action
-
-        self.calculate_font_size()
-
-    def calculate_font_size(self) -> None:
-
-        while (
-            pr.measure_text(
-                self.standin_input,
-                self.font_size
-            ) >= self.w - 5
-        ) and self.font_size >= 1:
-
-            self.font_size -= 1
 
     def _update_widget(self) -> None:
 
@@ -115,19 +102,18 @@ class Input_box(Widget):
 
         pr.draw_rectangle_lines(*self.textbox, line_color)
 
-        text_padding: int = (
-            self.w + 5 - pr.measure_text(self.standin_input, self.font_size)
-        )
-        text_startx: int = self.posx + text_padding
-        text_starty: int = self.posy + (self.h - self.font_size) // 2
+        text_padding: int = self.w // 8
 
-        pr.draw_text(
+        user_input: Text = Text(
             self.input,
-            text_startx,
-            text_starty,
-            self.font_size,
+            self.posx + text_padding,
+            self.posy,
+            self.h - self.h // 8,
+            self.w - text_padding * 2,
             self.text_color
         )
+        user_input.y += (self.h - user_input.font_size) // 2
+        user_input.display_widget()
 
         if (
             self.enter_input
@@ -136,10 +122,11 @@ class Input_box(Widget):
         ) and (
             (self.frame_counter // 20) % 2 == 0
         ):
-            pr.draw_text(
+            pr.draw_text_ex(
+                Text.font,
                 "_",
-                text_startx + 5 + pr.measure_text(self.input, self.font_size),
-                text_starty + 2,
-                self.font_size,
+                (user_input.x + 5 + user_input.width, user_input.y + 2),
+                float(user_input.font_size),
+                Text.spacing,
                 self.cursor_color
             )

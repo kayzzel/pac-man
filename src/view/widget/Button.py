@@ -1,6 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .Widget import Widget
+from .Text import Text
 
 
 BUTTON_BASE_COLOR: pr.Color = pr.WHITE
@@ -46,4 +47,4 @@ class Button(Widget):
         if self.is_in or self.is_in_area:
             color = self.hover_color
 
-        pr.draw_text(self.label, self.posx, self.posy, self.h, color)
+        pr.draw_text_ex(Text.font, self.label, (self.posx, self.posy), float(self.h), Text.spacing, color)

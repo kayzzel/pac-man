@@ -68,11 +68,11 @@ class Game_view(View):
         )
         self.widgets.append(life_label)
         life_icon_sz: int = (
-            self.left_w - (life_label.x + life_label.w)
+            self.left_w - (life_label.x + life_label.width)
         ) // 3 - 10
 
         self.widgets += [Icon(
-            10 + life_label.x + life_label.w + life_icon_sz * life,
+            10 + life_label.x + life_label.width + life_icon_sz * life,
             life_label.y - 5,
             LIFE_ICON_PATH,
             (life_icon_sz, life_icon_sz),
@@ -160,8 +160,7 @@ class Game_view(View):
         if not pr.is_window_resized() and not forced:
             return
 
-        if not self.show_as_modal:
-            self.modal_view._update(True)
+        self.modal_view._update(True)
 
         self.widgets: list[Widget] = []
         self._update_score_panel()

@@ -1,6 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .Widget import Widget
+from .Text import Text
 from .Button import Button, BUTTON_BASE_COLOR, BUTTON_HOVER_COLOR
 
 
@@ -54,15 +55,8 @@ class Panel(Widget):
         self.font_size: int = height_remaining // len(labels)
         space_for_labels = height_remaining - (len(labels) - 1) * (self.font_size // 2)
 
-        self.font_size = space_for_labels // len(labels)
-
         max_label: str = max(labels, key=lambda label: len(label))
-        while (
-            pr.measure_text(max_label, self.font_size) >= self.w
-        ) and (
-            self.font_size > 5
-        ):
-            self.font_size -= 1
+        self.font_size = Text._resize_font(max_label, space_for_labels // len(labels), self.w)
 
         self.int_pad: int = 0
         if len(labels) > 1:
@@ -75,7 +69,7 @@ class Panel(Widget):
     def center_button_x(self, label: str) -> int:
 
         return self.posx + (
-            self.w - pr.measure_text(label, self.font_size)
+            self.w - int(pr.measure_text_ex(Text.font, label, float(self.font_size), Text.spacing).x)
         ) // 2
 
     def init_buttons(
