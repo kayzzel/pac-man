@@ -3,10 +3,10 @@ from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
-from .Scores_view import Scores_view
+from .Scores_view import Scores_view, TEST_SCORES
 from .Save_score_view import Save_score_view
 from .Endgame_view import Endgame_view
-from .widget import Widget, Text, Panel, ClickableIcon, Input_box
+from .widget import Text, Panel, ClickableIcon, Input_box
 
 
 CHEAT_PASSWORD: str = "password"
@@ -16,15 +16,6 @@ BORDER_THICK: int = 5
 
 LOCK_CLOSED_PATH: str = "src/view/assets/icons/lock_closed.jpg"
 LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
-
-TEST_SCORES: dict[str, int] = {
-    "figue": 123456789,
-    "banane": 12345678,
-    "mirabelle": 1234567,
-    "pomme": 123456,
-    "pêche": 12345,
-    "abricot": 1234
-}
 
 
 class Pause_menu(View):
@@ -58,7 +49,7 @@ class Pause_menu(View):
             ), None),
             "Scores": (
                 self.app.change_view,
-                Scores_view(self.app, TEST_SCORES)
+                Scores_view(self.app)
             ),
             "Save and exit": (self.app.change_view, Save_score_view(self.app, self.game)),
             "Exit": (self.app.change_view, Endgame_view(self.app, self.game, TEST_SCORES, True))
@@ -73,6 +64,12 @@ class Pause_menu(View):
             button_actions,
             (10, 2, 0.1)
         )
+
+    def reset_input(self) -> None:
+
+        self.show_input: bool = False
+        self.show_message: str = ""
+        self.lock_icon.y = -2
 
     def _update_lock_and_password(self) -> None:
 
@@ -98,9 +95,7 @@ class Pause_menu(View):
             (32, 125),
             (self.validate_password, None)
         )
-
-        self.show_input: bool = False
-        self.show_message: str = ""
+        self.reset_input()
 
     def show_input_box(self) -> None:
 
@@ -173,21 +168,20 @@ class Pause_menu(View):
 
         if self.frame_counter < PASSWORD_MSG_TIME:
 
-            message_width: int = (self.w // 2 - pr.measure_text(
+            message: Text = Text(
                 self.show_message,
-                self.h // 20
-            )) // 2
-            pr.draw_text(
-                self.show_message,
-                self.x + self.w // 2 + message_width,
+                self.x + self.w // 2,
                 (
                     self.input_password.posy
                     + self.input_password.h
                     + self.h // 10
                 ),
-                self.h // 20,
+                self.h // 15,
+                self.w // 2 - self.w // 6,
                 self.input_password.text_color
             )
+            message.x += (self.w // 2 - message.width) // 2
+            message.display_widget()
             self.frame_counter += 1
 
         else:

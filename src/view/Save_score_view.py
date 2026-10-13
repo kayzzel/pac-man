@@ -125,15 +125,18 @@ class Save_score_view(View):
 
             for msg in self.show_message:
 
-                msg_x: int = (self.w - pr.measure_text(
+                msg_x: int = (self.w - int(pr.measure_text_ex(
+                    Text.font,
                     msg,
-                    msg_font_sz
-                )) // 2
-                pr.draw_text(
-                    msg,
-                    msg_x,
-                    msg_y,
                     msg_font_sz,
+                    Text.spacing
+                ).x)) // 2
+                pr.draw_text_ex(
+                    Text.font,
+                    msg,
+                    (msg_x, msg_y),
+                    msg_font_sz,
+                    Text.spacing,
                     pr.GREEN
                 )
                 msg_y += msg_font_sz + msg_font_sz // 2

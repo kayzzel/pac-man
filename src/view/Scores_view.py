@@ -6,10 +6,19 @@ from .widget import Widget, Text, Panel, Dropdown
 
 DEFAULT_MAPS: list[str] = ["MANDATORY", "ARCADE", "CUSTOM", "ADDONE", "ADDTWO", "ADDTHREE", "ADDFOUR", "ADDFIVE", "ADDSIX"]
 
+TEST_SCORES: dict[str, int] = {
+    "figue": 123456789,
+    "banane": 12345678,
+    "mirabelle": 1234567,
+    "pomme": 123456,
+    "pêche": 12345,
+    "abricot": 1234
+}
+
 
 class Scores_view(View):
 
-    def __init__(self, app, scores: dict[str, int]) -> None:
+    def __init__(self, app, scores: dict[str, int] = TEST_SCORES) -> None:
 
         self.scores: list[str] = [
             pl_name + ": " + str(pl_score)

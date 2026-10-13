@@ -1,6 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .View import View
+from .Scores_view import Scores_view
 from .widget.Panel import Widget, Panel
 from .widget.Icon import Icon, AnimIcon
 
@@ -55,11 +56,9 @@ class Main_menu(View):
 
         button_actions: dict[str, tuple[Callable, Any]] = {
             "start game": (self.app.change_view, "map_choice_menu"),
-            "view highscores": (lambda: print(
-                "Action for button 'view highscores' not yet coded\n"
-            ), None),
-            "instructions": (lambda: print(
-                "Action for button 'instructions' not yet coded\n"
+            "view highscores": (self.app.change_view, Scores_view(self.app)),
+            "options": (lambda: print(
+                "Action for button 'options' not yet coded\n"
             ), None),
             "exit": (pr.close_window, None),
         }

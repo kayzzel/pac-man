@@ -48,7 +48,7 @@ class Game_view(View):
         ]
         max_label: str = max(self.labels, key=lambda label: len(label))
 
-        label_font_sz: int = Text._resize_font(max_label, self.h // 10, self.left_w - self.left_w // 3)
+        label_font_sz: int = Text._resize_font(max_label, self.h // 8, self.left_w - self.left_w // 3)
 
         self.widgets += [Text(
             label,
@@ -146,6 +146,7 @@ class Game_view(View):
 
         if self.show_as_modal:
             self.game.pause(1)
+            self.modal_view.reset_input()
         else:
             self.game.resume()
 
