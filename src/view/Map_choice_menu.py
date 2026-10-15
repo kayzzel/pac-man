@@ -1,7 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .View import View
-from .widget import Widget, Text, Panel, Icon
+from .widget import Widget, Text, ButtonPanel, Icon
 
 
 ICON_PATHS: dict[str, str] = {
@@ -56,7 +56,7 @@ class Map_choice_menu(View):
 
         self.calculate_panel_spacing()
 
-        self.widgets += [Panel(
+        self.widgets += [ButtonPanel(
             self.icons[label].posx + (self.icons[label].w - self.panel_width) // 2,
             self.icon_y + (self.icon_height - self.panel_height) // 2,
             self.panel_width,
@@ -73,16 +73,17 @@ class Map_choice_menu(View):
         )
 
         back_width: int = (
-            pr.measure_text(back_label, self.button_font_sz)
+            int(pr.measure_text_ex(Text.font, back_label, self.button_font_sz, Text.spacing).x)
         ) + self.button_font_sz - 5
         back_height: int = self.button_font_sz * 2 - 5
 
-        self.widgets.append(Panel(
+        self.widgets.append(ButtonPanel(
             self.w - back_width - 10,
             self.h - back_height - 10,
             back_width,
             back_height,
-            {back_label: self.button_actions[back_label]}
+            {back_label: self.button_actions[back_label]},
+            ((self.button_font_sz - 5)// 2, 2, 0.1)
         ))
 
     def calculate_panel_spacing(self) -> None:

@@ -6,7 +6,7 @@ from .View import View
 from .Scores_view import Scores_view, TEST_SCORES
 from .Save_score_view import Save_score_view
 from .Endgame_view import Endgame_view
-from .widget import Text, Panel, ClickableIcon, Input_box
+from .widget import Text, ButtonPanel, TextPanel, ClickableIcon, Input_box
 
 
 CHEAT_PASSWORD: str = "password"
@@ -54,9 +54,9 @@ class Pause_menu(View):
             "Save and exit": (self.app.change_view, Save_score_view(self.app, self.game)),
             "Exit": (self.app.change_view, Endgame_view(self.app, self.game, TEST_SCORES, True))
         }
-        button_font_sz: int = panel_height // (len(button_actions.keys()) * 2 - 1)
+        # button_font_sz: int = panel_height // (len(button_actions.keys()) * 2 - 1)
 
-        self.left_panel: Panel = Panel(
+        self.left_panel: ButtonPanel = ButtonPanel(
             self.x + BORDER_THICK + self.w // 20 + (self.w // 2 - panel_width) // 2,
             -2,
             panel_width,
@@ -64,6 +64,14 @@ class Pause_menu(View):
             button_actions,
             (10, 2, 0.1)
         )
+
+    def _update_cheat_panel(self) -> None:
+
+        if not self.show_right_panel:
+            return
+
+        panel_width: int = self.w - self.left_panel.w - BORDER_THICK
+        panel_height: int = self.left_panel.h
 
     def reset_input(self) -> None:
 

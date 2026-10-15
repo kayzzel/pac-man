@@ -2,7 +2,7 @@ import pyray as pr
 from typing import Any
 from .View import View
 from .Pause_menu import Pause_menu
-from .widget import Icon, Text, Widget
+from .widget import Icon, Text, Widget, TextPanel
 from ..game.Game import Game
 from ..game.map.Cell import Cell
 from .Map_renderer import Map_renderer
@@ -37,38 +37,44 @@ class Game_view(View):
 
         super().__init__(app)
 
-    def _update_score_panel(self) -> None:
-
-        self.left_w: int = self.w // 4
+    def _update_info_panel(self) -> None:
 
         self.labels: list[str] = [
             "Highscore : " + str(0),
             "Score : " + str(self.game.player.score),
             "Timer : " + str(self.game.timer)
         ]
-        max_label: str = max(self.labels, key=lambda label: len(label))
+        self.info_panel: TextPanel = TextPanel(
+            0,
+            self.h // 16,
+            self.w // 4,
+            self.h // 3,
+            self.labels,
+            (self.w // 12 // 2, 2, 0.1)
+        )
+        # max_label: str = max(self.labels, key=lambda label: len(label))
 
-        label_font_sz: int = Text._resize_font(max_label, self.h // 8, self.left_w - self.left_w // 3)
+        # label_font_sz: int = Text._resize_font(max_label, self.h // 8, self.left_w - self.left_w // 3)
 
-        self.widgets += [Text(
-            label,
-            -2,
-            self.h // 16 + (label_font_sz + self.h // 10) * i,
-            label_font_sz,
-            self.left_w - self.left_w // 3,
-            pr.RAYWHITE,
-            self.left_w
-        ) for i, label in enumerate(self.labels)]
+        # self.widgets += [Text(
+        #     label,
+        #     -2,
+        #     self.h // 16 + (label_font_sz + self.h // 10) * i,
+        #     label_font_sz,
+        #     self.left_w - self.left_w // 3,
+        #     pr.RAYWHITE,
+        #     self.left_w
+        # ) for i, label in enumerate(self.labels)]
 
         life_label: Text = Text(
             "Lives : ",
-            self.left_w // 10,
+            self.info_panel.w // 10,
             self.h - self.h // 5,
-            label_font_sz
+            self.info_panel.font_size
         )
-        self.widgets.append(life_label)
+        self.widgets += [self.info_panel, life_label]
         life_icon_sz: int = (
-            self.left_w - (life_label.x + life_label.width)
+            self.info_panel.w - (life_label.x + life_label.width)
         ) // 3 - 10
 
         self.widgets += [Icon(
@@ -83,7 +89,7 @@ class Game_view(View):
     def map_startx(self) -> int:
 
         return (
-            self.left_w + MIDDLE_LINE_THICKNESS
+            self.info_panel.w + MIDDLE_LINE_THICKNESS
             + (self.map_panel_width - self.map_width) // 2
         )
 
@@ -109,7 +115,7 @@ class Game_view(View):
     def _update_map_panel(self) -> None:
 
         self.grid: list[list[Cell]] = self.game.map[self.game.map_index].cells
-        self.map_panel_width: int = self.w - self.left_w - MIDDLE_LINE_THICKNESS - 10
+        self.map_panel_width: int = self.w - self.info_panel.w - MIDDLE_LINE_THICKNESS - 10
         self.map_width: int = min(
             self.map_panel_width - self.map_panel_width // 10,
             self.h - self.h // 10
@@ -164,7 +170,7 @@ class Game_view(View):
         self.modal_view._update(True)
 
         self.widgets: list[Widget] = []
-        self._update_score_panel()
+        self._update_info_panel()
         self._update_map_panel()
 
     def display_view(self) -> None:
@@ -176,8 +182,8 @@ class Game_view(View):
             return
 
         pr.draw_line_ex(
-            (self.left_w, 0),
-            (self.left_w, self.h),
+            (self.info_panel.w, 0),
+            (self.info_panel.w, self.h),
             MIDDLE_LINE_THICKNESS,
             pr.RAYWHITE
         )

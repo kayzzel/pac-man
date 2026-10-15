@@ -1,7 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .Widget import Widget
-from .Text import Text
+from .Text import Text, TEXT_COLOR
 from .Button import Button, BUTTON_BASE_COLOR, BUTTON_HOVER_COLOR
 
 
@@ -10,6 +10,109 @@ PANEL_FILL_COLOR: pr.Color = pr.BLANK
 
 
 class Panel(Widget):
+
+    def __init__(
+        self,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        shape_params: tuple[int, int, float] = (10, 2, 0.1),
+        center: int = -2,
+        panel_colors: tuple[pr.Color, pr.Color] = (
+            PANEL_OUTLINE_COLOR,
+            PANEL_FILL_COLOR
+        )
+    ) -> None:
+
+        super().__init__(x, y, width, height)
+
+        self.padding: int
+        self.thickness: int
+        self.roundness: float
+        self.padding, self.thickness, self.roundness = shape_params
+        self.center: int = center
+        self.outline_color: pr.Color
+        self.fill_color: pr.Color
+        self.outline_color, self.fill_color = panel_colors
+
+    def calculate_label_spacing(self, labels: list[str]) -> None:
+
+        if self.padding == 0:
+            self.padding = (self.h // (len(labels) * 2 + 1)) // 2
+
+        height_remaining: int = self.h - self.padding * 2
+        self.font_size: int = height_remaining // len(labels)
+        space_for_labels = height_remaining - (len(labels) - 1) * (self.font_size // 2)
+
+        max_label: str = max(labels, key=lambda label: len(label))
+        self.font_size = Text._resize_font(max_label, space_for_labels // len(labels), self.w)
+
+        self.int_pad: int = 0
+        if len(labels) > 1:
+            self.int_pad = (height_remaining - self.font_size * len(labels)) // (len(labels) - 1)
+
+        total_height: int = self.font_size * len(labels) + self.int_pad * (len(labels) - 1)
+        if self.h - total_height > self.padding * 2:
+            self.padding = (self.h - total_height) // 2
+
+    def center_label_x(self, label: str) -> int:
+
+        return self.posx + (
+            self.w - int(pr.measure_text_ex(Text.font, label, float(self.font_size), Text.spacing).x)
+        ) // 2
+
+
+class TextPanel(Panel):
+
+    def __init__(
+        self,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        labels: list[str],
+        shape_params: tuple[int, int, float] = (10, 2, 0.1),
+        center: int = -2,
+        panel_colors: tuple[pr.Color, pr.Color] = (
+            PANEL_OUTLINE_COLOR,
+            PANEL_FILL_COLOR
+        ),
+        label_color: pr.Color = TEXT_COLOR
+    ) -> None:
+
+        super().__init__(x, y, width, height, shape_params, center, panel_colors)
+
+        self.text_color: pr.Color = label_color
+        self.init_labels(labels)
+
+    def init_labels(self, labels: list[str]) -> None:
+
+        self.calculate_label_spacing(labels)
+        start_y: int = self.posy + self.padding - self.font_size
+        self.labels: dict[str, Text] = {
+            label: Text(
+                label,
+                (
+                    self.center_label_x(label)
+                    if self.center == -2
+                    else self.posx + self.center
+                ),
+                start_y + self.int_pad * i + self.font_size * (i + 1),
+                self.font_size,
+                self.w,
+                self.text_color
+            )
+            for i, label in enumerate(labels)
+        }
+
+    def display_widget(self) -> None:
+
+        for label in self.labels.values():
+            label.display_widget()
+
+
+class ButtonPanel(Panel):
 
     def __init__(
         self,
@@ -31,60 +134,26 @@ class Panel(Widget):
         hover_color: pr.Color = pr.BLANK
     ) -> None:
 
-        super().__init__(x, y, width, height)
+        super().__init__(x, y, width, height, shape_params, center, panel_colors)
 
-        self.padding: int
-        self.thickness: int
-        self.roundness: float
-        self.padding, self.thickness, self.roundness = shape_params
-        self.center: int = center
-        self.outline_color: pr.Color
-        self.fill_color: pr.Color
-        self.outline_color, self.fill_color = panel_colors
         self.button_colors: tuple[pr.Color, pr.Color] = button_colors
         self.hover_color: pr.Color = hover_color
 
         self.init_buttons(buttons)
-
-    def calculate_button_spacing(self, labels: list[str]) -> None:
-
-        if self.padding == 0:
-            self.padding = (self.h // (len(labels) * 2 + 1)) // 2
-
-        height_remaining: int = self.h - self.padding * 2
-        self.font_size: int = height_remaining // len(labels)
-        space_for_labels = height_remaining - (len(labels) - 1) * (self.font_size // 2)
-
-        max_label: str = max(labels, key=lambda label: len(label))
-        self.font_size = Text._resize_font(max_label, space_for_labels // len(labels), self.w)
-
-        self.int_pad: int = 0
-        if len(labels) > 1:
-            self.int_pad = (height_remaining - self.font_size * len(labels)) // (len(labels) - 1)
-
-        total_height: int = self.font_size * len(labels) + self.int_pad * (len(labels) - 1)
-        if self.h - total_height > self.padding * 2:
-            self.padding = (self.h - total_height) // 2
-
-    def center_button_x(self, label: str) -> int:
-
-        return self.posx + (
-            self.w - int(pr.measure_text_ex(Text.font, label, float(self.font_size), Text.spacing).x)
-        ) // 2
 
     def init_buttons(
         self,
         button_actions: dict[str, tuple[Callable, Any]]
     ) -> None:
 
-        self.calculate_button_spacing(
+        self.calculate_label_spacing(
             list(button_actions.keys())
         )
         start_y: int = self.posy + self.padding - self.font_size
         self.buttons: dict[str, Button] = {
             label: Button(
                 (
-                    self.center_button_x(label)
+                    self.center_label_x(label)
                     if self.center == -2
                     else self.posx + self.center
                 ),

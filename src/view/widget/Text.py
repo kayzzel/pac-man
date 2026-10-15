@@ -5,6 +5,8 @@ from .Widget import Widget
 
 PACMAN_FONT = "src/view/assets/fonts/crackman/Crackman.otf"
 
+TEXT_COLOR = pr.RAYWHITE
+
 
 class Text(Widget):
 

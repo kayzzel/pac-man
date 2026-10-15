@@ -1,6 +1,6 @@
 import pyray as pr
 from .View import View
-from .widget import Widget, Text, Input_box, Panel
+from .widget import Widget, Text, Input_box, ButtonPanel
 
 
 MAX_INPUT_LENGTH: int = 20
@@ -36,16 +36,17 @@ class Save_score_view(View):
         back_padding: int = back_font_sz - 5
 
         back_width: int = (
-            pr.measure_text(back_label, back_font_sz)
+            int(pr.measure_text_ex(Text.font, back_label, back_font_sz, Text.spacing).x)
         ) + back_padding
         back_height: int = back_font_sz + back_padding
 
-        self.back_button: Panel = Panel(
+        self.back_button: ButtonPanel = ButtonPanel(
             self.w - back_width - 10,
             self.h - back_height - 10,
             back_width,
             back_height,
-            {back_label: (self.app.return_to_prev_view, None)}
+            {back_label: (self.app.return_to_prev_view, None)},
+            (back_padding // 2, 2, 0.1)
         )
         self.widgets.append(self.back_button)
 

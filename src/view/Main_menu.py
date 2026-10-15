@@ -2,8 +2,7 @@ import pyray as pr
 from typing import Callable, Any
 from .View import View
 from .Scores_view import Scores_view
-from .widget.Panel import Widget, Panel
-from .widget.Icon import Icon, AnimIcon
+from .widget import Widget, ButtonPanel, Icon, AnimIcon
 
 
 BACKGROUND_IMAGE_PATH: str = "src/view/assets/gifs/pac-man_bg.gif"
@@ -63,7 +62,7 @@ class Main_menu(View):
             "exit": (pr.close_window, None),
         }
 
-        self.panel: Panel = Panel(
+        self.panel: ButtonPanel = ButtonPanel(
             panel_x,
             panel_y,
             panel_width,

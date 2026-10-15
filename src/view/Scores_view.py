@@ -1,7 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .View import View
-from .widget import Widget, Text, Panel, Dropdown
+from .widget import Widget, Text, ButtonPanel, TextPanel, Dropdown
 
 
 DEFAULT_MAPS: list[str] = ["MANDATORY", "ARCADE", "CUSTOM", "ADDONE", "ADDTWO", "ADDTHREE", "ADDFOUR", "ADDFIVE", "ADDSIX"]
@@ -49,17 +49,18 @@ class Scores_view(View):
         button_padding: int = button_font_sz - 5
 
         back_width: int = (
-            pr.measure_text(back_label, button_font_sz)
+            int(pr.measure_text_ex(Text.font, back_label, button_font_sz, Text.spacing).x)
         ) + button_padding
         load_width: int = self.w // 5
         button_height: int = button_font_sz + button_padding
 
-        self.back_button: Panel = Panel(
+        self.back_button: ButtonPanel = ButtonPanel(
             self.w - back_width - 10,
             self.h - button_height - 10,
             back_width,
             button_height,
-            {back_label: (self.app.return_to_prev_view, None)}
+            {back_label: (self.app.return_to_prev_view, None)},
+            (button_padding // 2, 2, 0.1)
         )
         self.widgets.append(self.back_button)
 
@@ -82,31 +83,18 @@ class Scores_view(View):
     def _update_scores(self) -> None:
 
         scores_start: int = self.map_dropdown.posy + self.map_dropdown.h
-
         scores_height: int = self.h - scores_start - self.back_button.h - 10
-
         padding: int = scores_height // 8
-        space_remaining: int = scores_height - padding * 2
 
-        score_y: int = scores_start + padding
-
-        max_score: str = max(self.scores, key=lambda score: len(score))
-        score_font_sz: int = Text._resize_font(
-            max_score,
-            space_remaining // (len(self.scores) * 2 - 1)
+        self.score_panel: TextPanel = TextPanel(
+            -2,
+            scores_start,
+            self.w // 3,
+            scores_height,
+            self.scores,
+            (padding, 2, 0.1)
         )
-        score_y -= score_font_sz
-
-        for i, score in enumerate(self.scores):
-
-            self.widgets.append(Text(
-                score,
-                -2,
-                score_y + score_font_sz * i + score_font_sz * (i + 1),
-                score_font_sz
-            ))
-
-        self.widgets.append(self.map_dropdown)
+        self.widgets += [self.score_panel, self.map_dropdown]
 
     def _update(self, forced: bool = False) -> None:
 

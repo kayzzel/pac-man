@@ -2,7 +2,7 @@ import pyray as pr
 from typing import Callable, Any
 from .Widget import Widget
 from .Text import Text
-from .Panel import Panel
+from .Panel import ButtonPanel
 from .Icon import ClickableIcon
 
 
@@ -33,7 +33,7 @@ class Dropdown(Widget):
             label: action for i, (label, action) in enumerate(buttons.items())
             if i == 0
         }
-        self.main_panel: Panel = Panel(
+        self.main_panel: ButtonPanel = ButtonPanel(
             self.posx,
             self.posy,
             self.w - self.arrow_size - self.arrow_pad * 2,
@@ -95,7 +95,7 @@ class Dropdown(Widget):
             if self.button_range[0] <= i <= self.button_range[1]
         }
 
-        self.panel: Panel = Panel(
+        self.panel: ButtonPanel = ButtonPanel(
             self.posx,
             self.posy + self.h,
             self.w,
