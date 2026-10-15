@@ -1,12 +1,12 @@
 import pyray as pr
 from ..App import App
-from ..view import View, Main_menu, Map_choice_menu, Pause_menu, Game_view
+from ..view import View, Main_menu, Map_choice_menu, Game_view
 from ..game.Game import Game
 
 pr.set_config_flags(pr.FLAG_WINDOW_RESIZABLE)
 pr.set_trace_log_level(pr.LOG_ERROR)
 
-pr.init_window(800, 450, "pac-man menu example")
+pr.init_window(1920, 1080, "pac-man menu example")
 
 pr.set_target_fps(60)
 

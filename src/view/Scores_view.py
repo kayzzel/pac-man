@@ -61,6 +61,8 @@ class Scores_view(View):
             button_height,
             {back_label: (self.app.return_to_prev_view, None)}
         )
+        self.widgets.append(self.back_button)
+
         main_button: dict[str, tuple[Callable, Any]] = {
             load_label: (lambda: 0, None)
         }
@@ -76,7 +78,6 @@ class Scores_view(View):
             button_height,
             main_button
         )
-        self.widgets += [self.back_button, self.map_dropdown]
 
     def _update_scores(self) -> None:
 
@@ -104,6 +105,8 @@ class Scores_view(View):
                 score_y + score_font_sz * i + score_font_sz * (i + 1),
                 score_font_sz
             ))
+
+        self.widgets.append(self.map_dropdown)
 
     def _update(self, forced: bool = False) -> None:
 

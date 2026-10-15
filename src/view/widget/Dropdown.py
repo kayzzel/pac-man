@@ -1,6 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .Widget import Widget
+from .Text import Text
 from .Panel import Panel
 from .Icon import ClickableIcon
 
@@ -38,14 +39,15 @@ class Dropdown(Widget):
             self.w - self.arrow_size - self.arrow_pad * 2,
             self.h,
             self.main_button,
-            (10, 0, 0),
+            (self.w // 12, 0, 0),
             -2,
             (pr.BLANK, pr.DARKGRAY),
             (pr.RAYWHITE, pr.RAYWHITE)
         )
         self.main_label: str = [k for k in self.main_button.keys()][0]
         self.main_panel.center = (
-            self.w - pr.measure_text(self.main_label, self.main_panel.font_size)
+            self.w - int(pr.measure_text_ex(Text.font, self.main_label, self.main_panel.font_size, Text.spacing).x)
+            - self.arrow_size - self.arrow_pad * 2
         ) // 2
         self.main_panel.w = self.w
         self.buttons.pop(self.main_label)
