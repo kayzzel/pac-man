@@ -152,7 +152,8 @@ class Game_view(View):
 
         if self.show_as_modal:
             self.game.pause(1)
-            self.modal_view.reset_input()
+            if not self.modal_view.show_cheat_panel:
+                self.modal_view.reset_input()
         else:
             self.game.resume()
 

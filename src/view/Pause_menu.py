@@ -24,7 +24,15 @@ class Pause_menu(View):
 
         self.game = game
         self.global_view: View = global_view
-        self.show_right_panel: bool = False
+        self.show_cheat_panel: bool = False
+
+        self.nb_lives: int = self.game.config.lives
+        self.pts_per_pacgum: int = self.game.config.point_per_pacgum
+        self.pts_per_spacgum: int = self.game.config.point_per_super_pacgum
+        self.pts_per_ghost: int = self.game.config.point_per_ghost
+        self.invicible_mode: bool = False
+        self.nowalls_mode: bool = False
+
         super().__init__(app)
 
     @property
@@ -67,11 +75,66 @@ class Pause_menu(View):
 
     def _update_cheat_panel(self) -> None:
 
-        if not self.show_right_panel:
+        if not self.show_cheat_panel:
             return
+
+        labels: dict[str, str] = {
+            "nb_lives": f"number of lives ({self.nb_lives})",
+            "pts_per_pacgum": f"points per pacgum ({self.pts_per_pacgum})",
+            "pts_per_spacgum": f"points per super pacgum ({self.pts_per_spacgum})",
+            "pts_per_ghost": f"points per ghost ({self.pts_per_ghost})",
+            "invicible_mode": "invicible mode",
+            "nowalls_mode": "pass through walls"
+        }
 
         panel_width: int = self.w - self.left_panel.w - BORDER_THICK
         panel_height: int = self.left_panel.h
+
+        self.cheat_panel: TextPanel = TextPanel(
+            self.left_panel.posx + self.left_panel.w + BORDER_THICK,
+            -2,
+            panel_width // 2,
+            panel_height,
+            list(labels.values()),
+            (0, 2, 0.1),
+            panel_width // 12
+        )
+        self.input_boxes: dict[str, Input_box] = {
+            parameter: Input_box(
+                self.cheat_panel.posx + self.cheat_panel.w + panel_width // 8,
+                self.cheat_panel.labels[labels[parameter]].posy,
+                panel_width // 8,
+                self.cheat_panel.font_size,
+                10,
+                (48, 57),
+                (self.change_parameter, parameter)
+            ) for parameter in list(labels.keys())[:-2]
+        }
+        self.onoff_buttons: dict[str, ButtonPanel] = {
+            parameter: ButtonPanel(
+                self.cheat_panel.posx + self.cheat_panel.w + panel_width // 8,
+                self.cheat_panel.labels[labels[parameter]].posy,
+                panel_width // 12,
+                self.cheat_panel.font_size,
+                {("off" if not getattr(self, parameter) else "on"): (self.change_onoff_button, parameter)},
+                (0, 2, 0.1),
+                -2
+            ) for parameter in ["invicible_mode", "nowalls_mode"]
+        }
+
+    def change_parameter(self, parameter: str) -> None:
+
+        if not hasattr(self, parameter):
+            return
+        setattr(self, parameter, self.input_boxes[parameter].input)
+        self._update_cheat_panel()
+
+    def change_onoff_button(self, parameter: str) -> None:
+
+        if not hasattr(self, parameter):
+            return
+        setattr(self, parameter, not getattr(self, parameter))
+        self._update_cheat_panel()
 
     def reset_input(self) -> None:
 
@@ -124,11 +187,12 @@ class Pause_menu(View):
 
         if self.input_password.input == CHEAT_PASSWORD:
 
-            self.show_right_panel = True
+            self.show_cheat_panel = True
             self.show_message = "Well done, little cheater :)"
             self.input_password.text_color = pr.GREEN
             self.input_password.cursor_color = pr.DARKGREEN
             self.lock_icon._load_image(LOCK_OPEN_PATH)
+            self._update_cheat_panel()
 
         else:
 
@@ -142,6 +206,7 @@ class Pause_menu(View):
             return
 
         self._update_left_panel()
+        self._update_cheat_panel()
         self._update_lock_and_password()
 
     def display_view(self) -> None:
@@ -156,9 +221,14 @@ class Pause_menu(View):
 
         self.left_panel.display_widget()
 
-        if self.show_right_panel and self.frame_counter >= PASSWORD_MSG_TIME:
+        if self.show_cheat_panel and self.frame_counter >= PASSWORD_MSG_TIME:
 
             self.show_input = False
+            self.cheat_panel.display_widget()
+            for input_box in self.input_boxes.values():
+                input_box.display_widget()
+            for button in self.onoff_buttons.values():
+                button.display_widget()
 
         else:
 
