@@ -60,7 +60,10 @@ class Game:
             self.game_loop.reset()
             self.timer = self.game_loop.timer
 
-            self.pause(Game_state.PAUSED)
+            if self.state == Game_state.FINISHED_MAP:
+                self.pause(Game_state.FINISHED_MAP)
+            else:
+                self.pause(Game_state.PAUSED)
             self.game_loop.run(self)
 
             if self.state == Game_state.LOST:
