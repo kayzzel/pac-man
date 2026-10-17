@@ -15,6 +15,8 @@ from ..utils.enum_utils import Game_state, Ghost_state
 from mazegenerator import MazeGenerator
 
 import os
+import sys
+import threading
 import contextlib
 
 
@@ -36,12 +38,16 @@ class Game:
         self.consumables: list[Consumable] = []
 
         self.timer: int = 0
+        self.__map_finished: bool = False
 
+        self.__thread: threading.Thread | None = None
         self.game_loop = GameLoop(update_game, duration=config.level_max_time)
         self.state: Game_state = Game_state.NOT_RUNNING
 
     def stop(self, status: Game_state = Game_state.LOST) -> None:
         self.state = status
+        if status == Game_state.FINISHED_MAP:
+            self.__map_finished = True
         self.game_loop.stop()
 
     def pause(self, status: Game_state = Game_state.PAUSED) -> None:
@@ -60,7 +66,8 @@ class Game:
             self.game_loop.reset()
             self.timer = self.game_loop.timer
 
-            if self.state == Game_state.FINISHED_MAP:
+            if self.__map_finished:
+                self.__map_finished = False
                 self.pause(Game_state.FINISHED_MAP)
             else:
                 self.pause(Game_state.PAUSED)
@@ -70,7 +77,8 @@ class Game:
                 self.stop(Game_state.LOST)
                 return
 
-            self.map_index += 1
+            if self.map_index + 1 != len(self.map):
+                self.map_index += 1
 
         self.stop(Game_state.WON)
 
@@ -109,6 +117,24 @@ class Game:
             if ghost.state == Ghost_state.EATEN:
                 ghost.speed /= 2
             ghost.state = Ghost_state.SCATTER
+
+    def start_async(self) -> None:
+        if self.__thread is not None and self.__thread.is_alive():
+            return
+        self.__thread = threading.Thread(target=self.__run_safe, daemon=True)
+        self.__thread.start()
+
+    def __run_safe(self) -> None:
+        try:
+            self.start()
+        except Exception as err:
+            print(err, file=sys.stderr)
+            self.state = Game_state.ERROR
+            self.game_loop.stop()
+
+    def join(self, timeout: float = 2.0) -> None:
+        if self.__thread is not None:
+            self.__thread.join(timeout)
 
 
 def calculate_collision(game: Game) -> bool:
@@ -183,6 +209,6 @@ def mandatory_game(config: Config) -> Game:
         else:
             game.map.append(game.generate_map(width, height))
 
-    game.start()
+    game.start_async()
 
     return game

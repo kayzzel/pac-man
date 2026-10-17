@@ -6,6 +6,7 @@ from ..utils.enum_utils import Game_state
 from typing import Callable
 
 import time
+import threading
 
 
 class GameLoop:
@@ -24,6 +25,8 @@ class GameLoop:
         self.__elapsed_active: float = 0.0
         self.__paused = False
         self.__running = False
+        self.__resume_event = threading.Event()
+        self.__resume_event.set()
 
     @property
     def timer(self) -> int:
@@ -35,12 +38,15 @@ class GameLoop:
 
     def pause(self) -> None:
         self.__paused = True
+        self.__resume_event.clear()
 
     def resume(self) -> None:
         self.__paused = False
+        self.__resume_event.set()
 
     def stop(self) -> None:
         self.__running = False
+        self.__resume_event.set()
 
     def reset(self) -> None:
         self.__elapsed_active = 0.0
@@ -56,7 +62,8 @@ class GameLoop:
             last_time = now
 
             if self.__paused:
-                time.sleep(self.__dt)
+                self.__resume_event.wait()
+                last_time = time.perf_counter()
                 continue
 
             frame_time = min(frame_time, 0.25)
@@ -74,17 +81,4 @@ class GameLoop:
 
             sleep_time = self.__dt - accumulator
             if sleep_time > 0:
-                self.__precise_sleep(sleep_time)
-
-    @staticmethod
-    def __precise_sleep(seconds: float) -> None:
-        """
-        time.sleep() alone can overshoot by several ms on some OSes.
-        Sleep the bulk of the wait, then busy-spin the last ~1ms for accuracy.
-        """
-        target = time.perf_counter() + seconds
-        margin = 0.001
-        if seconds > margin:
-            time.sleep(seconds - margin)
-        while time.perf_counter() < target:
-            pass
+                time.sleep(sleep_time)
