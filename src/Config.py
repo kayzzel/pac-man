@@ -13,7 +13,7 @@ class ConfigValidate(BaseModel):
     levels_dimensions: tuple[
         Annotated[int, Field(ge=10, le=50)],
         Annotated[int, Field(ge=10, le=50)]
-    ]
+    ] = (15, 15)
     lives: int = Field(default=3, ge=1)
     point_per_pacgum: int = Field(default=10, ge=0)
     point_per_super_pacgum: int = Field(default=50, ge=0)
@@ -26,7 +26,7 @@ class Config:
     def __init__(self) -> None:
         self.__highscore_filename: str = "highscore.json"
         self.__nb_level: int = 10
-        self.__levels_dimensions: tuple[int, int] = (20, 20)
+        self.__levels_dimensions: tuple[int, int] = (15, 15)
         self.__lives: int = 3
         self.__point_per_pacgum: int = 10
         self.__point_per_super_pacgum: int = 50
