@@ -13,3 +13,7 @@ class Super_Pacgum(Collectible):
         super().collected(game)
 
         game.player.set_energized(int(game.game_loop.elapsed_time))
+
+        # A new power-up makes every ghost edible again
+        for ghost in game.ghosts.values():
+            ghost.eaten_this_power = False

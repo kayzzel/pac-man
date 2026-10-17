@@ -17,6 +17,7 @@ class Ghost(Entity, ABC):
         self.spawn_point: tuple[float, float] = (0, 0)
         self.scatter_point: tuple[float, float] = (0, 0)
         self.real_path_finding = False
+        self.eaten_this_power = False
 
     @abstractmethod
     def define_target(self, entities: dict[str, Entity]) -> int:
@@ -38,6 +39,7 @@ class Ghost(Entity, ABC):
     def set_eaten(self) -> None:
         if self.state != Ghost_state.EATEN:
             self.state = Ghost_state.EATEN
+            self.eaten_this_power = True
             self.speed *= 2
 
     def __respawned(self) -> None:
@@ -51,13 +53,17 @@ class Ghost(Entity, ABC):
                 "W": "E"
         }
 
+        # A ghost can only be eaten once per power-up
+        if not pacman.is_energized:
+            self.eaten_this_power = False
+
         if self.state == Ghost_state.EATEN:
             if (self.pos_x, self.pos_y) != self.spawn_point:
                 return
             else:
                 self.__respawned()
 
-        if pacman.is_energized:
+        if pacman.is_energized and not self.eaten_this_power:
             if self.state != Ghost_state.FRIGHTENED:
                 self.direction = OPPOSITE[self.direction]
                 self.state = Ghost_state.FRIGHTENED
