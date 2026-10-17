@@ -67,8 +67,7 @@ class GameLoop:
                 accumulator -= self.__dt
                 self.__elapsed_active += self.__dt
 
-                if self.__duration is not None \
-                        and self.__elapsed_active >= self.__duration:
+                if self.__elapsed_active >= self.__duration:
                     self.__running = False
                     game.state = Game_state.LOST
                     break
