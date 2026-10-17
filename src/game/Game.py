@@ -15,6 +15,8 @@ from ..utils.enum_utils import Game_state, Ghost_state
 from mazegenerator import MazeGenerator
 
 import os
+import sys
+import threading
 import contextlib
 
 
@@ -42,6 +44,7 @@ class Game:
 
         self.timer: int = 0
 
+        self.__thread: threading.Thread | None = None
         self.game_loop = GameLoop(update_game, duration=config.level_max_time)
         self.state: Game_state = Game_state.NOT_RUNNING
 
@@ -116,6 +119,24 @@ class Game:
                 ghost.speed /= 2
             ghost.state = Ghost_state.SCATTER
 
+    def start_async(self) -> None:
+        if self.__thread is not None and self.__thread.is_alive():
+            return
+        self.__thread = threading.Thread(target=self.__run_safe, daemon=True)
+        self.__thread.start()
+
+    def __run_safe(self) -> None:
+        try:
+            self.start()
+        except Exception as err:
+            print(err, file=sys.stderr)
+            self.state = Game_state.ERROR
+            self.game_loop.stop()
+
+    def join(self, timeout: float = 2.0) -> None:
+        if self.__thread is not None:
+            self.__thread.join(timeout)
+
 
 def calculate_collision(game: Game) -> bool:
     pacman = game.player
@@ -189,6 +210,6 @@ def mandatory_game(config: Config) -> Game:
         else:
             game.map.append(game.generate_map(width, height))
 
-    game.start()
+    game.start_async()
 
     return game
