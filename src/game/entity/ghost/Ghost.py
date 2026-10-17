@@ -1,19 +1,13 @@
 from ..Entity import Entity
 from ..Pac_man import Pac_man
 from ...map.Cell import Cell
+from ....utils.enum_utils import Ghost_state
 from ....utils.path_utils import next_direction
+from ....utils.enum_utils import Ghost_state
 
 from abc import ABC, abstractmethod
 from random import choice
 from math import modf
-from enum import Enum
-
-
-class Ghost_state(Enum):
-    CHASE = "chase"
-    EATEN = "eaten"
-    SCATTER = "scatter"
-    FRIGHTENED = "frightened"
 
 
 class Ghost(Entity, ABC):
@@ -21,8 +15,8 @@ class Ghost(Entity, ABC):
         super().__init__(name)
         self.state: Ghost_state = Ghost_state.CHASE
         self.target: tuple[int, int] = (0, 0)
-        self.spawn_point: tuple[int, int] = (0, 0)
-        self.scatter_point: tuple[int, int] = (0, 0)
+        self.spawn_point: tuple[float, float] = (0, 0)
+        self.scatter_point: tuple[float, float] = (0, 0)
         self.real_path_finding = False
 
     @abstractmethod
@@ -31,13 +25,15 @@ class Ghost(Entity, ABC):
             return 1
 
         if self.state == Ghost_state.EATEN:
-            self.target = self.spawn_point
+            self.target = (int(self.spawn_point[0]), int(self.spawn_point[1]))
             return 1
 
         if self.state == Ghost_state.SCATTER:
-            self.target = self.scatter_point
+            self.target = (
+                        int(self.scatter_point[0]),
+                        int(self.scatter_point[1])
+                   )
             return 1
-
         return 0
 
     def set_eaten(self) -> None:
@@ -57,7 +53,7 @@ class Ghost(Entity, ABC):
         }
 
         if self.state == Ghost_state.EATEN:
-            if (int(self.pos_x), int(self.pos_y)) != self.spawn_point:
+            if (self.pos_x, self.pos_y) != self.spawn_point:
                 return
             else:
                 self.__respawned()

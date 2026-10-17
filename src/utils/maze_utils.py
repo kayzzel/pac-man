@@ -5,7 +5,7 @@ from ..game.entity.collectible.Pacgum import Pacgum
 from ..game.entity.collectible.Super_Pacgum import Super_Pacgum
 
 
-def find_spawn_position(maze: list[list[int]]) -> tuple[int, int]:
+def find_spawn_position(maze: list[list[int]]) -> tuple[float, float]:
     height = len(maze)
     width = len(maze[0])
 
@@ -23,7 +23,7 @@ def find_spawn_position(maze: list[list[int]]) -> tuple[int, int]:
                 x = center_x + dx
                 y = center_y + dy
                 if 0 <= x < width and 0 <= y < height and maze[y][x] != 15:
-                    return (x, y)
+                    return (x + 0.5, y + 0.5)
 
     raise ValueError("No walkable spawn position found")
 
@@ -72,14 +72,14 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
             cell_row.append(cell)
         new_map.cells.append(cell_row)
 
-    new_map.ghosts_spawn["PINKY"] = (0, 0)
-    new_map.ghosts_spawn["BLINKY"] = (width - 1, 0)
-    new_map.ghosts_spawn["CLYDE"] = (0, height - 1)
-    new_map.ghosts_spawn["INKY"] = (width - 1, height - 1)
+    new_map.ghosts_spawn["PINKY"] = (0.5, 0.5)
+    new_map.ghosts_spawn["BLINKY"] = (width - 0.5, 0.5)
+    new_map.ghosts_spawn["CLYDE"] = (0.5, height - 0.5)
+    new_map.ghosts_spawn["INKY"] = (width - 0.5, height - 0.5)
 
-    new_map.ghosts_scatter["PINKY"] = (0, 0)
-    new_map.ghosts_scatter["BLINKY"] = (width - 1, 0)
-    new_map.ghosts_scatter["CLYDE"] = (0, height - 1)
-    new_map.ghosts_scatter["INKY"] = (width - 1, height - 1)
+    new_map.ghosts_scatter["PINKY"] = (0.5, 0.5)
+    new_map.ghosts_scatter["BLINKY"] = (width - 0.5, 0.5)
+    new_map.ghosts_scatter["CLYDE"] = (0.5, height - 0.5)
+    new_map.ghosts_scatter["INKY"] = (width - 0.5, height - 0.5)
 
     return new_map
