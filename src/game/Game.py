@@ -2,7 +2,7 @@ from .GameLoop import GameLoop
 from .map.Map import Map
 from .map.Map_scores import Map_scores
 from .entity.Pac_man import Pac_man
-from .entity.ghost.Ghost import Ghost, Ghost_state
+from .entity.ghost.Ghost import Ghost
 from .entity.ghost.Blinky import Blinky
 from .entity.ghost.Pinky import Pinky
 from .entity.ghost.Clyde import Clyde
@@ -10,6 +10,7 @@ from .entity.ghost.Inky import Inky
 from .entity.collectible.Consumable import Consumable
 from ..Config import Config
 from ..utils.maze_utils import convert_maze_to_map
+from ..utils.enum_utils import Game_state, Ghost_state
 
 from mazegenerator import MazeGenerator
 
@@ -36,24 +37,42 @@ class Game:
 
         self.timer: int = 0
 
-        self.game_loop = GameLoop(update_game)
-        self.is_paused: int = 0  # -1 dead / not paused / 1 normal
-        self.is_won: int = 0  # -1 lost / 0 not finished / 1 won
+        self.game_loop = GameLoop(update_game, duration=config.level_max_time)
+        self.state: Game_state = Game_state.NOT_RUNNING
 
-    def stop(self, status: int) -> None:
-        self.is_won = status
+    def stop(self, status: Game_state = Game_state.LOST) -> None:
+        self.state = status
         self.game_loop.stop()
 
-    def pause(self, status: int) -> None:
-        self.is_paused = status
+    def pause(self, status: Game_state = Game_state.PAUSED) -> None:
+        self.state = status
         self.game_loop.pause()
 
     def resume(self) -> None:
-        self.is_paused = 0
+        self.state = Game_state.RUNNING
         self.game_loop.resume()
 
     def start(self) -> None:
-        ...
+
+        for _ in self.map:
+
+            self.start_position()
+            self.game_loop.reset()
+            self.timer = self.game_loop.timer
+
+            if self.state == Game_state.FINISHED_MAP:
+                self.pause(Game_state.FINISHED_MAP)
+            else:
+                self.pause(Game_state.PAUSED)
+            self.game_loop.run(self)
+
+            if self.state == Game_state.LOST:
+                self.stop(Game_state.LOST)
+                return
+
+            self.map_index += 1
+
+        self.stop(Game_state.WON)
 
     def generate_map(self, width: int, height: int, seed: int = 0) -> Map:
         if width < 2 or height < 2:
@@ -74,8 +93,7 @@ class Game:
     def start_position(self) -> None:
         cur_map = self.map[self.map_index]
 
-        self.player.pos_x = cur_map.pacman_spawn[0] + 0.5
-        self.player.pos_y = cur_map.pacman_spawn[1] + 0.5
+        self.player.pos_x, self.player.pos_y = cur_map.pacman_spawn
 
         self.player.is_energized = False
 
@@ -85,10 +103,11 @@ class Game:
             ghost.spawn_point = cur_map.ghosts_spawn[ghost_name]
             ghost.scatter_point = cur_map.ghosts_scatter[ghost_name]
 
-            ghost.pos_x = ghost.spawn_point[0] + 0.5
-            ghost.pos_y = ghost.spawn_point[1] + 0.5
+            ghost.pos_x, ghost.pos_y = ghost.spawn_point
 
             ghost.real_path_finding = cur_map.real_path_finding
+            if ghost.state == Ghost_state.EATEN:
+                ghost.speed /= 2
             ghost.state = Ghost_state.SCATTER
 
 
@@ -110,7 +129,7 @@ def calculate_collision(game: Game) -> bool:
                 ):
             continue
 
-        if pacman.is_energized:
+        if pacman.is_energized and not ghost.eaten_this_power:
             ghost.set_eaten()
             pacman.score += game.config.point_per_ghost
 
@@ -141,8 +160,29 @@ def update_game(game: Game) -> None:
 
     if calculate_collision(game):
         if pacman.nb_lives == 0:
-            game.stop(-1)
+            game.stop(Game_state.LOST)
             return
 
         game.start_position()
-        game.pause(-1)
+        game.pause(Game_state.DIED)
+
+    if cur_map.collectible_count <= 0:
+        game.stop(Game_state.FINISHED_MAP)
+
+
+def mandatory_game(config: Config) -> Game:
+    game = Game(config)
+    first = True
+
+    width, height = config.levels_dimensions
+
+    for _ in range(config.nb_level):
+        if first:
+            game.map.append(game.generate_map(width, height, config.seed))
+            first = False
+        else:
+            game.map.append(game.generate_map(width, height))
+
+    game.start()
+
+    return game

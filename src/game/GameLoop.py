@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .Game import Game   # only imported by type checkers, not at runtime
+from ..utils.enum_utils import Game_state
 
 from typing import Callable
 
@@ -41,6 +42,9 @@ class GameLoop:
     def stop(self) -> None:
         self.__running = False
 
+    def reset(self) -> None:
+        self.__elapsed_active = 0.0
+
     def run(self, game: "Game") -> None:
         self.__running = True
         accumulator = 0.0
@@ -63,9 +67,9 @@ class GameLoop:
                 accumulator -= self.__dt
                 self.__elapsed_active += self.__dt
 
-                if self.__duration is not None \
-                        and self.__elapsed_active >= self.__duration:
+                if self.__elapsed_active >= self.__duration:
                     self.__running = False
+                    game.state = Game_state.LOST
                     break
 
             sleep_time = self.__dt - accumulator
