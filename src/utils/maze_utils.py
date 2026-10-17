@@ -54,7 +54,7 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
             cell = Cell(x, y)
             cell.walls = convert_nbr_to_cell(maze[y][x])
 
-            if maze[y][x] != 15 and (x, y) != (spawn_x, spawn_y):
+            if maze[y][x] != 15 and (x, y) != (int(spawn_x), int(spawn_y)):
                 if is_corner(x, y):
                     cell.collectible = Super_Pacgum(
                             x,
