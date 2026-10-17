@@ -9,6 +9,7 @@ class Game_state(str, Enum):
     FINISHED_MAP = "finished_map"
     WON = "won"
     LOST = "lost"
+    ERROR = "error"
 
 
 class Ghost_state(Enum):
