@@ -74,17 +74,4 @@ class GameLoop:
 
             sleep_time = self.__dt - accumulator
             if sleep_time > 0:
-                self.__precise_sleep(sleep_time)
-
-    @staticmethod
-    def __precise_sleep(seconds: float) -> None:
-        """
-        time.sleep() alone can overshoot by several ms on some OSes.
-        Sleep the bulk of the wait, then busy-spin the last ~1ms for accuracy.
-        """
-        target = time.perf_counter() + seconds
-        margin = 0.001
-        if seconds > margin:
-            time.sleep(seconds - margin)
-        while time.perf_counter() < target:
-            pass
+                time.sleep(sleep_time)
