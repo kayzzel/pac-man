@@ -38,6 +38,7 @@ class Game:
         self.consumables: list[Consumable] = []
 
         self.timer: int = 0
+        self.__map_finished: bool = False
 
         self.__thread: threading.Thread | None = None
         self.game_loop = GameLoop(update_game, duration=config.level_max_time)
@@ -45,6 +46,8 @@ class Game:
 
     def stop(self, status: Game_state = Game_state.LOST) -> None:
         self.state = status
+        if status == Game_state.FINISHED_MAP:
+            self.__map_finished = True
         self.game_loop.stop()
 
     def pause(self, status: Game_state = Game_state.PAUSED) -> None:
@@ -63,7 +66,8 @@ class Game:
             self.game_loop.reset()
             self.timer = self.game_loop.timer
 
-            if self.state == Game_state.FINISHED_MAP:
+            if self.__map_finished:
+                self.__map_finished = False
                 self.pause(Game_state.FINISHED_MAP)
             else:
                 self.pause(Game_state.PAUSED)
