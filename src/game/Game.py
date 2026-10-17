@@ -70,7 +70,8 @@ class Game:
                 self.stop(Game_state.LOST)
                 return
 
-            self.map_index += 1
+            if self.map_index + 1 != len(self.map):
+                self.map_index += 1
 
         self.stop(Game_state.WON)
 
