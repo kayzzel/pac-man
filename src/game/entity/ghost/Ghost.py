@@ -3,7 +3,6 @@ from ..Pac_man import Pac_man
 from ...map.Cell import Cell
 from ....utils.enum_utils import Ghost_state
 from ....utils.path_utils import next_direction
-from ....utils.enum_utils import Ghost_state
 
 from abc import ABC, abstractmethod
 from random import choice

@@ -13,8 +13,6 @@ from ..utils.maze_utils import convert_maze_to_map
 from ..utils.enum_utils import Game_state, Ghost_state
 
 from mazegenerator import MazeGenerator
-from time import sleep
-from enum import Enum
 
 import os
 import contextlib
