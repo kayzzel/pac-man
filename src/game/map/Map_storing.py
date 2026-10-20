@@ -4,8 +4,17 @@ from ..entity.collectible.Pacgum import Pacgum
 from ..entity.collectible.Super_Pacgum import Super_Pacgum
 from ..entity.collectible.Consumable import Consumable
 from ...utils.enum_utils import Consumable_type
+from ...utils.json_utils import get_json_from_file
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import (
+        BaseModel,
+        Field,
+        ValidationError,
+        field_validator,
+        model_validator
+    )
+
+import json
 
 
 class Collectible_info(BaseModel):
@@ -201,8 +210,25 @@ def info_to_map(info: Map_info) -> Map:
 
 
 def save_map_to_file(m: Map, filename: str) -> None:
-    ...
+    info = map_to_info(m)
+
+    try:
+        with open(filename, "w") as f:
+            json.dump(info.model_dump(), f, indent=4)
+    except OSError as err:
+        raise ValueError(
+                f"ERROR: couldn't write the map file {filename}: {err}"
+            ) from err
 
 
 def load_map_from_file(filename: str) -> Map:
-    ...
+    data = get_json_from_file(filename)
+
+    try:
+        info = Map_info.model_validate(data)
+    except ValidationError as err:
+        raise ValueError(
+                f"ERROR: invalid map file {filename}: {err}"
+            ) from err
+
+    return info_to_map(info)
