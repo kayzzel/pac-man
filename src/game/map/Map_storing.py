@@ -64,6 +64,7 @@ class Cell_info(BaseModel):
 
 
 class Map_info(BaseModel):
+    name: str = Field(ge=1)
     cells: list[list[Cell_info]]
     real_path_finding: bool = False
     collectible_count: int = Field(ge=0)
@@ -164,6 +165,7 @@ def map_to_info(m: Map) -> Map_info:
         cells.append(cells_row)
 
     return Map_info(
+            name=m.name,
             cells=cells,
             real_path_finding=m.real_path_finding,
             collectible_count=m.collectible_count,
@@ -200,6 +202,7 @@ def info_to_map(info: Map_info) -> Map:
             cells_row.append(cell)
         m.cells.append(cells_row)
 
+    m.name = info.name
     m.real_path_finding = info.real_path_finding
     m.collectible_count = info.collectible_count
     m.pacman_spawn = info.pacman_spawn
