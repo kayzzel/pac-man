@@ -4,6 +4,46 @@ from ..game.map.Cell import Cell
 from ..game.entity.collectible.Pacgum import Pacgum
 from ..game.entity.collectible.Super_Pacgum import Super_Pacgum
 
+from mazegenerator import MazeGenerator
+
+import os
+import contextlib
+
+
+def generate_walls(width: int, height: int, seed: int = 0) -> list[list[Cell]]:
+    """Generate the cells of a random maze, with only their walls set.
+
+    Each cell walls dict comes from the generated maze bitmask
+    (N = 1, E = 2, S = 4, W = 8): no collectible, no spawn, nothing
+    else is filled in, so the map editor starts from a clean slate.
+    """
+    if width < 2 or height < 2:
+        raise ValueError(f"Invalid maze size: {width}x{height}")
+
+    with (
+        open(os.devnull, "w") as devnull,
+        contextlib.redirect_stdout(devnull),
+    ):
+        generator: MazeGenerator = MazeGenerator(
+                (width, height), False, seed=seed
+            )
+
+    cells: list[list[Cell]] = []
+    for y, row in enumerate(generator.maze):
+        cells_row: list[Cell] = []
+        for x, nbr in enumerate(row):
+            cell = Cell(x, y)
+            cell.walls = {
+                    "N": bool(nbr & 1),
+                    "E": bool(nbr & 2),
+                    "S": bool(nbr & 4),
+                    "W": bool(nbr & 8),
+                }
+            cells_row.append(cell)
+        cells.append(cells_row)
+
+    return cells
+
 
 def find_spawn_position(maze: list[list[int]]) -> tuple[float, float]:
     height = len(maze)
