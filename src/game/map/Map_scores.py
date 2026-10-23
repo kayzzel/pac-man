@@ -1,6 +1,7 @@
 from ...utils.json_utils import (
             get_json_from_file,
-            write_json_to_file
+            write_json_to_file,
+            JsonUtilsError
         )
 
 from sys import stderr
@@ -23,12 +24,15 @@ class Map_scores:
     def load_scores(self) -> None:
         Score_list = TypeAdapter(list[Score])
 
-        data = get_json_from_file(self.score_file)
         try:
+            data = get_json_from_file(self.score_file)
             self.scores = Score_list.validate_python(data)
-        except ValidationError:
-            print(f"ERROR: invalid score file {self.score_file}, ignoring it",
-                  file=stderr)
+        except (ValidationError, JsonUtilsError) as err:
+            print(
+                    "WARNING: couldn't load the score file "
+                    f"{self.score_file}: {err}",
+                    file=stderr
+                )
             self.scores = []
             return
 
