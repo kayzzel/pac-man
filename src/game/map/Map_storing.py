@@ -64,7 +64,7 @@ class Cell_info(BaseModel):
 
 
 class Map_info(BaseModel):
-    name: str = Field(ge=1)
+    name: str = Field(min_length=1, max_length=20)
     cells: list[list[Cell_info]]
     real_path_finding: bool = False
     collectible_count: int = Field(ge=0)
