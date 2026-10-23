@@ -10,6 +10,33 @@ import os
 import contextlib
 
 
+def generate_empty_map(width: int, height: int) -> list[list[Cell]]:
+    """Generate the cells of an empty room: only the walls on the
+    border of the map are present, everything inside is open.
+
+    No collectible, no spawn, so the map editor starts from a blank
+    slate it can fill wall by wall.
+    """
+    if width < 2 or height < 2:
+        raise ValueError(f"Invalid maze size: {width}x{height}")
+
+    cells: list[list[Cell]] = []
+    for y in range(height):
+        cells_row: list[Cell] = []
+        for x in range(width):
+            cell = Cell(x, y)
+            cell.walls = {
+                    "N": y == 0,
+                    "S": y == height - 1,
+                    "E": x == width - 1,
+                    "W": x == 0,
+                }
+            cells_row.append(cell)
+        cells.append(cells_row)
+
+    return cells
+
+
 def generate_walls(width: int, height: int, seed: int = 0) -> list[list[Cell]]:
     """Generate the cells of a random maze, with only their walls set.
 
