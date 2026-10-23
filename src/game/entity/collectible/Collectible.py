@@ -16,7 +16,10 @@ class Collectible(ABC):
         self.name = name
         self.pos_x: int = x
         self.pos_y: int = y
-        self.points = points
+        if points < 0:
+            self.points = 0
+        else:
+            self.points = points
 
     def collected(self, game: "Game") -> None:
         game.player.score += self.points
