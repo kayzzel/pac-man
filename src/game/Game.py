@@ -13,6 +13,7 @@ from ..utils.maze_utils import convert_maze_to_map
 from ..utils.enum_utils import Game_state, Ghost_state
 
 from mazegenerator import MazeGenerator
+from pathlib import Path
 
 import os
 import sys
@@ -25,7 +26,7 @@ class Game:
                 self,
                 config: Config,
                 map_name: str,
-                score_file: str,
+                score_file: Path,  # maps_folder/map_name/score.json
             ) -> None:
         self.map: list[Map] = []
         self.map_index: int = 0
@@ -202,7 +203,7 @@ def update_game(game: Game) -> None:
 
 
 def mandatory_game(config: Config) -> Game:
-    game = Game(config, "Mandatory", config.highscore_filename)
+    game = Game(config, "Mandatory", Path(config.highscore_filename))
     first = True
 
     width, height = config.levels_dimensions
