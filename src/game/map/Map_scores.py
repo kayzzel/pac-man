@@ -53,7 +53,7 @@ class Map_scores:
         self.scores.append(entry)
         self.scores.sort(key=(lambda e: e.score), reverse=True)
         write_json_to_file(
-                self.score_file,
+                str(self.score_file),
                 [e.model_dump() for e in self.scores]
             )
 
