@@ -2,10 +2,12 @@ import pyray as pr
 from typing import Any
 from .View import View
 from .Pause_menu import Pause_menu
+from .Endgame_view import Endgame_view
 from .widget import Icon, Text, Widget, TextPanel
 from ..game.Game import Game
 from ..game.map.Cell import Cell
 from .Map_renderer import Map_renderer
+from ..utils.enum_utils import Game_state
 
 
 LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
@@ -32,7 +34,6 @@ class Game_view(View):
         self.modal_view: Pause_menu = Pause_menu(app, game, self)
         self.show_as_modal: bool = False
 
-        self.game.map.append(self.game.generate_map(10, 10))
         self.game.start_position()
 
         super().__init__(app)
@@ -108,9 +109,6 @@ class Game_view(View):
             self.game.player.set_next_direction("W")
         elif pr.is_key_pressed(pr.KEY_RIGHT) or pr.is_key_pressed(pr.KEY_D):
             self.game.player.set_next_direction("E")
-        cur_x = int(self.game.player.pos_x)
-        cur_y = int(self.game.player.pos_y)
-        self.game.player.test_update(self.game.map[self.game.map_index].cells[cur_y][cur_x])
 
     def _update_map_panel(self) -> None:
 
@@ -151,11 +149,16 @@ class Game_view(View):
         self.show_as_modal = not self.show_as_modal
 
         if self.show_as_modal:
-            self.game.pause(1)
+            self.game.pause(Game_state.PAUSED)
             if not self.modal_view.show_cheat_panel:
                 self.modal_view.reset_input()
         else:
             self.game.resume()
+
+    def exit_game(self, next_view: View) -> None:
+
+        self.game.stop()
+        self.app.change_view(next_view)
 
     def _update(self, forced: bool = False) -> None:
 
@@ -164,6 +167,12 @@ class Game_view(View):
 
         if pr.is_key_pressed(pr.KEY_ESCAPE):
             self.pause_or_resume()
+
+        if self.game.state == Game_state.WON or self.game.state == Game_state.LOST:
+            self.exit_game(Endgame_view(self.app, self.game))
+            self.game.stop()
+            self.app.change_view()
+            return
 
         if not pr.is_window_resized() and not forced:
             return

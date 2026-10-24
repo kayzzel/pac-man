@@ -1,6 +1,7 @@
 import pyray as pr
 from typing import Callable, Any
 from .View import View
+from ..game.map.Map_scores import Map_scores
 from .widget import Widget, Text, ButtonPanel, TextPanel, Dropdown
 
 
@@ -18,12 +19,10 @@ TEST_SCORES: dict[str, int] = {
 
 class Scores_view(View):
 
-    def __init__(self, app, scores: dict[str, int] = TEST_SCORES) -> None:
+    def __init__(self, app, map_name: str = "mandatory") -> None:
 
-        self.scores: list[str] = [
-            pl_name + ": " + str(pl_score)
-            for pl_name, pl_score in scores.items()
-        ]
+        self.map_scores: Map_scores = Map_scores()
+        self.load_new_scores(map_name)
         super().__init__(app)
 
     def _update_title(self) -> None:
@@ -39,6 +38,11 @@ class Scores_view(View):
     def load_new_scores(self, map_name: str) -> None:
 
         print(f"Loading the scores for map '{map_name}'...\n")
+        self.map_scores.load_scores(map_name)
+        self.scores: list[str] = [
+            pl_name + ": " + str(pl_score)
+            for pl_name, pl_score in self.map_scores.scores.items()
+        ]
         self.map_dropdown.invert_show()
 
     def _update_buttons(self) -> None:

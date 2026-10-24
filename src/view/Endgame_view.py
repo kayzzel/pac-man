@@ -3,18 +3,18 @@ from .View import View
 from .Save_score_view import Save_score_view
 from .Main_menu import Main_menu
 from ..game.Game import Game
+from ..utils.enum_utils import Game_state
 from .widget import Widget, ButtonPanel, TextPanel, Text
 
 
 class Endgame_view(View):
 
-    def __init__(self, app, game: Game, scores: dict[str, int], state: bool) -> None:
+    def __init__(self, app, game: Game) -> None:
 
-        self.state: bool = state
         self.game: Game = game
         self.scores: list[str] = [
             pl_name + ": " + str(pl_score)
-            for pl_name, pl_score in scores.items()
+            for pl_name, pl_score in self.game.scores.scores.items()
         ]
         super().__init__(app)
 
@@ -22,7 +22,7 @@ class Endgame_view(View):
 
         self.title: Text = Text(
             (
-                "VICTORY" if self.state
+                "VICTORY" if self.game.state == Game_state.WON
                 else "GAME OVER"
             ),
             -2,

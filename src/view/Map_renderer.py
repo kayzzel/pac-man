@@ -1,6 +1,7 @@
 import pyray as pr
 from ..game.map.Cell import Cell
-from ..game.Game import Game  # , Game_state
+from ..game.Game import Game
+from ..utils.enum_utils import Game_state
 from .Texture_pack import Texture_pack
 from .widget import Icon, AnimIcon
 from ..game.entity.Pac_man import Pac_man
@@ -51,8 +52,7 @@ class Map_renderer:
 
     def set_correct_dir(self, entity: Entity) -> None:
 
-        # if self.game.state == Game_state.PAUSED:
-        if self.game.is_paused == -1:
+        if not self.game.state == Game_state.RUNNING:
             return
 
         if entity.direction == self.saved_dirs[entity.name][0]:
@@ -85,8 +85,7 @@ class Map_renderer:
     def get_pacman_texture(self, pac_man: Pac_man) -> str:
 
         self.set_correct_dir(pac_man)
-        # if self.game.state == Game_state.PAUSED:
-        if self.game.is_paused == -1:
+        if self.game.state == Game_state.DIED:
             return "pacman_death"
         return self.get_entity_texture(pac_man)
 
@@ -381,7 +380,7 @@ class Map_renderer:
                 self.sprites[entity.name].y = en_posy
 
             self.sprites[entity.name].display_widget()
-            if self.game.is_paused == 1 and "pacman" in self.sprites.keys() and self.sprites["pacman"].loop_finished:
+            if self.game.state == Game_state.DIED and "pacman" in self.sprites.keys() and self.sprites["pacman"].loop_finished:
                 self.game.resume()
 
     def get_neighbors(self, cell: Cell) -> None:
