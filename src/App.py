@@ -2,7 +2,7 @@ import pyray as pr
 from typing import Any
 from .Config import Config
 from .view.View import View
-fron .view.Texture_pack import TEXTURES_PACK
+from .view.Texture_pack import TEXTURES_PACK
 
 from sys import stderr
 
