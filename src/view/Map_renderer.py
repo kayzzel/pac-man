@@ -8,8 +8,6 @@ from ..game.entity.Pac_man import Pac_man
 from ..game.entity.Entity import Entity
 from ..game.entity.ghost.Ghost import Ghost_state, Ghost
 
-TEXTURE_PACK: str = "src/view/assets/default_texture_pack"
-
 DIRECTIONS: dict[str, str] = {
     "N": "up",
     "S": "down",

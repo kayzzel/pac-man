@@ -57,9 +57,9 @@ class Save_score_view(View):
             -2,
             self.w // 3,
             self.h // 8,
+            (self.save_name, None),
             MAX_INPUT_LENGTH,
-            NAME_CHAR_RANGE,
-            (self.save_name, None)
+            NAME_CHAR_RANGE
         )
         self.input_box.enter_input = True
         self.widgets.append(self.input_box)

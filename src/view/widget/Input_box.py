@@ -19,9 +19,9 @@ class Input_box(Widget):
         y: int,
         width: int,
         height: int,
+        action: tuple[Callable, Any] = (lambda: 0, None),
         max_chars: int = MAX_INPUT_CHARS,
         char_range: tuple[int, int] = (32, 125),
-        action: tuple[Callable, Any] = (lambda: 0, None),
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
             DEFAULT_COLOR,
             TEXT_COLOR,
@@ -62,17 +62,18 @@ class Input_box(Widget):
             pr.set_mouse_cursor(pr.MOUSE_CURSOR_IBEAM)
             self.frame_counter += 1
 
-            key: int = pr.get_char_pressed()
+            self.key: int = pr.get_char_pressed()
 
-            while key > 0:
+            while self.key > 0:
 
-                if key >= self.char_range[0] and (
-                    key <= self.char_range[1]
+                if self.key >= self.char_range[0] and (
+                    self.key <= self.char_range[1]
                     and len(self.input) < self.max_chars
                 ):
-                    self.input += chr(key)
+                    self.input += chr(self.key)
 
-                key = pr.get_char_pressed()
+                if len(self.input) > 1:
+                    self.key = pr.get_char_pressed()
 
             if pr.is_key_pressed(pr.KEY_BACKSPACE) and self.input:
                 self.input = self.input[:-1]

@@ -68,20 +68,18 @@ class Scores_view(View):
         )
         self.widgets.append(self.back_button)
 
-        main_button: dict[str, tuple[Callable, Any]] = {
-            load_label: (lambda: 0, None)
-        }
         dropdown_buttons: dict[str, tuple[Callable, Any]] = {
+            load_label: (lambda: 0, None)
+        } | {
             map_name: (self.load_new_scores, map_name)
             for map_name in DEFAULT_MAPS
         }
-        main_button.update(dropdown_buttons)
         self.map_dropdown: Dropdown = Dropdown(
             -2,
             self.title.y + self.title.font_size + self.h // 25,
             load_width,
             button_height,
-            main_button
+            dropdown_buttons
         )
 
     def _update_scores(self) -> None:

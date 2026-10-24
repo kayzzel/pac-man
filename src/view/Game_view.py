@@ -14,17 +14,6 @@ LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
 
 MIDDLE_LINE_THICKNESS: int = 10
 
-DIR_KEYS: list = [
-    pr.KEY_UP,
-    pr.KEY_DOWN,
-    pr.KEY_RIGHT,
-    pr.KEY_LEFT,
-    pr.KEY_W,
-    pr.KEY_S,
-    pr.KEY_A,
-    pr.KEY_D
-]
-
 
 class Game_view(View):
 
@@ -101,13 +90,13 @@ class Game_view(View):
 
     def catch_player_input(self) -> None:
 
-        if pr.is_key_pressed(pr.KEY_UP) or pr.is_key_pressed(pr.KEY_W):
+        if pr.is_key_pressed(self.app.display_config.keybinds["UP"]):
             self.game.player.set_next_direction("N")
-        elif pr.is_key_pressed(pr.KEY_DOWN) or pr.is_key_pressed(pr.KEY_S):
+        elif pr.is_key_pressed(self.app.display_config.keybinds["DOWN"]):
             self.game.player.set_next_direction("S")
-        elif pr.is_key_pressed(pr.KEY_LEFT) or pr.is_key_pressed(pr.KEY_A):
+        elif pr.is_key_pressed(self.app.display_config.keybinds["LEFT"]):
             self.game.player.set_next_direction("W")
-        elif pr.is_key_pressed(pr.KEY_RIGHT) or pr.is_key_pressed(pr.KEY_D):
+        elif pr.is_key_pressed(self.app.display_config.keybinds["RIGHT"]):
             self.game.player.set_next_direction("E")
 
     def _update_map_panel(self) -> None:
@@ -135,7 +124,8 @@ class Game_view(View):
             self.grid,
             (self.map_startx + 3, self.map_starty + 3),
             self.cell_size,
-            [self.game.player] + list(self.game.ghosts.values())
+            [self.game.player] + list(self.game.ghosts.values()),
+            self.app.display_config.texture_pack
         )
         self.map_outline: tuple[int, int, int, int] = (
             self.map_startx,

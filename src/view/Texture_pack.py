@@ -1,12 +1,15 @@
 import os
 
 
-DEFAULT_PACK: str = "src/view/assets/default_texture_pack/"
+TEXTURES_PACK: dict[str, str] = {
+    "DEFAULT": "src/view/assets/default_texture_pack",
+    "LUIGI": "src/view/assets/luigi_texture_pack"
+}
 
 
 class Texture_pack:
 
-    def __init__(self, pack_path: str = DEFAULT_PACK) -> None:
+    def __init__(self, pack_path: str = TEXTURES_PACK["DEFAULT"]) -> None:
 
         self.folders_needed: list[str] = [
             "pac-man_sprites",

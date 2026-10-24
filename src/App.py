@@ -1,7 +1,26 @@
+import pyray as pr
+from typing import Any
 from .Config import Config
 from .view.View import View
+fron .view.Texture_pack import TEXTURES_PACK
 
 from sys import stderr
+
+
+class Display_config:
+
+    def __init__(self) -> None:
+
+        self.keybinds: dict[str, Any] = {
+            "UP": pr.KEY_W,
+            "DOWN": pr.KEY_S,
+            "LEFT": pr.KEY_A,
+            "RIGHT": pr.KEY_D
+        }
+
+        self.fps_max: int = 60
+
+        self.texture_pack: str = TEXTURES_PACK["DEFAULT"]
 
 
 class App:
@@ -11,6 +30,8 @@ class App:
         self.__current_view: View | None = None
         self.__previous_views: list[View | None] = []
         self.__is_running = False
+
+        self.display_config: Display_config = Display_config()
 
     def load_config(self, filename: str) -> int:
         try:
