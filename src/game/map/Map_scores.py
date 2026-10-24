@@ -15,9 +15,9 @@ class Score(BaseModel):
 
 
 class Map_scores:
-    def __init__(self, map_name: str, score_file: str) -> None:
+    def __init__(self, map_name: str, maps_folder: Path) -> None:
         self.map_name: str = map_name
-        self.score_file: str = score_file
+        self.score_file: Path = maps_folder / map_name / "score.json"
         self.scores: list[Score] = []
 
         self.load_scores()
