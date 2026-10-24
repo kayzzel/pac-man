@@ -5,6 +5,7 @@ from ...utils.json_utils import (
         )
 
 from sys import stderr
+from pathlib import Path
 from pydantic import BaseModel, Field, ValidationError, TypeAdapter
 
 
@@ -14,9 +15,9 @@ class Score(BaseModel):
 
 
 class Map_scores:
-    def __init__(self, map_name: str, score_file: str) -> None:
+    def __init__(self, map_name: str, maps_folder: Path) -> None:
         self.map_name: str = map_name
-        self.score_file: str = score_file
+        self.score_file: Path = maps_folder / map_name / "score.json"
         self.scores: list[Score] = []
 
         self.load_scores()
@@ -25,7 +26,7 @@ class Map_scores:
         Score_list = TypeAdapter(list[Score])
 
         try:
-            data = get_json_from_file(self.score_file)
+            data = get_json_from_file(str(self.score_file))
             self.scores = Score_list.validate_python(data)
         except (ValidationError, JsonUtilsError) as err:
             print(
