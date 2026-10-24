@@ -30,7 +30,8 @@ class Map_renderer:
         grid: list[list[Cell]],
         map_coor: tuple[int, int],
         cell_size: int,
-        entities: list[Entity]
+        entities: list[Entity],
+        texture_pack: str
     ) -> None:
 
         self.game: Game = game
@@ -48,7 +49,7 @@ class Map_renderer:
         self.collectible_size: int = cell_size // 3
         self.entity_space: int = self.cell_size - self.cell_padding * 2
         self.entity_size: int = self.entity_space - self.entity_space // 8
-        self.texture_pack: Texture_pack = Texture_pack(TEXTURE_PACK)
+        self.texture_pack: Texture_pack = Texture_pack(texture_pack)
 
     def set_correct_dir(self, entity: Entity) -> None:
 

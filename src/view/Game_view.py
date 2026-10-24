@@ -170,8 +170,6 @@ class Game_view(View):
 
         if self.game.state == Game_state.WON or self.game.state == Game_state.LOST:
             self.exit_game(Endgame_view(self.app, self.game))
-            self.game.stop()
-            self.app.change_view()
             return
 
         if not pr.is_window_resized() and not forced:
