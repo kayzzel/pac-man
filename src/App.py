@@ -1,6 +1,7 @@
 from .Config import Config
 from .view.View import View
 
+from pathlib import Path
 from sys import stderr
 
 
@@ -9,6 +10,8 @@ class App:
         self.__config: Config = Config()
         self.__current_view = View()
         self.__is_running = False
+        self.map_folder: Path = Path(".maps")
+        self.map_folder.mkdir(parents=True, exist_ok=True)
 
     def load_config(self, filename: str) -> int:
         try:

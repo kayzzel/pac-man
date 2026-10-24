@@ -4,6 +4,30 @@ from pathlib import Path
 import json
 
 
+class JsonUtilsError(ValueError):
+    """Base class for all json_utils errors."""
+
+
+class JsonFileNotFoundError(JsonUtilsError):
+    """Raised when the requested file does not exist."""
+
+
+class JsonFileReadError(JsonUtilsError):
+    """Raised when the file exists but cannot be read."""
+
+
+class JsonParseError(JsonUtilsError):
+    """Raised when the file content is not valid JSON."""
+
+
+class JsonSerializationError(JsonUtilsError):
+    """Raised when the data cannot be serialized to JSON."""
+
+
+class JsonFileWriteError(JsonUtilsError):
+    """Raised when the file cannot be written to."""
+
+
 def _strip_comments(text: str) -> str:
     """Remove #, // and /* */ comments while leaving string content intact."""
     out = []
@@ -44,17 +68,44 @@ def _strip_comments(text: str) -> str:
 def get_json_from_file(filename: str) -> list[Any] | dict[Any, Any]:
     path = Path(filename)
     if not path.exists():
-        raise ValueError(f"ERROR: config file not found: {filename}")
+        raise JsonFileNotFoundError(f"File not found: {filename!r}")
     try:
         with open(path) as f:
             raw = f.read()
-        text = _strip_comments(raw)
-        if not text.strip():
-            return {}
+    except OSError as err:
+        raise JsonFileReadError(f"Couldn't read {filename!r}: {err}") from err
+    except UnicodeError as err:
+        raise JsonFileReadError(
+                f"Couldn't decode {filename!r} as UTF-8: {err}"
+            ) from err
+
+    text = _strip_comments(raw)
+    if not text.strip():
+        return {}
+
+    try:
         data: list[Any] | dict[Any, Any] = json.loads(text)
     except json.JSONDecodeError as err:
-        raise ValueError(f"ERROR: Invalid JSON in dataset: {err}")
-    except Exception as err:
-        raise ValueError(f"ERROR: Couldn't open the dataset: {err}") from err
+        raise JsonParseError(f"Invalid JSON in {filename!r}: {err}") from err
 
     return data
+
+
+def write_json_to_file(
+            filename: str,
+            data: dict[Any, Any] | list[Any]
+        ) -> None:
+    try:
+        text = json.dumps(data, indent=4)
+    except (TypeError, ValueError) as err:
+        raise JsonSerializationError(
+                f"Data is not JSON serializable for {filename!r}: {err}"
+            ) from err
+
+    try:
+        with open(filename, "w") as f:
+            f.write(text)
+    except OSError as err:
+        raise JsonFileWriteError(
+                f"Couldn't write to {filename!r}: {err}"
+            ) from err
