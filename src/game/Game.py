@@ -1,6 +1,7 @@
 from .GameLoop import GameLoop
 from .map.Map import Map
 from .map.Map_scores import Map_scores
+from .map.Map_storing import load_map_from_file
 from .entity.Pac_man import Pac_man
 from .entity.ghost.Ghost import Ghost
 from .entity.ghost.Blinky import Blinky
@@ -215,6 +216,36 @@ def mandatory_game(config: Config) -> Game:
         else:
             game.map.append(game.generate_map(width, height))
 
+    game.start_async()
+
+    return game
+
+
+def custom_game(
+            map_name: str,
+            map_directory: Path,
+            config: Config | None = None
+        ) -> Game | None:
+    """Start an async game on the stored map called map_name.
+
+    Returns the running Game, or None when the map does not exist,
+    is not well formatted, or its name tries to escape map_directory.
+    """
+    if config is None:
+        config = Config()
+
+    if map_name != Path(map_name).name:
+        return None
+
+    map_file = map_directory / map_name / "map.json"
+
+    try:
+        new_map = load_map_from_file(str(map_file))
+    except ValueError:
+        return None
+
+    game = Game(config)
+    game.map.append(new_map)
     game.start_async()
 
     return game
