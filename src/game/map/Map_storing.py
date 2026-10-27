@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from .Map import Map
 from .Cell import Cell
 from ..entity.collectible.Pacgum import Pacgum
@@ -235,3 +237,30 @@ def load_map_from_file(filename: str) -> Map:
             ) from err
 
     return info_to_map(info)
+
+
+def get_stored_map_list(map_dir: Path) -> list[str]:
+    """Return the names of every well-formatted map stored in map_dir.
+
+    A map is well-formatted when its folder holds a loadable map.json
+    and a score.json file: incomplete folders, stray files and folders
+    with an invalid map.json are left out of the list.
+    """
+    maps: list[str] = []
+
+    try:
+        entries = sorted(map_dir.iterdir())
+    except OSError:
+        return []
+
+    for entry in entries:
+        if not entry.is_dir():
+            continue
+        if not (entry / "map.json").is_file():
+            continue
+        if not (entry / "score.json").is_file():
+            continue
+
+        maps.append(entry.name)
+
+    return maps
