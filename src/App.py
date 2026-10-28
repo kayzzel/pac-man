@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from .Config import Config
 from .view.View import View
 
