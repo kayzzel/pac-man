@@ -11,6 +11,7 @@ TEXT_COLOR = pr.RAYWHITE
 class Text(Widget):
 
     spacing: float = 2
+    font: pr.Font = pr.get_font_default()
 
     def __init__(
         self,
@@ -49,14 +50,21 @@ class Text(Widget):
 
         if not hasattr(cls, "font"):
             cls._load_font()
-        while int(pr.measure_text_ex(cls.font, string, float(fontsize), cls.spacing).x) >= width and fontsize >= 5:
+
+        while int(pr.measure_text_ex(
+            cls.font, string, float(fontsize), cls.spacing
+        ).x) >= width and fontsize >= 5:
+
             fontsize -= 1
+
         return fontsize
 
     @property
     def width(self) -> int:
 
-        return int(pr.measure_text_ex(self.font, self.label, float(self.font_size), self.spacing).x)
+        return int(pr.measure_text_ex(
+            type(self).font, self.label, float(self.font_size), self.spacing
+        ).x)
 
     @property
     def lowerbound(self) -> int:
@@ -66,7 +74,7 @@ class Text(Widget):
     def display_widget(self) -> None:
 
         pr.draw_text_ex(
-            self.font,
+            type(self).font,
             self.label,
             (self.x, self.y),
             float(self.font_size),

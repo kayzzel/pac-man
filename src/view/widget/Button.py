@@ -22,6 +22,7 @@ class Button(Widget):
     ) -> None:
 
         super().__init__(x, y, pr.measure_text(label, font_sz), font_sz)
+
         self.label: str = label
         self.action: tuple[Callable, Any] = action
         self.color: pr.Color = color
@@ -34,10 +35,14 @@ class Button(Widget):
             return False
 
         return (
-            self.area[0] <= pr.get_mouse_x() <= self.area[0] + self.area[2]
+            self.area[0] <= pr.get_mouse_x() <= (self.area[0] + self.area[2])
         ) and (
-            self.area[1] <= pr.get_mouse_y() <= self.area[1] + self.area[3]
+            self.area[1] <= pr.get_mouse_y() <= (self.area[1] + self.area[3])
         )
+
+    def set_area(self, area: tuple[int, int, int, int]) -> None:
+
+        self.area: tuple[int, int, int, int] = area
 
     def display_widget(self) -> None:
 
@@ -47,4 +52,11 @@ class Button(Widget):
         if self.is_in or self.is_in_area:
             color = self.hover_color
 
-        pr.draw_text_ex(Text.font, self.label, (self.posx, self.posy), float(self.h), Text.spacing, color)
+        pr.draw_text_ex(
+            Text.font,
+            self.label,
+            (self.posx, self.posy),
+            float(self.h),
+            Text.spacing,
+            color
+        )

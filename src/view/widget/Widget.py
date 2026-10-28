@@ -1,4 +1,5 @@
 import pyray as pr
+from pyray.MouseButton import MOUSE_BUTTON_LEFT
 from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from abc import ABC, abstractmethod
@@ -34,7 +35,7 @@ class Widget(ABC):
     def is_pressed(self) -> bool:
 
         return (
-            pr.is_mouse_button_pressed(pr.MOUSE_BUTTON_LEFT)
+            pr.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
         ) and (
             self.is_in
         )

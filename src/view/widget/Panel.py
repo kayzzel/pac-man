@@ -31,6 +31,7 @@ class Panel(Widget):
         self.thickness: int
         self.roundness: float
         self.padding, self.thickness, self.roundness = shape_params
+
         self.center: int = center
         self.outline_color: pr.Color
         self.fill_color: pr.Color
@@ -43,23 +44,45 @@ class Panel(Widget):
 
         height_remaining: int = self.h - self.padding * 2
         self.font_size: int = height_remaining // len(labels)
-        space_for_labels = height_remaining - (len(labels) - 1) * (self.font_size // 2)
+        space_for_labels = (
+            height_remaining
+            - (len(labels) - 1)
+            * (self.font_size // 2)
+        )
 
         max_label: str = max(labels, key=lambda label: len(label))
-        self.font_size = Text._resize_font(max_label, space_for_labels // len(labels), self.w)
+        self.font_size = Text._resize_font(
+            max_label,
+            space_for_labels // len(labels),
+            self.w
+        )
 
         self.int_pad: int = 0
-        if len(labels) > 1:
-            self.int_pad = (height_remaining - self.font_size * len(labels)) // (len(labels) - 1)
 
-        total_height: int = self.font_size * len(labels) + self.int_pad * (len(labels) - 1)
+        if len(labels) > 1:
+
+            self.int_pad = (
+                height_remaining
+                - self.font_size
+                * len(labels)
+            ) // (len(labels) - 1)
+
+        total_height: int = (
+            self.font_size
+            * len(labels)
+            + self.int_pad
+            * (len(labels) - 1)
+        )
+
         if self.h - total_height > self.padding * 2:
             self.padding = (self.h - total_height) // 2
 
     def center_label_x(self, label: str) -> int:
 
         return self.posx + (
-            self.w - int(pr.measure_text_ex(Text.font, label, float(self.font_size), Text.spacing).x)
+            self.w - int(pr.measure_text_ex(
+                Text.font, label, float(self.font_size), Text.spacing
+            ).x)
         ) // 2
 
 
@@ -81,7 +104,9 @@ class TextPanel(Panel):
         label_color: pr.Color = TEXT_COLOR
     ) -> None:
 
-        super().__init__(x, y, width, height, shape_params, center, panel_colors)
+        super().__init__(
+            x, y, width, height, shape_params, center, panel_colors
+        )
 
         self.text_color: pr.Color = label_color
         self.init_labels(labels)
@@ -89,7 +114,9 @@ class TextPanel(Panel):
     def init_labels(self, labels: list[str]) -> None:
 
         self.calculate_label_spacing(labels)
+
         start_y: int = self.posy + self.padding - self.font_size
+
         self.labels: dict[str, Text] = {
             label: Text(
                 label,
@@ -134,7 +161,9 @@ class ButtonPanel(Panel):
         hover_color: pr.Color = pr.BLANK
     ) -> None:
 
-        super().__init__(x, y, width, height, shape_params, center, panel_colors)
+        super().__init__(
+            x, y, width, height, shape_params, center, panel_colors
+        )
 
         self.button_colors: tuple[pr.Color, pr.Color] = button_colors
         self.hover_color: pr.Color = hover_color
@@ -149,7 +178,9 @@ class ButtonPanel(Panel):
         self.calculate_label_spacing(
             list(button_actions.keys())
         )
+
         start_y: int = self.posy + self.padding - self.font_size
+
         self.buttons: dict[str, Button] = {
             label: Button(
                 (
@@ -189,11 +220,12 @@ class ButtonPanel(Panel):
             ey -= self.int_pad // 2
             ey += self.padding
 
-        button.area: tuple[int, int, int, int] = (sx, sy, ex - sx, ey - sy)
+        button.set_area((sx, sy, ex - sx, ey - sy))
 
     def display_widget(self) -> None:
 
         if self.outline_color != pr.BLANK:
+
             pr.draw_rectangle_rounded_lines_ex(
                 (
                     self.posx - self.thickness,
@@ -206,6 +238,7 @@ class ButtonPanel(Panel):
                 self.thickness,
                 self.outline_color
             )
+
         pr.draw_rectangle_rounded(
             (self.posx, self.posy, self.w, self.h),
             self.roundness,
@@ -222,4 +255,5 @@ class ButtonPanel(Panel):
                     4,
                     self.hover_color
                 )
+
             button.display_widget()
