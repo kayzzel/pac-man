@@ -3,6 +3,7 @@ from .Cell import Cell
 
 class Map:
     def __init__(self) -> None:
+        self.name: str = ""
         self.cells: list[list[Cell]] = []
         self.real_path_finding = False
         self.collectible_count: int = 0
