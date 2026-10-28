@@ -1,0 +1,152 @@
+from ..Config import Config
+from ..game.map.Map import Map
+from ..game.map.Cell import Cell
+from ..game.entity.collectible.Pacgum import Pacgum
+from ..game.entity.collectible.Super_Pacgum import Super_Pacgum
+
+from mazegenerator import MazeGenerator
+
+import os
+import contextlib
+
+
+def generate_empty_map(width: int, height: int) -> list[list[Cell]]:
+    """Generate the cells of an empty room: only the walls on the
+    border of the map are present, everything inside is open.
+
+    No collectible, no spawn, so the map editor starts from a blank
+    slate it can fill wall by wall.
+    """
+    if width < 2 or height < 2:
+        raise ValueError(f"Invalid maze size: {width}x{height}")
+
+    cells: list[list[Cell]] = []
+    for y in range(height):
+        cells_row: list[Cell] = []
+        for x in range(width):
+            cell = Cell(x, y)
+            cell.walls = {
+                    "N": y == 0,
+                    "S": y == height - 1,
+                    "E": x == width - 1,
+                    "W": x == 0,
+                }
+            cells_row.append(cell)
+        cells.append(cells_row)
+
+    return cells
+
+
+def generate_walls(width: int, height: int, seed: int = 0) -> list[list[Cell]]:
+    """Generate the cells of a random maze, with only their walls set.
+
+    Each cell walls dict comes from the generated maze bitmask
+    (N = 1, E = 2, S = 4, W = 8): no collectible, no spawn, nothing
+    else is filled in, so the map editor starts from a clean slate.
+    """
+    if width < 2 or height < 2:
+        raise ValueError(f"Invalid maze size: {width}x{height}")
+
+    with (
+        open(os.devnull, "w") as devnull,
+        contextlib.redirect_stdout(devnull),
+    ):
+        generator: MazeGenerator = MazeGenerator(
+                (width, height), False, seed=seed
+            )
+
+    cells: list[list[Cell]] = []
+    for y, row in enumerate(generator.maze):
+        cells_row: list[Cell] = []
+        for x, nbr in enumerate(row):
+            cell = Cell(x, y)
+            cell.walls = {
+                    "N": bool(nbr & 1),
+                    "E": bool(nbr & 2),
+                    "S": bool(nbr & 4),
+                    "W": bool(nbr & 8),
+                }
+            cells_row.append(cell)
+        cells.append(cells_row)
+
+    return cells
+
+
+def find_spawn_position(maze: list[list[int]]) -> tuple[float, float]:
+    height = len(maze)
+    width = len(maze[0])
+
+    center_y = height // 2
+    center_x = width // 2
+
+    max_dist = max(center_x, center_y,
+                   width - 1 - center_x, height - 1 - center_y)
+
+    for dist in range(max_dist + 1):
+        for dy in range(-dist, dist + 1):
+            for dx in range(-dist, dist + 1):
+                if abs(dx) + abs(dy) != dist:
+                    continue
+                x = center_x + dx
+                y = center_y + dy
+                if 0 <= x < width and 0 <= y < height and maze[y][x] != 15:
+                    return (x + 0.5, y + 0.5)
+
+    raise ValueError("No walkable spawn position found")
+
+
+def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
+    new_map: Map = Map()
+
+    width = len(maze[0])
+    height = len(maze)
+
+    spawn_x, spawn_y = find_spawn_position(maze)
+    new_map.pacman_spawn = (spawn_x, spawn_y)
+
+    def convert_nbr_to_cell(nbr: int) -> dict[str, bool]:
+        return {
+                "N": bool(nbr & 1),
+                "E": bool(nbr & 2),
+                "S": bool(nbr & 4),
+                "W": bool(nbr & 8),
+        }
+
+    def is_corner(x: int, y: int) -> bool:
+        return (x == 0 or x == width - 1) and (y == 0 or y == height - 1)
+
+    for y in range(height):
+        cell_row = []
+        for x in range(width):
+            cell = Cell(x, y)
+            cell.walls = convert_nbr_to_cell(maze[y][x])
+
+            if maze[y][x] != 15 and (x, y) != (int(spawn_x), int(spawn_y)):
+                if is_corner(x, y):
+                    cell.collectible = Super_Pacgum(
+                            x,
+                            y,
+                            config.point_per_super_pacgum,
+                        )
+                else:
+                    cell.collectible = Pacgum(
+                            x,
+                            y,
+                            config.point_per_pacgum,
+                        )
+                new_map.collectible_count += 1
+
+            cell_row.append(cell)
+        new_map.cells.append(cell_row)
+
+    new_map.ghosts_spawn["PINKY"] = (0.5, 0.5)
+    new_map.ghosts_spawn["BLINKY"] = (width - 0.5, 0.5)
+    new_map.ghosts_spawn["CLYDE"] = (0.5, height - 0.5)
+    new_map.ghosts_spawn["INKY"] = (width - 0.5, height - 0.5)
+
+    new_map.ghosts_scatter["PINKY"] = (0.5, 0.5)
+    new_map.ghosts_scatter["BLINKY"] = (width - 0.5, 0.5)
+    new_map.ghosts_scatter["CLYDE"] = (0.5, height - 0.5)
+    new_map.ghosts_scatter["INKY"] = (width - 0.5, height - 0.5)
+
+    return new_map
