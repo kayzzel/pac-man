@@ -1,5 +1,6 @@
 import pyray as pr
 from typing import Callable, Any
+from pathlib import Path
 from .View import View
 from ..game.map.Map_scores import Map_scores
 from .widget import Widget, Text, ButtonPanel, TextPanel, Dropdown
@@ -21,8 +22,7 @@ class Scores_view(View):
 
     def __init__(self, app, map_name: str = "mandatory") -> None:
 
-        self.map_scores: Map_scores = Map_scores()
-        self.load_new_scores(map_name)
+        self.load_new_scores(map_name, app.map_folder)
         super().__init__(app)
 
     def _update_title(self) -> None:
@@ -35,10 +35,10 @@ class Scores_view(View):
         )
         self.widgets.append(self.title)
 
-    def load_new_scores(self, map_name: str) -> None:
+    def load_new_scores(self, map_name: str, map_folder: Path) -> None:
 
         print(f"Loading the scores for map '{map_name}'...\n")
-        self.map_scores.load_scores(map_name)
+        self.map_scores: Map_scores = Map_scores(map_name, map_folder / map_name / "score.json")
         self.scores: list[str] = [
             pl_name + ": " + str(pl_score)
             for pl_name, pl_score in self.map_scores.scores.items()
@@ -71,7 +71,7 @@ class Scores_view(View):
         dropdown_buttons: dict[str, tuple[Callable, Any]] = {
             load_label: (lambda: 0, None)
         } | {
-            map_name: (self.load_new_scores, map_name)
+            map_name: (self.load_new_scores, (map_name, self.app.map_folder))
             for map_name in DEFAULT_MAPS
         }
         self.map_dropdown: Dropdown = Dropdown(
