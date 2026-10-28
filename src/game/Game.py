@@ -244,7 +244,7 @@ def custom_game(
     except ValueError:
         return None
 
-    game = Game(config)
+    game = Game(config, map_name, map_file)
     game.map.append(new_map)
     game.start_async()
 
