@@ -19,6 +19,7 @@ class Icon(Widget):
         to_resize: bool = False
     ) -> None:
 
+        self.image_path: str = image_path
         self.max_size: tuple[int, int] = max_size
         self.to_resize: bool = to_resize
 
@@ -27,7 +28,8 @@ class Icon(Widget):
         super().__init__(x, y, self.i_w, self.i_h)
 
     def _resize_image(
-        self, max_w: int,
+        self,
+        max_w: int,
         max_h: int,
         resize_needed: bool = False
     ) -> None:
@@ -47,19 +49,19 @@ class Icon(Widget):
         self.image: pr.Image = pr.load_image(image_path)
 
         if self.to_resize:
-            self._resize_image(*self.max_size)
+            self._resize_image(*self.max_size, True)
 
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
 
     @property
     def i_w(self) -> int:
 
-        return self.texture.width
+        return self.texture.width if not self.to_resize else self.max_size[0]
 
     @property
     def i_h(self) -> int:
 
-        return self.texture.height
+        return self.texture.height if not self.to_resize else self.max_size[1]
 
     @property
     def posx(self) -> int:
@@ -80,7 +82,7 @@ class Icon(Widget):
         )
 
     @property
-    def get_lower_bounds(self) -> tuple[int, int]:
+    def lower_bounds(self) -> tuple[int, int]:
 
         return (self.posx + self.i_w, self.posy + self.i_h)
 
@@ -102,7 +104,8 @@ class AnimIcon(Icon):
         frame_delay: int = BASE_FRAME_DELAY
     ) -> None:
 
-        super().__init__(x, y, image_path, max_size, to_resize)
+        super().__init__(x, y, image_path, max_size)
+        self.to_resize = to_resize
 
         self.frame_delay: int = frame_delay
 
@@ -114,6 +117,7 @@ class AnimIcon(Icon):
 
         self.cur_frame: int = 0
         self.frame_counter: int = 0
+        self.loop_finished: bool = False
 
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
 
@@ -124,9 +128,11 @@ class AnimIcon(Icon):
         if self.frame_counter >= self.frame_delay:
 
             self.cur_frame += 1
+            self.loop_finished = False
 
             if self.cur_frame >= self.frames_value:
                 self.cur_frame = 0
+                self.loop_finished = True
 
             nx_frame_offset: int = (
                 self.image.width * self.image.height * 4 * self.cur_frame
@@ -171,11 +177,13 @@ class ClickableIcon(Icon):
         image_path: str,
         action: tuple[Callable, Any],
         max_size: tuple[int, int],
-        to_resize: bool = False
+        to_resize: bool = False,
+        magnify: bool = True
     ) -> None:
 
         super().__init__(x, y, image_path, max_size, to_resize)
         self.action: tuple[Callable, Any] = action
+        self.magnify: bool = magnify
         self.was_in: bool = False
 
     def _update_widget(self) -> None:
@@ -183,22 +191,24 @@ class ClickableIcon(Icon):
         if self.was_in and not self.is_in:
 
             self.was_in = False
-            self._resize_image(
-                self.max_size[0],
-                self.max_size[1],
-                True
-            )
-            self.texture = pr.load_texture_from_image(self.image)
+            if self.magnify:
+                self._resize_image(
+                    self.max_size[0],
+                    self.max_size[1],
+                    True
+                )
+                self.texture = pr.load_texture_from_image(self.image)
 
         elif not self.was_in and self.is_in:
 
             self.was_in = True
-            self._resize_image(
-                self.max_size[0] + self.max_size[0] // 10,
-                self.max_size[1] + self.max_size[1] // 10,
-                True
-            )
-            self.texture = pr.load_texture_from_image(self.image)
+            if self.magnify:
+                self._resize_image(
+                    self.max_size[0] + self.max_size[0] // 10,
+                    self.max_size[1] + self.max_size[1] // 10,
+                    True
+                )
+                self.texture = pr.load_texture_from_image(self.image)
 
         if self.is_pressed:
             self.call_action()
