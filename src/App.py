@@ -4,6 +4,7 @@ from .Config import Config
 from .view.View import View
 from .view.Texture_pack import TEXTURES_PACK
 
+from pathlib import Path
 from sys import stderr
 
 
@@ -30,6 +31,8 @@ class App:
         self.__current_view: View | None = None
         self.__previous_views: list[View | None] = []
         self.__is_running = False
+        self.map_folder: Path = Path(".maps")
+        self.map_folder.mkdir(parents=True, exist_ok=True)
 
         self.display_config: Display_config = Display_config()
 
