@@ -10,6 +10,7 @@ TEXT_COLOR = pr.RAYWHITE
 
 class Text(Widget):
 
+    font: pr.Font = pr.get_font_default()
     spacing: float = 2
 
     def __init__(
@@ -23,6 +24,7 @@ class Text(Widget):
         width: int = 0
     ) -> None:
 
+        # these are default values, weirdly did not work when defined above
         if not max_w:
             max_w = sw()
         if not width:
@@ -44,19 +46,31 @@ class Text(Widget):
     @classmethod
     def _resize_font(cls, string: str, fontsize: int, width: int = 0) -> int:
 
+        # easier way of resizing text of fontsize based on max available space
+
         if not width:
             width = sw()
 
         if not hasattr(cls, "font"):
             cls._load_font()
-        while int(pr.measure_text_ex(cls.font, string, float(fontsize), cls.spacing).x) >= width and fontsize >= 5:
+
+        while cls.measure_text(string, fontsize) >= width and fontsize >= 5:
+
             fontsize -= 1
+
         return fontsize
 
     @property
     def width(self) -> int:
 
-        return int(pr.measure_text_ex(self.font, self.label, float(self.font_size), self.spacing).x)
+        return type(self).measure_text(self.label, self.font_size)
+
+    @classmethod
+    def measure_text(cls, text: str, font_size: int) -> int:
+
+        return int(pr.measure_text_ex(
+            cls.font, text, float(font_size), cls.spacing
+        ).x)
 
     @property
     def lowerbound(self) -> int:
@@ -66,7 +80,7 @@ class Text(Widget):
     def display_widget(self) -> None:
 
         pr.draw_text_ex(
-            self.font,
+            type(self).font,
             self.label,
             (self.x, self.y),
             float(self.font_size),

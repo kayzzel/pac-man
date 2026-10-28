@@ -1,4 +1,10 @@
 import pyray as pr
+from pyray.KeyboardKey import KEY_BACKSPACE, KEY_ENTER, KEY_ESCAPE
+from pyray.MouseButton import (
+    MOUSE_BUTTON_LEFT,
+    MOUSE_CURSOR_IBEAM,
+    MOUSE_CURSOR_DEFAULT
+)
 from typing import Callable, Any
 from .Widget import Widget
 from .Text import Text
@@ -12,6 +18,8 @@ CURSOR_COLOR: pr.Color = pr.RAYWHITE
 
 
 class Input_box(Widget):
+
+    # a simple input box with a validating function to call at the end
 
     def __init__(
         self,
@@ -37,6 +45,7 @@ class Input_box(Widget):
         self.char_range: tuple[int, int] = char_range
         self.max_chars: int = max_chars
         self.standin_input: str = "h" * max_chars
+
         self.base_colors: tuple[pr.Color, pr.Color, pr.Color] = colors
         self.box_color: pr.Color
         self.text_color: pr.Color
@@ -51,15 +60,18 @@ class Input_box(Widget):
 
     def _update_widget(self) -> None:
 
+        # if click inside text box for first time, input activated
         if self.is_pressed and not self.enter_input:
             self.enter_input = True
 
-        if pr.is_mouse_button_pressed(pr.MOUSE_BUTTON_LEFT) and not self.is_in:
+        # if click outside the box, input deactivated
+
+        if pr.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not self.is_in:
             self.enter_input = False
 
         if self.enter_input:
 
-            pr.set_mouse_cursor(pr.MOUSE_CURSOR_IBEAM)
+            pr.set_mouse_cursor(MOUSE_CURSOR_IBEAM)
             self.frame_counter += 1
 
             self.key: int = pr.get_char_pressed()
@@ -75,18 +87,18 @@ class Input_box(Widget):
                 if len(self.input) > 1:
                     self.key = pr.get_char_pressed()
 
-            if pr.is_key_pressed(pr.KEY_BACKSPACE) and self.input:
+            if pr.is_key_pressed(KEY_BACKSPACE) and self.input:
                 self.input = self.input[:-1]
 
-            if pr.is_key_pressed(pr.KEY_ESCAPE):
+            if pr.is_key_pressed(KEY_ESCAPE):
                 self.enter_input = False
 
-            if pr.is_key_pressed(pr.KEY_ENTER):
+            if pr.is_key_pressed(KEY_ENTER):
                 self.call_action()
 
         else:
 
-            pr.set_mouse_cursor(pr.MOUSE_CURSOR_DEFAULT)
+            pr.set_mouse_cursor(MOUSE_CURSOR_DEFAULT)
             self.frame_counter = 0
 
     def display_widget(self) -> None:
@@ -115,6 +127,8 @@ class Input_box(Widget):
         )
         user_input.y += (self.h - user_input.font_size) // 2
         user_input.display_widget()
+
+        # displays a blinking cursor in input box
 
         if (
             self.enter_input
