@@ -1,5 +1,5 @@
 import pyray as pr
-from pyray.MOUSE_BUTTON import MOUSE_BUTTON_LEFT
+from pyray import MouseButton as mb
 from typing import Callable, Any
 from .Widget import Widget
 from .Text import Text
@@ -107,7 +107,7 @@ class Dropdown(Widget):
         if not self.show:
             return
 
-        if pr.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not self.is_in:
+        if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT) and not self.is_in:
             self.invert_show()
             return
 

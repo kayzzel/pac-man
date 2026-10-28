@@ -1,10 +1,7 @@
 import pyray as pr
-from pyray.KeyboardKey import KEY_BACKSPACE, KEY_ENTER, KEY_ESCAPE
-from pyray.MouseButton import (
-    MOUSE_BUTTON_LEFT,
-    MOUSE_CURSOR_IBEAM,
-    MOUSE_CURSOR_DEFAULT
-)
+from pyray import KeyboardKey as kek
+from pyray import MouseButton as mb
+from pyray import MouseCursor as mc
 from typing import Callable, Any
 from .Widget import Widget
 from .Text import Text
@@ -66,12 +63,12 @@ class Input_box(Widget):
 
         # if click outside the box, input deactivated
 
-        if pr.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not self.is_in:
+        if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT) and not self.is_in:
             self.enter_input = False
 
         if self.enter_input:
 
-            pr.set_mouse_cursor(MOUSE_CURSOR_IBEAM)
+            pr.set_mouse_cursor(mc.MOUSE_CURSOR_IBEAM)
             self.frame_counter += 1
 
             self.key: int = pr.get_char_pressed()
@@ -87,18 +84,18 @@ class Input_box(Widget):
                 if len(self.input) > 1:
                     self.key = pr.get_char_pressed()
 
-            if pr.is_key_pressed(KEY_BACKSPACE) and self.input:
+            if pr.is_key_pressed(kek.KEY_BACKSPACE) and self.input:
                 self.input = self.input[:-1]
 
-            if pr.is_key_pressed(KEY_ESCAPE):
+            if pr.is_key_pressed(kek.KEY_ESCAPE):
                 self.enter_input = False
 
-            if pr.is_key_pressed(KEY_ENTER):
+            if pr.is_key_pressed(kek.KEY_ENTER):
                 self.call_action()
 
         else:
 
-            pr.set_mouse_cursor(MOUSE_CURSOR_DEFAULT)
+            pr.set_mouse_cursor(mc.MOUSE_CURSOR_DEFAULT)
             self.frame_counter = 0
 
     def display_widget(self) -> None:
