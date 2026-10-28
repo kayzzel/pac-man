@@ -11,6 +11,8 @@ PANEL_FILL_COLOR: pr.Color = pr.BLANK
 
 class Panel(Widget):
 
+    # basic template for panel, but only inheriting classes should be used
+
     def __init__(
         self,
         x: int,
@@ -38,6 +40,8 @@ class Panel(Widget):
         self.outline_color, self.fill_color = panel_colors
 
     def calculate_label_spacing(self, labels: list[str]) -> None:
+
+        # calculating font size and space between elements
 
         if self.padding == 0:
             self.padding = (self.h // (len(labels) * 2 + 1)) // 2
@@ -80,13 +84,13 @@ class Panel(Widget):
     def center_label_x(self, label: str) -> int:
 
         return self.posx + (
-            self.w - int(pr.measure_text_ex(
-                Text.font, label, float(self.font_size), Text.spacing
-            ).x)
+            self.w - Text.measure_text(label, self.font_size)
         ) // 2
 
 
 class TextPanel(Panel):
+
+    # panel which displays basic labels, not clickable buttons
 
     def __init__(
         self,
@@ -140,6 +144,8 @@ class TextPanel(Panel):
 
 
 class ButtonPanel(Panel):
+
+    # panel which displays clickable labels
 
     def __init__(
         self,
@@ -202,6 +208,8 @@ class ButtonPanel(Panel):
 
     def determine_button_area(self, button: Button, nb: int) -> None:
 
+        # this is used to be able to change background color when hovering
+
         sx: int = self.posx
         sy: int = self.posy
 
@@ -249,6 +257,7 @@ class ButtonPanel(Panel):
         for i, button in enumerate(self.buttons.values()):
 
             if button.is_in_area:
+
                 pr.draw_rectangle_rounded(
                     button.area,
                     self.roundness,

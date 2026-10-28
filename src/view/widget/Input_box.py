@@ -19,6 +19,8 @@ CURSOR_COLOR: pr.Color = pr.RAYWHITE
 
 class Input_box(Widget):
 
+    # a simple input box with a validating function to call at the end
+
     def __init__(
         self,
         x: int,
@@ -43,6 +45,7 @@ class Input_box(Widget):
         self.char_range: tuple[int, int] = char_range
         self.max_chars: int = max_chars
         self.standin_input: str = "h" * max_chars
+
         self.base_colors: tuple[pr.Color, pr.Color, pr.Color] = colors
         self.box_color: pr.Color
         self.text_color: pr.Color
@@ -57,8 +60,11 @@ class Input_box(Widget):
 
     def _update_widget(self) -> None:
 
+        # if click inside text box for first time, input activated
         if self.is_pressed and not self.enter_input:
             self.enter_input = True
+
+        # if click outside the box, input deactivated
 
         if pr.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not self.is_in:
             self.enter_input = False
@@ -121,6 +127,8 @@ class Input_box(Widget):
         )
         user_input.y += (self.h - user_input.font_size) // 2
         user_input.display_widget()
+
+        # displays a blinking cursor in input box
 
         if (
             self.enter_input

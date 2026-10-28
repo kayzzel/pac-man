@@ -1,6 +1,4 @@
 import pyray as pr
-from pyray import get_screen_width as sw
-from pyray import get_screen_height as sh
 from .Widget import Widget
 from typing import Any, Callable
 
@@ -9,6 +7,8 @@ BASE_FRAME_DELAY: int = 8
 
 
 class Icon(Widget):
+
+    # basic icon template widget, can be instanced by itself
 
     def __init__(
         self,
@@ -25,7 +25,7 @@ class Icon(Widget):
 
         self._load_image(image_path)
 
-        super().__init__(x, y, self.i_w, self.i_h)
+        super().__init__(x, y, self.texture.width, self.texture.height)
 
     def _resize_image(
         self,
@@ -47,44 +47,13 @@ class Icon(Widget):
     def _load_image(self, image_path: str) -> None:
 
         self.image: pr.Image = pr.load_image(image_path)
-
-        if self.to_resize:
-            self._resize_image(*self.max_size, True)
-
+        self._resize_image(*self.max_size, self.to_resize)
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
-
-    @property
-    def i_w(self) -> int:
-
-        return self.texture.width if not self.to_resize else self.max_size[0]
-
-    @property
-    def i_h(self) -> int:
-
-        return self.texture.height if not self.to_resize else self.max_size[1]
-
-    @property
-    def posx(self) -> int:
-
-        return (
-            self.x
-            if self.x >= 0
-            else (sw() - self.i_w) // -(self.x)
-        )
-
-    @property
-    def posy(self) -> int:
-
-        return (
-            self.y
-            if self.y >= 0
-            else (sh() - self.i_h) // -(self.y)
-        )
 
     @property
     def lower_bounds(self) -> tuple[int, int]:
 
-        return (self.posx + self.i_w, self.posy + self.i_h)
+        return (self.posx + self.w, self.posy + self.h)
 
     def display_widget(self) -> None:
 
@@ -93,6 +62,8 @@ class Icon(Widget):
 
 
 class AnimIcon(Icon):
+
+    # animated icon such as gifs
 
     def __init__(
         self,
@@ -122,6 +93,8 @@ class AnimIcon(Icon):
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
 
     def _update_widget(self) -> None:
+
+        # updating frames for the animated image
 
         self.frame_counter += 1
 
@@ -154,6 +127,8 @@ class AnimIcon(Icon):
             super().display_widget()
             return
 
+        # different resizing for animated images, using vectors
+
         self._update_widget()
 
         src_rect: pr.Rectangle = pr.Rectangle(
@@ -170,6 +145,8 @@ class AnimIcon(Icon):
 
 class ClickableIcon(Icon):
 
+    # icon that can be pressed and calls a function
+
     def __init__(
         self,
         x: int,
@@ -182,7 +159,9 @@ class ClickableIcon(Icon):
     ) -> None:
 
         super().__init__(x, y, image_path, max_size, to_resize)
+
         self.action: tuple[Callable, Any] = action
+        # magnifying means the icon becomes bigger when mouse hovers
         self.magnify: bool = magnify
         self.was_in: bool = False
 
@@ -191,7 +170,9 @@ class ClickableIcon(Icon):
         if self.was_in and not self.is_in:
 
             self.was_in = False
+
             if self.magnify:
+
                 self._resize_image(
                     self.max_size[0],
                     self.max_size[1],
@@ -202,7 +183,9 @@ class ClickableIcon(Icon):
         elif not self.was_in and self.is_in:
 
             self.was_in = True
+
             if self.magnify:
+
                 self._resize_image(
                     self.max_size[0] + self.max_size[0] // 10,
                     self.max_size[1] + self.max_size[1] // 10,

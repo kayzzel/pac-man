@@ -25,6 +25,8 @@ class Widget(ABC):
     @property
     def is_in(self) -> bool:
 
+        # generic property for all widgets to know if mouse in radius
+
         return (
             self.posx <= pr.get_mouse_x() <= self.posx + self.w
         ) and (
@@ -34,6 +36,9 @@ class Widget(ABC):
     @property
     def is_pressed(self) -> bool:
 
+        # generic property for all widgets to know if widget is pressed
+        # mostly used only for clickable widgets
+
         return (
             pr.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
         ) and (
@@ -42,11 +47,15 @@ class Widget(ABC):
 
     def _update_widget(self) -> None:
 
+        # used only for clickable widgets
+
         if self.is_pressed:
 
             self.call_action()
 
     def call_action(self) -> None:
+
+        # used only for clickable widgets
 
         if not hasattr(self, "action"):
 
@@ -71,6 +80,11 @@ class Widget(ABC):
     @property
     def posx(self) -> int:
 
+        # calculates relative position or fixed position for x coordinate
+        # if x < 0 then the position is calculated by dividing the width by -x
+        # example: for x = -2, the widget is centered horizontally
+        # else the widget keeps the fixed original position of x
+
         return (
             self.x
             if self.x >= 0
@@ -79,6 +93,11 @@ class Widget(ABC):
 
     @property
     def posy(self) -> int:
+
+        # calculates relative position or fixed position for y coordinate
+        # if y < 0 then the position is calculated by dividing the height by -y
+        # example: for y = -2, the widget is centered vertically
+        # else the widget keeps the fixed original position of y
 
         return (
             self.y

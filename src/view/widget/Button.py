@@ -10,6 +10,8 @@ BUTTON_HOVER_COLOR: pr.Color = pr.DARKGRAY
 
 class Button(Widget):
 
+    # clickable label that calls function when pressed
+
     def __init__(
         self,
         x: int,
@@ -21,7 +23,7 @@ class Button(Widget):
         hover_color: pr.Color = BUTTON_HOVER_COLOR
     ) -> None:
 
-        super().__init__(x, y, pr.measure_text(label, font_sz), font_sz)
+        super().__init__(x, y, Text.measure_text(label, font_sz), font_sz)
 
         self.label: str = label
         self.action: tuple[Callable, Any] = action

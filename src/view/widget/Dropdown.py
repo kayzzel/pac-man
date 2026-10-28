@@ -13,6 +13,8 @@ ARROW_DOWN_PATH: str = "src/view/assets/icons/arrow_down.png"
 
 class Dropdown(Widget):
 
+    # simple dropdown with an arrow Icon and Buttons
+
     def __init__(
         self,
         x: int,
@@ -38,6 +40,8 @@ class Dropdown(Widget):
 
     def _init_main_panel(self) -> None:
 
+        # this is to initialize the main label, the 'title' of the dropdown
+
         self.main_button: dict[str, tuple[Callable, Any]] = {
             label: action
             for i, (label, action) in enumerate(self.buttons.items())
@@ -60,12 +64,7 @@ class Dropdown(Widget):
 
         self.main_panel.center = (
             self.w
-            - int(pr.measure_text_ex(
-                Text.font,
-                self.main_label,
-                self.main_panel.font_size,
-                Text.spacing
-            ).x)
+            - Text.measure_text(self.main_label, self.main_panel.font_size)
             - self.arrow_size - self.arrow_pad * 2
         ) // 2
 
@@ -77,6 +76,8 @@ class Dropdown(Widget):
         self.button_range: tuple[int, int] = (0, self.max_show - 1)
 
     def invert_show(self) -> None:
+
+        # changes the state of the dropdown (shown or hidden)
 
         self.show = not self.show
 
