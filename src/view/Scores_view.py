@@ -3,32 +3,34 @@ from typing import Callable, Any
 from pathlib import Path
 from .View import View
 from ..game.map.Map_scores import Map_scores
+from ..game.map.Map_storing import get_stored_map_list
 from .widget import Widget, Text, ButtonPanel, TextPanel, Dropdown
 
 
-DEFAULT_MAPS: list[str] = ["MANDATORY", "ARCADE", "CUSTOM", "ADDONE", "ADDTWO", "ADDTHREE", "ADDFOUR", "ADDFIVE", "ADDSIX"]
-
-TEST_SCORES: dict[str, int] = {
-    "figue": 123456789,
-    "banane": 12345678,
-    "mirabelle": 1234567,
-    "pomme": 123456,
-    "pêche": 12345,
-    "abricot": 1234
-}
+# DEFAULT_MAPS: list[str] = ["MANDATORY", "ARCADE", "CUSTOM", "ADDONE", "ADDTWO", "ADDTHREE", "ADDFOUR", "ADDFIVE", "ADDSIX"]
+# 
+# TEST_SCORES: dict[str, int] = {
+#     "figue": 123456789,
+#     "banane": 12345678,
+#     "mirabelle": 1234567,
+#     "pomme": 123456,
+#     "pêche": 12345,
+#     "abricot": 1234
+# }
 
 
 class Scores_view(View):
 
     def __init__(self, app, map_name: str = "mandatory") -> None:
 
+        self.maps: list[str] = get_stored_map_list(app.map_folder)
         self.load_new_scores(map_name, app.map_folder)
         super().__init__(app)
 
     def _update_title(self) -> None:
 
         self.title: Text = Text(
-            "BEST SCORES",
+            f"BEST SCORES FOR {self.map_scores.map_name}",
             -2,
             self.h // 15,
             self.h // 10
@@ -72,7 +74,7 @@ class Scores_view(View):
             load_label: (lambda: 0, None)
         } | {
             map_name: (self.load_new_scores, (map_name, self.app.map_folder))
-            for map_name in DEFAULT_MAPS
+            for map_name in self.maps
         }
         self.map_dropdown: Dropdown = Dropdown(
             -2,
