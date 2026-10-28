@@ -27,10 +27,13 @@ class Widget(ABC):
 
         # generic property for all widgets to know if mouse in radius
 
-        return (
+        if (
             self.posx <= pr.get_mouse_x() <= (self.posx + self.w)
             and self.posy <= pr.get_mouse_y() <= (self.posy + self.h)
-        )
+        ):
+            return True
+
+        return False
 
     @property
     def is_pressed(self) -> bool:

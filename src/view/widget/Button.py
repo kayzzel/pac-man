@@ -36,13 +36,16 @@ class Button(Widget):
         if not hasattr(self, "area"):
             return False
 
-        return (
+        if (
             self.area[0] <= pr.get_mouse_x() <= (self.area[0] + self.area[2])
             and (
                 self.area[1] <= pr.get_mouse_y()
                 <= (self.area[1] + self.area[3])
             )
-        )
+        ):
+            return True
+
+        return False
 
     def set_area(self, area: tuple[int, int, int, int]) -> None:
 
