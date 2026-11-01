@@ -81,7 +81,7 @@ class Input_box(Widget):
                 ):
                     self.input += chr(self.key)
 
-                if len(self.input) > 1:
+                if self.max_chars > 1:
                     self.key = pr.get_char_pressed()
 
             if pr.is_key_pressed(kek.KEY_BACKSPACE) and self.input:

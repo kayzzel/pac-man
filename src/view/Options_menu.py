@@ -32,17 +32,17 @@ class Options_menu(View):
             self.h // 25
         )
         self.keybind_panel: TextPanel = TextPanel(
-            self.keybind_title.posx,
-            self.keybind_title.lowerbound,
-            2 * self.keybind_title.width // 3,
-            self.h // 30,
+            self.keybind_title.posx - self.w // 20,
+            self.keybind_title.lowerbound + self.h // 25,
+            self.keybind_title.width,
+            self.h // 5,
             list(self.app.display_config.keybinds.keys())
         )
         self.keybind_input: dict[str, Input_box] = {
             keybind: Input_box(
                 self.keybind_panel.posx + self.keybind_panel.w + self.keybind_panel.w // 10,
                 self.keybind_panel.labels[keybind].posy,
-                self.keybind_title.width // 3 - self.keybind_panel.w // 5,
+                self.keybind_title.width // 2,
                 self.keybind_panel.font_size,
                 (self.change_keybind, keybind),
                 1
@@ -54,15 +54,24 @@ class Options_menu(View):
     def change_resolution(self, res: str) -> None:
 
         if res == "fullscreen":
-            if not pr.is_window_fullscreen():
-                pr.toggle_fullscreen()
+            pr.toggle_fullscreen()
             return
 
-        if res == "1080p":
-            pr.set_window_size(1920, 1080)
+        if res == "1080p" or res == "720p":
 
-        elif res == "720p":
-            pr.set_window_size(1240, 720)
+            if pr.is_window_fullscreen():
+                pr.toggle_fullscreen()
+
+            if res == "1080p":
+                width: int = 1920
+                height: int = 1080
+
+            elif res == "720p":
+                width = 1240
+                height = 720
+
+            pr.set_window_size(width, height)
+            self._update(True)
 
     def change_fps(self) -> None:
 

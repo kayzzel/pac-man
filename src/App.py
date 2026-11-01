@@ -1,4 +1,5 @@
 import pyray as pr
+from pyray import KeyboardKey as kek
 from typing import Any
 from .Config import Config
 from .view.View import View
@@ -13,10 +14,10 @@ class Display_config:
     def __init__(self) -> None:
 
         self.keybinds: dict[str, Any] = {
-            "UP": pr.KEY_W,
-            "DOWN": pr.KEY_S,
-            "LEFT": pr.KEY_A,
-            "RIGHT": pr.KEY_D
+            "UP": kek.KEY_W,
+            "DOWN": kek.KEY_S,
+            "LEFT": kek.KEY_A,
+            "RIGHT": kek.KEY_D
         }
 
         self.fps_max: int = 60
