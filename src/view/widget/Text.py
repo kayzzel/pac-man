@@ -83,7 +83,7 @@ class Text(Widget):
 
         if not cls.init:
             cls._load_font()
-            cls.init: bool = True
+            cls.init = True
 
         if not cls.default:
             return int(pr.measure_text_ex(
