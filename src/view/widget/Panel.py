@@ -117,6 +117,9 @@ class TextPanel(Panel):
 
     def init_labels(self, labels: list[str]) -> None:
 
+        if not labels:
+            return
+
         self.calculate_label_spacing(labels)
 
         start_y: int = self.posy + self.padding - self.font_size
@@ -138,6 +141,9 @@ class TextPanel(Panel):
         }
 
     def display_widget(self) -> None:
+
+        if not hasattr(self, "labels"):
+            return
 
         for label in self.labels.values():
             label.display_widget()
@@ -180,6 +186,9 @@ class ButtonPanel(Panel):
         self,
         button_actions: dict[str, tuple[Callable, Any]]
     ) -> None:
+
+        if not button_actions:
+            return
 
         self.calculate_label_spacing(
             list(button_actions.keys())
@@ -253,6 +262,9 @@ class ButtonPanel(Panel):
             4,
             self.fill_color
         )
+
+        if not hasattr(self, "buttons"):
+            return
 
         for i, button in enumerate(self.buttons.values()):
 
