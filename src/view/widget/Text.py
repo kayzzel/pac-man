@@ -11,6 +11,10 @@ TEXT_COLOR = pr.RAYWHITE
 
 class Text(Widget):
 
+    font = pr.get_font_default()
+    spacing: int = 4
+    default: bool = True
+
     def __init__(
         self,
         label: str,
@@ -58,8 +62,9 @@ class Text(Widget):
         if not width:
             width = sw()
 
-        if not hasattr(cls, "font"):
+        if not hasattr(cls, "init"):
             cls._load_font()
+            cls.init: bool = True
 
         while cls.measure_text(string, fontsize) >= width and fontsize >= 5:
 
@@ -74,6 +79,10 @@ class Text(Widget):
 
     @classmethod
     def measure_text(cls, text: str, font_size: int) -> int:
+
+        if not hasattr(cls, "init"):
+            cls._load_font()
+            cls.init: bool = True
 
         if not cls.default:
             return int(pr.measure_text_ex(
