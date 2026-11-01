@@ -15,7 +15,7 @@ pr.set_exit_key(pr.KEY_NULL)
 app: App = App()
 
 map_choice: Map_choice_menu = Map_choice_menu(app)
-Text._load_font(PACMAN_FONT)
+# Text._load_font(PACMAN_FONT)
 
 views: dict[str, View] = {
     "map_choice_menu": map_choice

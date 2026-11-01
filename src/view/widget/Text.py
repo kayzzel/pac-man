@@ -3,16 +3,13 @@ from pyray import get_screen_width as sw
 from .Widget import Widget
 
 
+DEFAULT_FONT = "src/view/assets/fonts/Gohu/GohuFont11NerdFontMono-Regular.ttf"
 PACMAN_FONT = "src/view/assets/fonts/crackman/Crackman.otf"
 
 TEXT_COLOR = pr.RAYWHITE
 
 
 class Text(Widget):
-
-    font: pr.Font = pr.get_font_default()
-    spacing: float = 2
-    default: bool = True
 
     def __init__(
         self,
@@ -41,15 +38,17 @@ class Text(Widget):
         self.color: pr.Color = color
 
     @classmethod
-    def _load_font(cls, new_font_path: str = "") -> None:
+    def _load_font(cls, new_font_path: str = DEFAULT_FONT) -> None:
+
         if not new_font_path:
             cls.font = pr.get_font_default()
-            cls.spacing = cls.font.spacing
-            cls.default = True
+            cls.spacing: int = 4
+            cls.default: bool = True
+
         else:
             cls.font = pr.load_font(new_font_path)
-            cls.default = False
             cls.spacing = 2
+            cls.default = False
 
     @classmethod
     def _resize_font(cls, string: str, fontsize: int, width: int = 0) -> int:
@@ -76,6 +75,9 @@ class Text(Widget):
     @classmethod
     def measure_text(cls, text: str, font_size: int) -> int:
 
+        if not hasattr(cls, "font"):
+            cls._load_font()
+
         if not cls.default:
             return int(pr.measure_text_ex(
                 cls.font, text, float(font_size), cls.spacing
@@ -89,11 +91,20 @@ class Text(Widget):
 
     def display_widget(self) -> None:
 
-        pr.draw_text_ex(
-            type(self).font,
-            self.label,
-            (self.x, self.y),
-            float(self.font_size),
-            self.spacing,
-            self.color
-        )
+        if not type(self).default:
+            pr.draw_text_ex(
+                type(self).font,
+                self.label,
+                (self.x, self.y),
+                float(self.font_size),
+                self.spacing,
+                self.color
+            )
+        else:
+            pr.draw_text(
+                self.label,
+                self.x,
+                self.y,
+                self.font_size,
+                self.color
+            )

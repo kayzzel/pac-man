@@ -36,7 +36,7 @@ class Save_score_view(View):
         back_padding: int = back_font_sz - 5
 
         back_width: int = (
-            int(pr.measure_text_ex(Text.font, back_label, back_font_sz, Text.spacing).x)
+            Text.measure_text(back_label, back_font_sz)
         ) + back_padding
         back_height: int = back_font_sz + back_padding
 

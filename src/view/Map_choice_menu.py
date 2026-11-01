@@ -75,7 +75,7 @@ class Map_choice_menu(View):
         )
 
         back_width: int = (
-            int(pr.measure_text_ex(Text.font, back_label, self.button_font_sz, Text.spacing).x)
+            Text.measure_text(back_label, self.button_font_sz)
         ) + self.button_font_sz - 5
         back_height: int = self.button_font_sz * 2 - 5
 

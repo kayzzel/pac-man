@@ -58,7 +58,7 @@ class Scores_view(View):
         button_padding: int = button_font_sz - 5
 
         back_width: int = (
-            int(pr.measure_text_ex(Text.font, back_label, button_font_sz, Text.spacing).x)
+            Text.measure_text(back_label, button_font_sz)
         ) + button_padding
         load_width: int = self.w // 5
         button_height: int = button_font_sz + button_padding
