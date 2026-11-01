@@ -48,7 +48,8 @@ class Options_menu(View):
                 1
             ) for keybind in list(self.app.display_config.keybinds.keys())
         }
-        self.widgets += [self.keybind_title, self.keybind_panel, self.keybind_input]
+        self.widgets += [self.keybind_title, self.keybind_panel]
+        self.widgets += list(self.keybind_input.values())
 
     def change_resolution(self, res: str) -> None:
 

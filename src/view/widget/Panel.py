@@ -84,7 +84,7 @@ class Panel(Widget):
     def center_label_x(self, label: str) -> int:
 
         return self.posx + (
-            self.w - int(pr.measure_text_ex(Text.font, label, self.font_size, Text.spacing).x)
+            self.w - Text.measure_text(label, self.font_size)
         ) // 2
 
 
@@ -116,6 +116,9 @@ class TextPanel(Panel):
         self.init_labels(labels)
 
     def init_labels(self, labels: list[str]) -> None:
+
+        if not labels:
+            return
 
         self.calculate_label_spacing(labels)
 
@@ -180,6 +183,9 @@ class ButtonPanel(Panel):
         self,
         button_actions: dict[str, tuple[Callable, Any]]
     ) -> None:
+
+        if not button_actions:
+            return
 
         self.calculate_label_spacing(
             list(button_actions.keys())
@@ -254,15 +260,16 @@ class ButtonPanel(Panel):
             self.fill_color
         )
 
-        for i, button in enumerate(self.buttons.values()):
+        if hasattr(self, "buttons"):
+            for i, button in enumerate(self.buttons.values()):
 
-            if button.is_in_area:
+                if button.is_in_area:
 
-                pr.draw_rectangle_rounded(
-                    button.area,
-                    self.roundness,
-                    4,
-                    self.hover_color
-                )
+                    pr.draw_rectangle_rounded(
+                        button.area,
+                        self.roundness,
+                        4,
+                        self.hover_color
+                    )
 
-            button.display_widget()
+                button.display_widget()

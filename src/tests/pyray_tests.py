@@ -1,6 +1,7 @@
 import pyray as pr
 from ..App import App
 from ..view import View, Main_menu, Map_choice_menu
+from ..view.widget.Text import Text, PACMAN_FONT
 
 # pr.set_config_flags(pr.FLAG_WINDOW_RESIZABLE)
 pr.set_trace_log_level(pr.LOG_ERROR)
@@ -14,6 +15,7 @@ pr.set_exit_key(pr.KEY_NULL)
 app: App = App()
 
 map_choice: Map_choice_menu = Map_choice_menu(app)
+Text._load_font(PACMAN_FONT)
 
 views: dict[str, View] = {
     "map_choice_menu": map_choice

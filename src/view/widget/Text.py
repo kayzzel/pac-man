@@ -12,6 +12,7 @@ class Text(Widget):
 
     font: pr.Font = pr.get_font_default()
     spacing: float = 2
+    default: bool = True
 
     def __init__(
         self,
@@ -40,8 +41,15 @@ class Text(Widget):
         self.color: pr.Color = color
 
     @classmethod
-    def _load_font(cls) -> None:
-        cls.font = pr.load_font(PACMAN_FONT)
+    def _load_font(cls, new_font_path: str = "") -> None:
+        if not new_font_path:
+            cls.font = pr.get_font_default()
+            cls.spacing = cls.font.spacing
+            cls.default = True
+        else:
+            cls.font = pr.load_font(new_font_path)
+            cls.default = False
+            cls.spacing = 2
 
     @classmethod
     def _resize_font(cls, string: str, fontsize: int, width: int = 0) -> int:
@@ -68,9 +76,11 @@ class Text(Widget):
     @classmethod
     def measure_text(cls, text: str, font_size: int) -> int:
 
-        return int(pr.measure_text_ex(
-            cls.font, text, float(font_size), cls.spacing
-        ).x)
+        if not cls.default:
+            return int(pr.measure_text_ex(
+                cls.font, text, float(font_size), cls.spacing
+            ).x)
+        return pr.measure_text(text, font_size)
 
     @property
     def lowerbound(self) -> int:

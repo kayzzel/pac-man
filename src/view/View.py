@@ -34,5 +34,6 @@ class View(ABC):
     def display_view(self) -> None:
 
         self._update()
-        for widget in self.widgets:
-            widget.display_widget()
+        if hasattr(self, "widgets"):
+            for widget in self.widgets:
+                widget.display_widget()

@@ -46,16 +46,13 @@ class Main_menu(View):
     def _update_panel(self) -> None:
 
         icon_bottom: int = self.background.lower_bounds[1]
-        print(f"icon bottom {icon_bottom}")
 
         height_remaining: int = self.h - BORDER_PADDING * 2 - icon_bottom
         panel_height: int = height_remaining - height_remaining // 4
         panel_width: int = self.w // 3
-        print(f"panel width {panel_width} panel height {panel_height}")
 
         panel_y: int = icon_bottom + (height_remaining - panel_height) // 2
         panel_x: int = (self.w - panel_width) // 2
-        print(f"panel y {panel_y} panel x {panel_x}")
 
         button_actions: dict[str, tuple[Callable, Any]] = {
             "start game": (self.app.change_view, "map_choice_menu"),
