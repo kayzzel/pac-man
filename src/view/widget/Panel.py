@@ -142,6 +142,9 @@ class TextPanel(Panel):
 
     def display_widget(self) -> None:
 
+        if not hasattr(self, "labels"):
+            return
+
         for label in self.labels.values():
             label.display_widget()
 
@@ -260,8 +263,10 @@ class ButtonPanel(Panel):
             self.fill_color
         )
 
-        if hasattr(self, "buttons"):
-            for i, button in enumerate(self.buttons.values()):
+        if not hasattr(self, "buttons"):
+            return
+
+        for i, button in enumerate(self.buttons.values()):
 
                 if button.is_in_area:
 

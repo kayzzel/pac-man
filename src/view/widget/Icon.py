@@ -55,12 +55,20 @@ class Icon(Widget):
     @property
     def i_w(self) -> int:
 
-        return self.texture.width if not self.to_resize else self.max_size[0]
+        return (
+            self.texture.width
+            if not self.to_resize
+            else self.max_size[0]
+        )
 
     @property
     def i_h(self) -> int:
 
-        return self.texture.height if not self.to_resize else self.max_size[1]
+        return (
+            self.texture.height
+            if not self.to_resize
+            else self.max_size[1]
+        )
 
     @property
     def posx(self) -> int:
