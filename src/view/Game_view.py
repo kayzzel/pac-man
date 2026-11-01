@@ -152,7 +152,7 @@ class Game_view(View):
 
     def _update(self, forced: bool = False) -> None:
 
-        if pr.get_key_pressed() in DIR_KEYS:
+        if pr.get_key_pressed() in self.app.display_config.keybinds.values():
             self.catch_player_input()
 
         if pr.is_key_pressed(pr.KEY_ESCAPE):

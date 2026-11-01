@@ -84,7 +84,7 @@ class Panel(Widget):
     def center_label_x(self, label: str) -> int:
 
         return self.posx + (
-            self.w - Text.measure_text(label, self.font_size)
+            self.w - int(pr.measure_text_ex(Text.font, label, self.font_size, Text.spacing).x)
         ) // 2
 
 

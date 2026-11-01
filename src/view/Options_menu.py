@@ -1,6 +1,6 @@
 import pyray as pr
 from .View import View
-from .view.Texture_pack import Texture_pack, TEXTURES_PACK
+from .Texture_pack import Texture_pack, TEXTURES_PACK
 from .widget import Widget, Text, ButtonPanel, Dropdown, TextPanel, Input_box, AnimIcon
 from typing import Callable, Any
 
@@ -28,12 +28,12 @@ class Options_menu(View):
         self.keybind_title: Text = Text(
             "KEYBINDS",
             self.w // 10,
-            self.title.y + self.title.font_size + self.h // 15,
+            self.title.lowerbound + self.h // 15,
             self.h // 25
         )
         self.keybind_panel: TextPanel = TextPanel(
             self.keybind_title.posx,
-            self.keybind_title.h + self.keybind_title.font_size,
+            self.keybind_title.lowerbound,
             2 * self.keybind_title.width // 3,
             self.h // 30,
             list(self.app.display_config.keybinds.keys())
@@ -41,12 +41,12 @@ class Options_menu(View):
         self.keybind_input: dict[str, Input_box] = {
             keybind: Input_box(
                 self.keybind_panel.posx + self.keybind_panel.w + self.keybind_panel.w // 10,
-                self.keybing_panel.labels[keybind].posy,
-                self.keybind_title.width // 3 - self.keybind_panel.width // 5,
+                self.keybind_panel.labels[keybind].posy,
+                self.keybind_title.width // 3 - self.keybind_panel.w // 5,
                 self.keybind_panel.font_size,
                 (self.change_keybind, keybind),
                 1
-            ) for keybind in list(self.app.display_config.keys())
+            ) for keybind in list(self.app.display_config.keybinds.keys())
         }
         self.widgets += [self.keybind_title, self.keybind_panel, self.keybind_input]
 
@@ -85,7 +85,7 @@ class Options_menu(View):
         }
         self.resolution_dropdown: Dropdown = Dropdown(
             self.graphics_title.posx,
-            self.graphics_title.posy + self.graphics_title.font_size + self.h // 25,
+            self.graphics_title.lowerbound + self.h // 25,
             self.graphics_title.width,
             self.graphics_title.font_size,
             res_buttons
@@ -94,13 +94,13 @@ class Options_menu(View):
             f"FPS max ({self.app.display_config.fps_max})",
             self.graphics_title.posx,
             self.resolution_dropdown.posy + self.resolution_dropdown.h + self.h // 25,
-            self.resolution_dropdown.panel.font_size,
+            self.resolution_dropdown.main_panel.font_size,
             self.graphics_title.width // 2
         )
         self.fps_input: Input_box = Input_box(
             self.fps_label.posx + self.graphics_title.width // 2 + self.graphics_title.width // 10,
             self.fps_label.posy,
-            self.graphics_title // 2 - self.graphics_title // 5,
+            self.graphics_title.width // 2 - self.graphics_title.width // 5,
             self.graphics_title.font_size,
             (self.change_fps, None),
             4,
@@ -114,9 +114,7 @@ class Options_menu(View):
         button_font_sz: int = self.h // 20
         button_padding: int = button_font_sz - 5
 
-        back_width: int = (
-            int(pr.measure_text_ex(Text.font, back_label, button_font_sz, Text.spacing).x)
-        ) + button_padding
+        back_width: int = Text.measure_text(back_label, button_font_sz) + button_padding
         button_height: int = button_font_sz + button_padding
 
         self.back_button: ButtonPanel = ButtonPanel(
@@ -158,29 +156,29 @@ class Options_menu(View):
         }
         self.texture_dropdown: Dropdown = Dropdown(
             self.texture_title.posx,
-            self.texture_title.posy + self.texture_title.font_size + self.h // 25,
+            self.texture_title.lowerbound + self.h // 25,
             self.w // 3,
             self.texture_title.font_size,
             texture_buttons
         )
-        self.preview_label: Text(
+        self.preview_label: Text = Text(
             "PREVIEW : ",
             self.texture_dropdown.posx,
             self.texture_dropdown.posy + self.texture_dropdown.h + self.h // 5,
             self.texture_title.font_size
         )
-        height_remaining: int = self.h - (self.preview_label.posy + self.preview_label.font_size + self.back_button.h)
+        height_remaining: int = self.h - (self.preview_label.lowerbound + self.back_button.h)
         height_remaining -= height_remaining // 4
         self.preview_icon_pacman: AnimIcon = AnimIcon(
             self.preview_label.posx + self.w // 10,
-            self.preview_label.posy + self.preview_label.font_size + self.h // 15,
+            self.preview_label.lowerbound + self.h // 15,
             Texture_pack(self.app.display_config.texture_pack).get_texture("pacman_right"),
             (height_remaining, height_remaining),
             True
         )
         self.preview_icon_ghost: AnimIcon = AnimIcon(
             self.preview_icon_pacman.posx + self.preview_icon_pacman.image.width + self.w // 10,
-            self.preview_label.posy + self.preview_label.font_size + self.h // 15,
+            self.preview_label.lowerbound + self.h // 15,
             Texture_pack(self.app.display_config.texture_pack).get_texture("clyde_left"),
             (height_remaining, height_remaining),
             True
@@ -194,6 +192,7 @@ class Options_menu(View):
 
         self.widgets: list[Widget] = []
         self._update_title()
+        self._update_back_button()
         self._update_keybinds()
         self._update_graphics()
         self._update_texture_pack()

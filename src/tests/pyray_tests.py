@@ -1,7 +1,6 @@
 import pyray as pr
 from ..App import App
-from ..view import View, Main_menu, Map_choice_menu, Game_view
-from ..game.Game import Game
+from ..view import View, Main_menu, Map_choice_menu
 
 # pr.set_config_flags(pr.FLAG_WINDOW_RESIZABLE)
 pr.set_trace_log_level(pr.LOG_ERROR)
@@ -14,19 +13,14 @@ pr.set_exit_key(pr.KEY_NULL)
 
 app: App = App()
 
-menu: Main_menu = Main_menu(app)
 map_choice: Map_choice_menu = Map_choice_menu(app)
-game_view: Game_view = Game_view(app, Game(app.config))
 
 views: dict[str, View] = {
-    "main_menu": menu,
-    "map_choice_menu": map_choice,
-    "pause_menu": game_view.modal_view,
-    "game_view": game_view
+    "map_choice_menu": map_choice
 }
 app.add_view(views)
 
-app.change_view("main_menu")
+app.change_view(Main_menu(app))
 
 while not pr.window_should_close():
 

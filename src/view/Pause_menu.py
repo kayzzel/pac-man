@@ -162,9 +162,9 @@ class Pause_menu(View):
             self.h // 3 + self.lock_icon.h + 10,
             input_width,
             self.h // 8,
+            (self.validate_password, None),
             20,
-            (32, 125),
-            (self.validate_password, None)
+            (32, 125)
         )
         self.reset_input()
 

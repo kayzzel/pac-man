@@ -53,7 +53,7 @@ class Icon(Widget):
     @property
     def lower_bounds(self) -> tuple[int, int]:
 
-        return (self.posx + self.w, self.posy + self.h)
+        return (self.posx + self.image.width, self.posy + self.image.height)
 
     def display_widget(self) -> None:
 

@@ -42,10 +42,13 @@ class Scores_view(View):
         print(f"Loading the scores for map '{map_name}'...\n")
         self.map_scores: Map_scores = Map_scores(map_name, map_folder / map_name / "score.json")
         self.scores: list[str] = [
-            pl_name + ": " + str(pl_score)
-            for pl_name, pl_score in self.map_scores.scores.items()
+            pl.name + ": " + str(pl.score)
+            for pl in self.map_scores.scores
         ]
-        self.map_dropdown.invert_show()
+        if not self.scores:
+            self.scores.append("No scores yet")
+        if hasattr(self, "map_dropdown"):
+            self.map_dropdown.invert_show()
 
     def _update_buttons(self) -> None:
 

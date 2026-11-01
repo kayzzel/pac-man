@@ -86,7 +86,7 @@ class Texture_pack:
         if not textures_missing:
             return
 
-        self.fill_textures(textures_missing, DEFAULT_PACK)
+        self.fill_textures(textures_missing, TEXTURES_PACK["DEFAULT"])
 
     def fill_textures(self, textures: list[str], pack_path: str) -> None:
 
