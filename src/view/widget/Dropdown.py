@@ -54,20 +54,18 @@ class Dropdown(Widget):
             self.w - self.arrow_size - self.arrow_pad * 2,
             self.h,
             self.main_button,
-            (self.w // 12, 0, 0),
-            -2,
+            (0, 0, 0),
+            0,
             (pr.BLANK, pr.DARKGRAY),
             (pr.RAYWHITE, pr.RAYWHITE)
         )
 
         self.main_label: str = [k for k in self.main_button.keys()][0]
-
-        self.main_panel.center = (
+        self.main_panel.buttons[self.main_label].x += (
             self.w
             - Text.measure_text(self.main_label, self.main_panel.font_size)
             - self.arrow_size - self.arrow_pad * 2
-        ) // 2
-
+        ) // 2 + self.arrow_pad
         self.main_panel.w = self.w
 
         self.buttons.pop(self.main_label)

@@ -93,7 +93,7 @@ class Save_score_view(View):
     def save_name(self) -> None:
 
         self.player_name: str = self.input_box.input
-        self.game.scores.add_scores(self.player_name, self.game.player.score)
+        self.game.scores.add_score(self.player_name, self.game.player.score)
         self.input_text.label = ""
         self.show_message = [
             "Successfully saved ",

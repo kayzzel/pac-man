@@ -22,14 +22,18 @@ class Options_menu(View):
         if keybind not in self.app.display_config.keybinds.keys():
             return
         self.app.display_config.keybinds[keybind] = self.keybind_input[keybind].key
+        self._update(True)
 
     def _update_keybinds(self) -> None:
 
+        self.p_w: int = self.w // 2
+        self.title_fontsz: int = self.h // 20
+
         self.keybind_title: Text = Text(
             "KEYBINDS",
-            self.w // 10,
+            (self.p_w - Text.measure_text("KEYBINDS", self.title_fontsz)) // 2,
             self.title.lowerbound + self.h // 15,
-            self.h // 25
+            self.title_fontsz
         )
         self.keybind_panel: TextPanel = TextPanel(
             self.keybind_title.posx - self.w // 20,
@@ -55,9 +59,8 @@ class Options_menu(View):
 
         if res == "fullscreen":
             pr.toggle_fullscreen()
-            return
 
-        if res == "1080p" or res == "720p":
+        elif res == "1080p" or res == "720p":
 
             if pr.is_window_fullscreen():
                 pr.toggle_fullscreen()
@@ -71,46 +74,55 @@ class Options_menu(View):
                 height = 720
 
             pr.set_window_size(width, height)
-            self._update(True)
+
+        self._update(True)
 
     def change_fps(self) -> None:
 
-        if not self.fps_input.input.is_digit():
+        if not self.fps_input.input.isdigit():
             return
         self.app.display_config.fps_max = int(self.fps_input.input)
+        self._update(True)
 
     def _update_graphics(self) -> None:
 
         self.graphics_title: Text = Text(
             "GRAPHICS",
-            self.keybind_title.posx,
+            (self.p_w - Text.measure_text("GRAPHICS", self.title_fontsz)) // 2,
             self.keybind_panel.posy + self.keybind_panel.h + self.h // 15,
-            self.h // 25
+            self.title_fontsz
         )
         res_buttons: dict[str, tuple[Callable, Any]] = {
-            "Change screen dimensions": (lambda: 0, None)
+            "Screen dimensions": (lambda: 0, None)
         } | {
             res: (self.change_resolution, res)
             for res in ["fullscreen", "1080p", "720p"]
         }
+        res_w: int = self.p_w // 2
         self.resolution_dropdown: Dropdown = Dropdown(
-            self.graphics_title.posx,
+            (self.p_w - res_w) // 2,
             self.graphics_title.lowerbound + self.h // 25,
-            self.graphics_title.width,
+            res_w,
             self.graphics_title.font_size,
             res_buttons
         )
+        fps_string: str = f"FPS max ({self.app.display_config.fps_max})"
+        fps_input_sz: int = self.resolution_dropdown.w // 5 + self.resolution_dropdown.w // 8
         self.fps_label: Text = Text(
             f"FPS max ({self.app.display_config.fps_max})",
-            self.graphics_title.posx,
+            self.resolution_dropdown.posx + (
+                self.resolution_dropdown.w
+                - Text.measure_text(fps_string, self.resolution_dropdown.main_panel.font_size)
+                - fps_input_sz
+            ) // 2,
             self.resolution_dropdown.posy + self.resolution_dropdown.h + self.h // 25,
             self.resolution_dropdown.main_panel.font_size,
-            self.graphics_title.width // 2
+            self.resolution_dropdown.w - fps_input_sz
         )
         self.fps_input: Input_box = Input_box(
-            self.fps_label.posx + self.graphics_title.width // 2 + self.graphics_title.width // 10,
+            self.fps_label.posx + self.fps_label.width + self.resolution_dropdown.w // 16,
             self.fps_label.posy,
-            self.graphics_title.width // 2 - self.graphics_title.width // 5,
+            self.resolution_dropdown.w // 5,
             self.graphics_title.font_size,
             (self.change_fps, None),
             4,
@@ -143,14 +155,15 @@ class Options_menu(View):
             return
 
         self.app.display_config.texture_pack = TEXTURES_PACK[new_pack]
+        self._update(True)
 
     def _update_texture_pack(self) -> None:
 
         self.texture_title: Text = Text(
             "TEXTURES",
-            self.w // 3 * 2,
+            self.p_w + (self.p_w - Text.measure_text("TEXTURES", self.title_fontsz)) // 2,
             self.keybind_title.posy,
-            self.keybind_title.font_size,
+            self.title_fontsz,
             self.w // 3
         )
         current_pack: str = "DEFAULT"
@@ -164,32 +177,34 @@ class Options_menu(View):
             pack: (self.change_texture_pack, pack)
             for pack in TEXTURES_PACK.keys()
         }
+        text_drdw_w: int = self.p_w - self.p_w // 3
         self.texture_dropdown: Dropdown = Dropdown(
-            self.texture_title.posx,
+            self.p_w + (self.p_w - text_drdw_w) // 2,
             self.texture_title.lowerbound + self.h // 25,
-            self.w // 3,
+            text_drdw_w,
             self.texture_title.font_size,
             texture_buttons
         )
         self.preview_label: Text = Text(
             "PREVIEW : ",
-            self.texture_dropdown.posx,
-            self.texture_dropdown.posy + self.texture_dropdown.h + self.h // 5,
-            self.texture_title.font_size
+            self.p_w,
+            self.texture_dropdown.posy + self.texture_dropdown.h + self.h // 15,
+            self.title_fontsz
         )
-        height_remaining: int = self.h - (self.preview_label.lowerbound + self.back_button.h)
+        height_remaining: int = self.h - (self.preview_label.lowerbound + self.back_button.h + self.h // 15)
         height_remaining -= height_remaining // 4
+        start_x: int = (self.p_w // 2 - height_remaining) // 2
         self.preview_icon_pacman: AnimIcon = AnimIcon(
-            self.preview_label.posx + self.w // 10,
+            self.p_w + start_x,
             self.preview_label.lowerbound + self.h // 15,
             Texture_pack(self.app.display_config.texture_pack).get_texture("pacman_right"),
             (height_remaining, height_remaining),
             True
         )
         self.preview_icon_ghost: AnimIcon = AnimIcon(
-            self.preview_icon_pacman.posx + self.preview_icon_pacman.image.width + self.w // 10,
+            self.p_w + self.p_w // 2 + start_x,
             self.preview_label.lowerbound + self.h // 15,
-            Texture_pack(self.app.display_config.texture_pack).get_texture("clyde_left"),
+            Texture_pack(self.app.display_config.texture_pack).get_texture("blinky_left"),
             (height_remaining, height_remaining),
             True
         )
