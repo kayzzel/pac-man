@@ -10,9 +10,6 @@ TEXT_COLOR = pr.RAYWHITE
 
 class Text(Widget):
 
-    font: pr.Font = pr.get_font_default()
-    spacing: float = 2
-
     def __init__(
         self,
         label: str,
@@ -40,8 +37,16 @@ class Text(Widget):
         self.color: pr.Color = color
 
     @classmethod
-    def _load_font(cls) -> None:
-        cls.font = pr.load_font(PACMAN_FONT)
+    def _load_font(cls, new_font_path: str = "") -> None:
+
+        if not new_font_path:
+            cls.font = pr.get_font_default()
+            cls.default: bool = True
+
+        else:
+            cls.font = pr.load_font(new_font_path)
+            cls.spacing: int = 2
+            cls.default = False
 
     @classmethod
     def _resize_font(cls, string: str, fontsize: int, width: int = 0) -> int:
@@ -68,9 +73,11 @@ class Text(Widget):
     @classmethod
     def measure_text(cls, text: str, font_size: int) -> int:
 
-        return int(pr.measure_text_ex(
-            cls.font, text, float(font_size), cls.spacing
-        ).x)
+        if not cls.default:
+            return int(pr.measure_text_ex(
+                cls.font, text, float(font_size), cls.spacing
+            ).x)
+        return pr.measure_text(text, font_size)
 
     @property
     def lowerbound(self) -> int:
@@ -79,11 +86,20 @@ class Text(Widget):
 
     def display_widget(self) -> None:
 
-        pr.draw_text_ex(
-            type(self).font,
-            self.label,
-            (self.x, self.y),
-            float(self.font_size),
-            self.spacing,
-            self.color
-        )
+        if not type(self).default:
+            pr.draw_text_ex(
+                type(self).font,
+                self.label,
+                (self.x, self.y),
+                float(self.font_size),
+                self.spacing,
+                self.color
+            )
+        else:
+            pr.draw_text(
+                self.label,
+                self.x,
+                self.y,
+                self.font_size,
+                self.color
+            )
