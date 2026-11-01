@@ -1,4 +1,6 @@
 import pyray as pr
+from pyray import get_screen_width as sw
+from pyray import get_screen_height as sh
 from .Widget import Widget
 from typing import Any, Callable
 
@@ -49,6 +51,34 @@ class Icon(Widget):
         self.image: pr.Image = pr.load_image(image_path)
         self._resize_image(*self.max_size, self.to_resize)
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
+
+    @property
+    def i_w(self) -> int:
+
+        return (self.texture.width if not self.to_resize else self.max_size[0])
+
+    @property
+    def i_h(self) -> int:
+
+        return (self.texture.height if not self.to_resize else self.max_size[1])
+
+    @property
+    def posx(self) -> int:
+
+        return (
+            self.x
+            if self.x >= 0
+            else (sw() - self.i_w) // -(self.x)
+        )
+
+    @property
+    def posy(self) -> int:
+
+        return (
+            self.y
+            if self.y >= 0
+            else (sh() - self.i_h) // -(self.y)
+        )
 
     @property
     def lower_bounds(self) -> tuple[int, int]:

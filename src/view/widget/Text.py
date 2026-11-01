@@ -3,6 +3,7 @@ from pyray import get_screen_width as sw
 from .Widget import Widget
 
 
+DEFAULT_FONT = "src/view/assets/fonts/Gohu/GohuFont11NerdFontMono-Regular.ttf"
 PACMAN_FONT = "src/view/assets/fonts/crackman/Crackman.otf"
 
 TEXT_COLOR = pr.RAYWHITE
@@ -37,15 +38,16 @@ class Text(Widget):
         self.color: pr.Color = color
 
     @classmethod
-    def _load_font(cls, new_font_path: str = "") -> None:
+    def _load_font(cls, new_font_path: str = DEFAULT_FONT) -> None:
 
         if not new_font_path:
             cls.font = pr.get_font_default()
+            cls.spacing: int = 5
             cls.default: bool = True
 
         else:
             cls.font = pr.load_font(new_font_path)
-            cls.spacing: int = 2
+            cls.spacing = 2
             cls.default = False
 
     @classmethod
