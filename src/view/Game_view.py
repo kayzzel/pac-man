@@ -23,7 +23,7 @@ class Game_view(View):
         self.modal_view: Pause_menu = Pause_menu(app, game, self)
         self.show_as_modal: bool = False
 
-        self.game.start_position()
+        self.game.resume()
 
         super().__init__(app)
 
