@@ -11,10 +11,12 @@ class Endgame_view(View):
     def __init__(self, app, game: Game) -> None:
 
         self.game: Game = game
-        self.scores: list[str] = [
-            pl_name + ": " + str(pl_score)
-            for pl_name, pl_score in self.game.scores.scores.items()
-        ]
+        self.scores: list[str] = []
+        if self.game.scores.scores:
+            self.scores = [
+                pl.name + ": " + str(pl.score)
+                for pl in self.game.scores.scores
+            ]
         super().__init__(app)
 
     def _update_title(self) -> None:

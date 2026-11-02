@@ -102,7 +102,6 @@ class Game_view(View):
             self.game.player.set_next_direction("W")
         elif pr.is_key_pressed(self.app.display_config.keybinds["RIGHT"]):
             self.game.player.set_next_direction("E")
-        print(f"player input detected! changing pacman position: {self.game.player.pos_x, self.game.player.pos_y}")
 
     def _update_map_panel(self) -> None:
 
@@ -134,8 +133,8 @@ class Game_view(View):
         self.map_outline: tuple[int, int, int, int] = (
             self.map_startx,
             self.map_starty,
-            self.map_width + 6,
-            self.map_height + 6
+            self.map_width,
+            self.map_height
         )
 
     def pause_or_resume(self) -> None:

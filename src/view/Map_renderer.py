@@ -65,8 +65,8 @@ class Map_renderer:
 
     def set_correct_dir(self, entity: Entity) -> None:
 
-        # if not self.game.state == Game_state.RUNNING:
-        #     return
+        if not self.game.state == Game_state.RUNNING:
+            return
 
         alignment: str = self.saved_dirs[entity.name][1]
 
@@ -90,14 +90,14 @@ class Map_renderer:
 
     def get_pacman_texture(self, pac_man: Pac_man) -> str:
 
-        # self.set_correct_dir(pac_man)
+        self.set_correct_dir(pac_man)
         if self.game.state == Game_state.DIED:
             return "pacman_death"
         return self.get_entity_texture(pac_man)
 
     def get_ghost_texture(self, ghost: Ghost) -> str:
 
-        # self.set_correct_dir(ghost)
+        self.set_correct_dir(ghost)
         if ghost.state == Ghost_state.EATEN:
             return "eyes_" + DIRECTIONS[self.saved_dirs[ghost.name][0]]
 
@@ -125,10 +125,10 @@ class Map_renderer:
 
     def draw_walls(self, cell: Cell, x: int, y: int) -> None:
 
+        self.get_neighbors(cell)
+
         if all(wall for wall in cell.walls.values()):
             return
-
-        self.get_neighbors(cell)
 
         end_x: int = x + self.cell_size
         end_y: int = y + self.cell_size
@@ -366,14 +366,10 @@ class Map_renderer:
             if not self.entity_is_in(entity, cell):
                 continue
 
-            check_pos: bool = False
-            if isinstance(entity, Pac_man) and self.saved_dirs[entity.name][2] != (entity.pos_x, entity.pos_y):
-                check_pos = True
-
             self.set_correct_dir(entity)
-            en_posx: float = entity.pos_x
-            en_posy: float = entity.pos_y
-            # en_posx, en_posy = self.saved_dirs[entity.name][2]
+            en_posx: float
+            en_posy: float
+            en_posx, en_posy = self.saved_dirs[entity.name][2]
             # print(f"cell pos {x, y}, entity coor : {en_posx, en_posy}")
             entity_offset_x: int = int((en_posx - cell.pos_x) * 10)
             entity_offset_y: int = int((en_posy - cell.pos_y) * 10)
@@ -404,8 +400,6 @@ class Map_renderer:
                 )
             self.sprites[texture_path].x = en_posx
             self.sprites[texture_path].y = en_posy
-            if check_pos:
-                print(f"texture for pacman position: {self.sprites[texture_path].posx, self.sprites[texture_path].posy}")
 
             self.sprites[texture_path].display_widget()
 
@@ -472,7 +466,12 @@ class Map_renderer:
 
     def display_grid(self) -> None:
 
-        pr.draw_texture(self.grid_texture.texture, self.map_x, self.map_y, pr.RAYWHITE)
+        pr.draw_texture_rec(
+            self.grid_texture.texture,
+            (0, 0, float(self.map_w), float(self.map_h)),
+            (self.map_x, self.map_y),
+            pr.RAYWHITE
+        )
 
         cell_y: int = self.map_y
 
