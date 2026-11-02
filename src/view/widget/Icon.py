@@ -52,6 +52,11 @@ class Icon(Widget):
         self._resize_image(*self.max_size, self.to_resize)
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
 
+    def _unload_image(self) -> None:
+
+        pr.unload_texture(self.texture)
+        pr.unload_image(self.image)
+
     @property
     def i_w(self) -> int:
 
