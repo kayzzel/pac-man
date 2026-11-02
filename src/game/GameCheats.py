@@ -42,5 +42,5 @@ class GameCheats:
     def toggle_invincible(self) -> None:
         self.__is_invincible = not self.__is_invincible
 
-    def toggle_cliping(self) -> None:
+    def toggle_clipping(self) -> None:
         self.__is_clipping = not self.__is_clipping
