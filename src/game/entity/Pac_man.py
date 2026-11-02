@@ -42,7 +42,8 @@ class Pac_man(Entity):
                 self,
                 cell: Cell,
                 elapsed_time: int,
-                is_clipping: bool
+                is_clipping: bool,
+                map_size: tuple[int, int]
             ) -> None:
         if self.is_energized != Pacman_state.NORMAL:
             if (
@@ -57,7 +58,20 @@ class Pac_man(Entity):
 
             self.__select_next_dir(cell)
 
-            if not is_clipping and cell.walls[self.direction]:
+            x = int(self.pos_x)
+            y = int(self.pos_y)
+
+            can_clip = (
+                is_clipping and
+                (
+                    (x != 0 and self.direction == "O") or
+                    (y != 0 and self.direction == "N") or
+                    (x != map_size[0] - 1 and self.direction == "O") or
+                    (y != map_size[1] - 1 and self.direction == "O")
+                )
+            )
+
+            if (not can_clip and cell.walls[self.direction]):
                 return
 
         self.walk()

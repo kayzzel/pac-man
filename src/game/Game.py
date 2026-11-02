@@ -185,10 +185,13 @@ def update_game(game: Game) -> None:
     pacman = game.player
     cur_map = game.map[game.map_index]
 
+
+
     pacman.update(
             cur_map.cells[int(pacman.pos_y)][int(pacman.pos_x)],
             int(game.game_loop.elapsed_time),
-            game.cheats.is_clipping
+            game.cheats.is_clipping,
+            (len(cur_map.cells[0]), len(cur_map.cells))
         )
 
     for ghost in game.ghosts.values():
