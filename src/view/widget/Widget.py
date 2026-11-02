@@ -63,15 +63,7 @@ class Widget(ABC):
             return
 
         args: Any = self.action[1]
-
-        if isinstance(args, tuple):
-            self.action[0](*args)
-
-        elif args:
-            self.action[0](args)
-
-        else:
-            self.action[0]()
+        self.action[0](args)
 
     @abstractmethod
     def display_widget(self) -> None:

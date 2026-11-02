@@ -42,6 +42,11 @@ class Input_box(Widget):
         self.char_range: tuple[int, int] = char_range
         self.max_chars: int = max_chars
         self.standin_input: str = "w" * max_chars
+        self.font_size: int = Text._resize_font(
+            self.standin_input,
+            self.h - self.h // 3,
+            self.w - self.w // 8
+        )
 
         self.base_colors: tuple[pr.Color, pr.Color, pr.Color] = colors
         self.box_color: pr.Color
@@ -112,7 +117,10 @@ class Input_box(Widget):
 
         pr.draw_rectangle_lines(*self.textbox, line_color)
 
-        text_padding: int = self.w // 8
+        text_padding: int = (
+            self.w + self.w // 8
+            - Text.measure_text(self.standin_input, self.font_size)
+        )
 
         user_input: Text = Text(
             self.input,

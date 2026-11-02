@@ -48,9 +48,17 @@ class Icon(Widget):
 
     def _load_image(self, image_path: str) -> None:
 
+        self._unload_image()
         self.image: pr.Image = pr.load_image(image_path)
         self._resize_image(*self.max_size, self.to_resize)
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
+
+    def _unload_image(self) -> None:
+
+        if hasattr(self, "texture"):
+            pr.unload_texture(self.texture)
+        if hasattr(self, "image"):
+            pr.unload_image(self.image)
 
     @property
     def i_w(self) -> int:
@@ -120,6 +128,7 @@ class AnimIcon(Icon):
 
     def _load_image(self, image_path: str) -> None:
 
+        self._unload_image()
         self.frames: Any = pr.ffi.new('int *', 0)
         self.image: pr.Image = pr.load_image_anim(image_path, self.frames)
         self.frames_value = self.frames[0]
@@ -216,6 +225,7 @@ class ClickableIcon(Icon):
                     self.max_size[1],
                     True
                 )
+                pr.unload_texture(self.texture)
                 self.texture = pr.load_texture_from_image(self.image)
 
         elif not self.was_in and self.is_in:
@@ -229,6 +239,7 @@ class ClickableIcon(Icon):
                     self.max_size[1] + self.max_size[1] // 10,
                     True
                 )
+                pr.unload_texture(self.texture)
                 self.texture = pr.load_texture_from_image(self.image)
 
         if self.is_pressed:
