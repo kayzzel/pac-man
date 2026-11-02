@@ -29,7 +29,7 @@ class Dropdown(Widget):
 
         self.show: bool = False
 
-        self.buttons: dict[str, tuple[Callable, Any]] = buttons
+        self.buttons: dict[str, tuple[Callable, Any]] = dict(buttons)
         self.max_show: int = max_show
 
         self.arrow_size: int = self.h // 2
@@ -37,6 +37,7 @@ class Dropdown(Widget):
         self.arrow_icon_path: str = ARROW_DOWN_PATH
 
         self._init_main_panel()
+        self._init_icons()
 
     def _init_main_panel(self) -> None:
 
@@ -86,19 +87,21 @@ class Dropdown(Widget):
 
         self.button_range = (0, self.max_show - 1)
 
-    def _update_icon(self) -> None:
+    def _init_icons(self) -> None:
 
         arrow_x: int = self.posx + self.w - self.arrow_size - self.arrow_pad
 
-        self.arrow_icon: ClickableIcon = ClickableIcon(
-            arrow_x,
-            self.posy + (self.h - self.arrow_size) // 2,
-            self.arrow_icon_path,
-            (self.invert_show, None),
-            (self.arrow_size, self.arrow_size),
-            True,
-            False
-        )
+        self.arrow_icons: dict[str, ClickableIcon] = {
+            path: ClickableIcon(
+                arrow_x,
+                self.posy + (self.h - self.arrow_size) // 2,
+                path,
+                (self.invert_show, None),
+                (self.arrow_size, self.arrow_size),
+                True,
+                False
+            ) for path in [ARROW_DOWN_PATH, ARROW_UP_PATH]
+        }
 
     def _update_buttons(self) -> None:
 
@@ -130,12 +133,12 @@ class Dropdown(Widget):
             pr.LIGHTGRAY
         )
 
-    def _scroll(self, direction: float = 0) -> None:
+    def _scroll(self) -> None:
 
         if self.nb_buttons <= self.max_show:
             return
 
-        direction = pr.get_mouse_wheel_move()
+        direction: float = pr.get_mouse_wheel_move()
 
         if direction == 0 or not self.show or not self.panel.is_in:
             return
@@ -156,9 +159,8 @@ class Dropdown(Widget):
     def display_widget(self) -> None:
 
         self._scroll()
-        self._update_icon()
         self.main_panel.display_widget()
-        self.arrow_icon.display_widget()
+        self.arrow_icons[self.arrow_icon_path].display_widget()
 
         if self.show:
             self._update_buttons()
