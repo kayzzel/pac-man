@@ -41,7 +41,7 @@ class Input_box(Widget):
         )
         self.char_range: tuple[int, int] = char_range
         self.max_chars: int = max_chars
-        self.standin_input: str = "h" * max_chars
+        self.standin_input: str = "w" * max_chars
 
         self.base_colors: tuple[pr.Color, pr.Color, pr.Color] = colors
         self.box_color: pr.Color
