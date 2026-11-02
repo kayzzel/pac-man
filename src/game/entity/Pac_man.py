@@ -23,14 +23,14 @@ class Pac_man(Entity):
 
         self.__next_direction = direction
 
-    def __select_next_dir(self, cell: Cell) -> None:
+    def __select_next_dir(self, cell: Cell, can_clip: bool) -> None:
         if not self.__next_direction:
             return
 
         if self.__next_direction == self.direction:
             return
 
-        if not cell.walls[self.__next_direction]:
+        if not cell.walls[self.__next_direction] or can_clip:
             self.direction = self.__next_direction
             self.__next_direction = ""
 
@@ -56,20 +56,17 @@ class Pac_man(Entity):
 
         if (modf(self.pos_x)[0] == 0.5 and modf(self.pos_y)[0] == 0.5):
 
-            self.__select_next_dir(cell)
-
             x = int(self.pos_x)
             y = int(self.pos_y)
 
-            can_clip = (
-                is_clipping and
-                (
-                    (x != 0 and self.direction == "O") or
-                    (y != 0 and self.direction == "N") or
-                    (x != map_size[0] - 1 and self.direction == "O") or
-                    (y != map_size[1] - 1 and self.direction == "O")
-                )
+            can_clip = is_clipping and (
+                (self.direction == "N" and y != 0) or
+                (self.direction == "S" and y != map_size[1] - 1) or
+                (self.direction == "W" and x != 0) or
+                (self.direction == "E" and x != map_size[0] - 1)
             )
+
+            self.__select_next_dir(cell, can_clip)
 
             if (not can_clip and cell.walls[self.direction]):
                 return
