@@ -17,10 +17,10 @@ class GameCheats:
     def is_clipping(self) -> bool:
         return self.__is_clipping
 
-    def add_live(self) -> None:
+    def add_life(self) -> None:
         self.__game.player.nb_lives += 1
 
-    def remove_live(self) -> None:
+    def remove_life(self) -> None:
         if self.__game.player.nb_lives > 1:
             self.__game.player.nb_lives -= 1
 
