@@ -3,6 +3,8 @@ from pyray import KeyboardKey as kek
 from typing import Any
 from .Config import Config
 from .view.View import View
+from .view.Main_menu import Main_menu
+from .view.widget.Text import Text, PACMAN_FONT
 from .view.Texture_pack import TEXTURES_PACK
 
 from pathlib import Path
@@ -79,10 +81,32 @@ class App:
             self.__current_view._update(True)
 
     def start_app(self) -> None:
-        ...
+
+        # pr.set_config_flags(pr.FLAG_WINDOW_RESIZABLE)
+        pr.set_trace_log_level(pr.LOG_ERROR)
+        pr.init_window(1920, 1080, "pac-man menu example")
+        pr.toggle_fullscreen()
+        pr.set_target_fps(60)
+        pr.set_exit_key(pr.KEY_NULL)
+        Text._load_font(PACMAN_FONT)
+
+        menu: Main_menu = Main_menu(self)
+        self.views["main_menu"] = menu
+        self.__current_view = menu
+
+        while not pr.window_should_close():
+
+            pr.clear_background(pr.BLACK)
+
+            pr.begin_drawing()
+
+            self.display_app()
+
+            pr.end_drawing()
 
     def stop_app(self) -> None:
-        ...
+
+        pr.close_window()
 
     def display_app(self) -> None:
 

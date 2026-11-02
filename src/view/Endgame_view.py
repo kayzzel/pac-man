@@ -1,7 +1,6 @@
 import pyray as pr
 from .View import View
 from .Save_score_view import Save_score_view
-from .Main_menu import Main_menu
 from ..game.Game import Game
 from ..utils.enum_utils import Game_state
 from .widget import Widget, ButtonPanel, TextPanel, Text
@@ -68,7 +67,7 @@ class Endgame_view(View):
             button_y,
             button_width,
             button_height,
-            {"exit": (self.app.change_view, Main_menu(self.app))},
+            {"exit": (self.app.change_view, "main_menu")},
             ((button_fontsz - 5) // 2, 2, 0.1)
         )
         self.widgets += [self.save_button, self.exit_button]

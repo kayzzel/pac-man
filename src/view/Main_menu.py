@@ -2,6 +2,7 @@ import pyray as pr
 from typing import Callable, Any
 from .View import View
 from .Scores_view import Scores_view
+from .Map_choice_menu import Map_choice_menu
 from .Options_menu import Options_menu
 from .widget import Widget, ButtonPanel, Icon, AnimIcon
 
@@ -55,10 +56,10 @@ class Main_menu(View):
         panel_x: int = (self.w - panel_width) // 2
 
         button_actions: dict[str, tuple[Callable, Any]] = {
-            "start game": (self.app.change_view, "map_choice_menu"),
+            "start game": (self.app.change_view, Map_choice_menu(self.app)),
             "view highscores": (self.app.change_view, Scores_view(self.app)),
             "options": (self.app.change_view, Options_menu(self.app)),
-            "exit": (pr.close_window, None),
+            "exit": (self.app.stop_app, None),
         }
 
         self.panel: ButtonPanel = ButtonPanel(

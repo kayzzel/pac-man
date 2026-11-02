@@ -3,7 +3,6 @@ from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from typing import Callable, Any
 from .View import View
-from .Main_menu import Main_menu
 from .Scores_view import Scores_view
 from .Save_score_view import Save_score_view
 from .widget import Text, ButtonPanel, TextPanel, ClickableIcon, Input_box
@@ -60,7 +59,7 @@ class Pause_menu(View):
                 Scores_view(self.app)
             ),
             "Save and exit": (self.app.change_view, Save_score_view(self.app, self.game)),
-            "Exit": (self.global_view.exit_game, Main_menu(self.app))
+            "Exit": (self.global_view.exit_game, "main_menu")
         }
         # button_font_sz: int = panel_height // (len(button_actions.keys()) * 2 - 1)
 

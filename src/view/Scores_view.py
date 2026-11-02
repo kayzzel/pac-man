@@ -39,7 +39,7 @@ class Scores_view(View):
 
     def load_new_scores(self, map_name: str, map_folder: Path) -> None:
 
-        print(f"Loading the scores for map '{map_name}'...\n")
+        # print(f"Loading the scores for map '{map_name}'...\n")
         self.map_scores: Map_scores = Map_scores(map_name, map_folder / map_name / "score.json")
         self.scores: list[str] = [
             pl.name + ": " + str(pl.score)
