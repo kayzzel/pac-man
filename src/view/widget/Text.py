@@ -42,8 +42,6 @@ class Text(Widget):
         self.y: int = y
         self.color: pr.Color = color
 
-        super().__init__(self.x, self.x, self.width, self.font_size)
-
     @classmethod
     def _load_font(cls, new_font_path: str = DEFAULT_FONT) -> None:
 
