@@ -32,7 +32,7 @@ class Endgame_view(View):
         )
 
         self.score: Text = Text(
-            "SCORE: " + str(6969696969),
+            "SCORE: " + str(self.game.player.score),
             -2,
             self.title.lowerbound + self.h // 25,
             self.h // 15

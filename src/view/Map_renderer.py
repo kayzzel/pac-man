@@ -390,13 +390,18 @@ class Map_renderer:
             ))
 
             if texture_path not in self.sprites.keys() or texture_path != self.sprites[texture_path].image_path:
+
+                sprite_frames: int = 6
+                if "death" in texture_path:
+                    sprite_frames = 8
+
                 self.sprites[texture_path] = AnimIcon(
                     0,
                     0,
                     texture_path,
                     (self.entity_size, self.entity_size),
                     True,
-                    6
+                    sprite_frames
                 )
             self.sprites[texture_path].x = en_posx
             self.sprites[texture_path].y = en_posy
@@ -468,7 +473,7 @@ class Map_renderer:
 
         pr.draw_texture_rec(
             self.grid_texture.texture,
-            (0, 0, float(self.map_w), float(self.map_h)),
+            (0, 0, float(self.map_w), -float(self.map_h)),
             (self.map_x, self.map_y),
             pr.RAYWHITE
         )

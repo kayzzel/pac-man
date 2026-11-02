@@ -33,6 +33,8 @@ class Game_view(View):
 
     def _update_info_panel(self) -> None:
 
+        self.info_widgets: list[Widget] = []
+
         self.labels: list[str] = [
             "Highscore : " + str(0),
             "Score : " + str(self.game.player.score),
@@ -66,18 +68,24 @@ class Game_view(View):
             self.h - self.h // 5,
             self.info_panel.font_size
         )
-        self.widgets += [self.info_panel, life_label]
+        self.info_widgets += [self.info_panel, life_label]
+
         life_icon_sz: int = (
             self.info_panel.w - (life_label.x + life_label.width)
-        ) // 3 - 10
+        ) // self.game.config.lives - 10
 
-        self.widgets += [Icon(
+        if hasattr(self, "lives"):
+            for life in self.lives:
+                life._unload_image()
+
+        self.lives: list[Icon] = [Icon(
             10 + life_label.x + life_label.width + life_icon_sz * life,
             life_label.y - 5,
             LIFE_ICON_PATH,
             (life_icon_sz, life_icon_sz),
             True
         ) for life in range(self.game.player.nb_lives)]
+        self.info_widgets += self.lives
 
     @property
     def map_startx(self) -> int:
@@ -93,6 +101,9 @@ class Game_view(View):
         return (self.h - self.map_height) // 2
 
     def catch_player_input(self) -> None:
+
+        if self.game.state != Game_state.RUNNING:
+            return
 
         if pr.is_key_pressed(self.app.display_config.keybinds["UP"]):
             self.game.player.set_next_direction("N")
@@ -161,6 +172,9 @@ class Game_view(View):
         if pr.is_key_pressed(pr.KEY_ESCAPE):
             self.pause_or_resume()
 
+        if not forced:
+            self._update_info_panel()
+
         if self.game.state == Game_state.WON or self.game.state == Game_state.LOST:
             self.exit_game(Endgame_view(self.app, self.game))
             return
@@ -196,6 +210,9 @@ class Game_view(View):
         )
 
         self.map_renderer.display_grid()
+
+        for i_widget in self.info_widgets:
+            i_widget.display_widget()
 
         for widget in self.widgets:
             widget.display_widget()

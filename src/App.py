@@ -96,9 +96,8 @@ class App:
 
         while not pr.window_should_close():
 
-            pr.clear_background(pr.BLACK)
-
             pr.begin_drawing()
+            pr.clear_background(pr.BLACK)
 
             self.display_app()
 
