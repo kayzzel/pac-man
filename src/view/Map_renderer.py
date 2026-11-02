@@ -25,72 +25,79 @@ class Map_renderer:
     def __init__(
         self,
         game: Game,
-        grid: list[list[Cell]],
-        map_coor: tuple[int, int],
-        cell_size: int,
-        entities: list[Entity],
         texture_pack: str
     ) -> None:
 
         self.game: Game = game
-        self.grid: list[list[Cell]] = grid
-        self.map_x, self.map_y = map_coor
-        self.entities: list[Entity] = entities
+        self.texture_pack: Texture_pack = Texture_pack(texture_pack)
+        self.collectible_icons: dict[str, Icon] = {}
         self.sprites: dict[str, AnimIcon] = {}
+
+    def update_grid(
+        self,
+        grid: list[list[Cell]],
+        map_size: tuple[int, int],
+        map_coor: tuple[int, int],
+        cell_size: int,
+        entities: list[Entity]
+    ) -> None:
+
+        self.grid: list[list[Cell]] = grid
+        self.entities: list[Entity] = entities
         self.saved_dirs: dict[str, tuple[str, str, tuple[float, float]]] = {
             entity.name: (entity.direction, "R", (entity.pos_x, entity.pos_y))
             for entity in entities
         }
+
+        self.map_w, self.map_h = map_size
+        self.map_x, self.map_y = map_coor
+
         self.cell_size: int = cell_size
         self.line_thickness: int = 3
         self.cell_padding: int = cell_size // 8 + self.line_thickness
+
         self.collectible_size: int = cell_size // 3
         self.entity_space: int = self.cell_size - self.cell_padding * 2
         self.entity_size: int = self.entity_space - self.entity_space // 8
-        self.texture_pack: Texture_pack = Texture_pack(texture_pack)
+
+        self.update_sprites()
+        self.update_texture()
 
     def set_correct_dir(self, entity: Entity) -> None:
 
-        if not self.game.state == Game_state.RUNNING:
-            return
-
-        if entity.direction == self.saved_dirs[entity.name][0]:
-            self.saved_dirs[entity.name] = (
-                entity.direction,
-                self.saved_dirs[entity.name][1],
-                (entity.pos_x, entity.pos_y)
-            )
-            return
+        # if not self.game.state == Game_state.RUNNING:
+        #     return
 
         alignment: str = self.saved_dirs[entity.name][1]
 
-        match entity.direction:
+        if entity.direction != self.saved_dirs[entity.name][0]:
+            match entity.direction:
 
-            case "N":
-                alignment = "L" if alignment == "R" else "R"
+                case "N":
+                    alignment = "L" if alignment == "R" else "R"
 
-            case "S":
-                if entity.direction == "N":
-                    alignment = "L" if entity.alignment == "R" else "R"
+                case "S":
+                    if entity.direction == "N":
+                        alignment = "L" if entity.alignment == "R" else "R"
 
-            case "E":
-                alignment = "R"
+                case "E":
+                    alignment = "R"
 
-            case "W":
-                alignment = "L"
+                case "W":
+                    alignment = "L"
 
         self.saved_dirs[entity.name] = (entity.direction, alignment, (entity.pos_x, entity.pos_y))
 
     def get_pacman_texture(self, pac_man: Pac_man) -> str:
 
-        self.set_correct_dir(pac_man)
+        # self.set_correct_dir(pac_man)
         if self.game.state == Game_state.DIED:
             return "pacman_death"
         return self.get_entity_texture(pac_man)
 
     def get_ghost_texture(self, ghost: Ghost) -> str:
 
-        self.set_correct_dir(ghost)
+        # self.set_correct_dir(ghost)
         if ghost.state == Ghost_state.EATEN:
             return "eyes_" + DIRECTIONS[self.saved_dirs[ghost.name][0]]
 
@@ -120,6 +127,8 @@ class Map_renderer:
 
         if all(wall for wall in cell.walls.values()):
             return
+
+        self.get_neighbors(cell)
 
         end_x: int = x + self.cell_size
         end_y: int = y + self.cell_size
@@ -320,19 +329,33 @@ class Map_renderer:
                     pr.DARKBLUE
                 )
 
-    def draw_cell(self, cell: Cell, x: int, y: int) -> None:
-
-        self.get_neighbors(cell)
-        self.draw_walls(cell, x, y)
-
-        if cell.collectible:
-            collectible: Icon = Icon(
-                x + (self.cell_size - self.collectible_size) // 2,
-                y + (self.cell_size - self.collectible_size) // 2,
+        if cell.collectible and cell.collectible.name not in self.collectible_icons.keys():
+            self.collectible_icons[cell.collectible.name] = Icon(
+                0,
+                0,
                 self.texture_pack.get_texture(cell.collectible.name),
                 (self.collectible_size, self.collectible_size),
                 True
             )
+
+    def update_sprites(self) -> None:
+
+        for icon in self.collectible_icons.values():
+            icon._unload_image()
+
+        for sprite in self.sprites.values():
+            sprite._unload_image()
+
+        self.collectible_icons = {}
+        self.sprites = {}
+
+    def draw_sprites(self, cell: Cell, x: int, y: int) -> None:
+
+        if cell.collectible and cell.collectible.name in self.collectible_icons.keys():
+
+            collectible: Icon = self.collectible_icons[cell.collectible.name]
+            collectible.x = x + (self.cell_size - self.collectible_size) // 2
+            collectible.y = y + (self.cell_size - self.collectible_size) // 2
             collectible.display_widget()
 
         entity_base_x: int = x + self.cell_padding
@@ -343,9 +366,14 @@ class Map_renderer:
             if not self.entity_is_in(entity, cell):
                 continue
 
-            en_posx: float
-            en_posy: float
-            en_posx, en_posy = self.saved_dirs[entity.name][2]
+            check_pos: bool = False
+            if isinstance(entity, Pac_man) and self.saved_dirs[entity.name][2] != (entity.pos_x, entity.pos_y):
+                check_pos = True
+
+            self.set_correct_dir(entity)
+            en_posx: float = entity.pos_x
+            en_posy: float = entity.pos_y
+            # en_posx, en_posy = self.saved_dirs[entity.name][2]
             # print(f"cell pos {x, y}, entity coor : {en_posx, en_posy}")
             entity_offset_x: int = int((en_posx - cell.pos_x) * 10)
             entity_offset_y: int = int((en_posy - cell.pos_y) * 10)
@@ -359,28 +387,35 @@ class Map_renderer:
                 en_posy += (self.entity_space // 10) * entity_offset_y
             # print(f"entity {entity.name}: entity pos {en_posx, en_posy} offset_x: {entity_offset_x} offset_y : {entity_offset_y}\n")
 
-            texture = self.texture_pack.get_texture((
+            texture_path = self.texture_pack.get_texture((
                 self.get_pacman_texture(entity)
                 if isinstance(entity, Pac_man)
                 else self.get_ghost_texture(entity)
             ))
 
-            if entity.name not in self.sprites.keys() or texture != self.sprites[entity.name].image_path:
-                self.sprites[entity.name] = AnimIcon(
-                    en_posx,
-                    en_posy,
-                    texture,
+            if texture_path not in self.sprites.keys() or texture_path != self.sprites[texture_path].image_path:
+                self.sprites[texture_path] = AnimIcon(
+                    0,
+                    0,
+                    texture_path,
                     (self.entity_size, self.entity_size),
                     True,
                     6
                 )
-            else:
-                self.sprites[entity.name].x = en_posx
-                self.sprites[entity.name].y = en_posy
+            self.sprites[texture_path].x = en_posx
+            self.sprites[texture_path].y = en_posy
+            if check_pos:
+                print(f"texture for pacman position: {self.sprites[texture_path].posx, self.sprites[texture_path].posy}")
 
-            self.sprites[entity.name].display_widget()
-            if self.game.state == Game_state.DIED and "pacman" in self.sprites.keys() and self.sprites["pacman"].loop_finished:
-                self.game.resume()
+            self.sprites[texture_path].display_widget()
+
+            self.check_death()
+
+    def check_death(self) -> None:
+
+        pacman_death_path: str = self.texture_pack.get_texture("pacman_death")
+        if self.game.state == Game_state.DIED and pacman_death_path in self.sprites.keys() and self.sprites[pacman_death_path].loop_finished:
+            self.game.resume()
 
     def get_neighbors(self, cell: Cell) -> None:
 
@@ -404,11 +439,40 @@ class Map_renderer:
     def entity_is_in(self, entity: Entity, cell: Cell) -> bool:
 
         return (
-            cell.pos_x <= self.saved_dirs[entity.name][2][0] < cell.pos_x + 1
-            and cell.pos_y <= self.saved_dirs[entity.name][2][1] < cell.pos_y + 1
+            cell.pos_x <= entity.pos_x < cell.pos_x + 1
+            and cell.pos_y <= entity.pos_y < cell.pos_y + 1
         )
 
-    def draw_grid(self) -> None:
+    def update_texture(self) -> None:
+
+        if hasattr(self, "grid_texture"):
+            pr.unload_render_texture(self.grid_texture)
+
+        self.grid_texture = pr.load_render_texture(self.map_w, self.map_h)
+        pr.end_drawing()
+        pr.begin_texture_mode(self.grid_texture)
+        pr.clear_background(pr.BLACK)
+
+        cell_y: int = 0
+
+        for row in self.grid:
+
+            cell_x: int = 0
+
+            for cell in row:
+
+                self.draw_walls(cell, cell_x, cell_y)
+
+                cell_x += self.cell_size
+
+            cell_y += self.cell_size
+
+        pr.end_texture_mode()
+        pr.begin_drawing()
+
+    def display_grid(self) -> None:
+
+        pr.draw_texture(self.grid_texture.texture, self.map_x, self.map_y, pr.RAYWHITE)
 
         cell_y: int = self.map_y
 
@@ -418,7 +482,7 @@ class Map_renderer:
 
             for cell in row:
 
-                self.draw_cell(cell, cell_x, cell_y)
+                self.draw_sprites(cell, cell_x, cell_y)
 
                 cell_x += self.cell_size
 

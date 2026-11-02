@@ -22,6 +22,10 @@ class Game_view(View):
         self.game: Game = game
         self.modal_view: Pause_menu = Pause_menu(app, game, self)
         self.show_as_modal: bool = False
+        self.map_renderer: Map_renderer = Map_renderer(
+            self.game,
+            app.display_config.texture_pack
+        )
 
         self.game.resume()
 
@@ -98,6 +102,7 @@ class Game_view(View):
             self.game.player.set_next_direction("W")
         elif pr.is_key_pressed(self.app.display_config.keybinds["RIGHT"]):
             self.game.player.set_next_direction("E")
+        print(f"player input detected! changing pacman position: {self.game.player.pos_x, self.game.player.pos_y}")
 
     def _update_map_panel(self) -> None:
 
@@ -119,19 +124,18 @@ class Game_view(View):
             self.cell_size = nb_cells_col
             self.map_width = self.cell_size * len(self.grid[0]) + 6
 
-        self.map_renderer: Map_renderer = Map_renderer(
-            self.game,
+        self.map_renderer.update_grid(
             self.grid,
+            (self.map_width, self.map_height),
             (self.map_startx + 3, self.map_starty + 3),
             self.cell_size,
-            [self.game.player] + list(self.game.ghosts.values()),
-            self.app.display_config.texture_pack
+            [self.game.player] + list(self.game.ghosts.values())
         )
         self.map_outline: tuple[int, int, int, int] = (
             self.map_startx,
             self.map_starty,
-            self.map_width,
-            self.map_height
+            self.map_width + 6,
+            self.map_height + 6
         )
 
     def pause_or_resume(self) -> None:
@@ -192,7 +196,7 @@ class Game_view(View):
             pr.DARKBLUE
         )
 
-        self.map_renderer.draw_grid()
+        self.map_renderer.display_grid()
 
         for widget in self.widgets:
             widget.display_widget()
