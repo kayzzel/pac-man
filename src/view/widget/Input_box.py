@@ -76,18 +76,18 @@ class Input_box(Widget):
             pr.set_mouse_cursor(mc.MOUSE_CURSOR_IBEAM)
             self.frame_counter += 1
 
-            self.key: int = pr.get_char_pressed()
+            key: int = pr.get_char_pressed()
 
-            while self.key > 0:
+            while key > 0:
 
-                if self.key >= self.char_range[0] and (
-                    self.key <= self.char_range[1]
+                if key >= self.char_range[0] and (
+                    key <= self.char_range[1]
                     and len(self.input) < self.max_chars
                 ):
-                    self.input += chr(self.key)
+                    self.input += chr(key)
 
-                if self.max_chars > len(self.input):
-                    self.key = pr.get_char_pressed()
+                self.last_key: int = key
+                key = pr.get_char_pressed()
 
             if pr.is_key_pressed(kek.KEY_BACKSPACE) and self.input:
                 self.input = self.input[:-1]
