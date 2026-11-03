@@ -1,7 +1,8 @@
 import pyray as pr
+from pyray import KeyboardKey as kek
 from .View import View
 from .Texture_pack import Texture_pack, TEXTURES_PACK
-from .widget import Widget, Text, ButtonPanel, Dropdown, TextPanel, Input_box, AnimIcon
+from .widget import Widget, Text, ButtonPanel, Dropdown, TextPanel, Input_box, Keybind_input_box, AnimIcon
 from typing import Callable, Any
 
 
@@ -21,7 +22,7 @@ class Options_menu(View):
 
         if keybind not in self.app.display_config.keybinds.keys():
             return
-        self.app.display_config.keybinds[keybind] = self.keybind_input[keybind].key
+        self.app.display_config.keybinds[keybind] = self.keybind_input[keybind].display_key
         self._update(True)
 
     def _update_keybinds(self) -> None:
@@ -42,14 +43,18 @@ class Options_menu(View):
             self.h // 5,
             list(self.app.display_config.keybinds.keys())
         )
-        self.keybind_input: dict[str, Input_box] = {
-            keybind: Input_box(
+        keybind_range: list[int] = [
+            keycode for keycode in range(32, 126)
+        ] + [kek.KEY_DOWN, kek.KEY_UP, kek.KEY_LEFT, kek.KEY_RIGHT]
+        self.keybind_input: dict[str, Keybind_input_box] = {
+            keybind: Keybind_input_box(
                 self.keybind_panel.posx + self.keybind_panel.w + self.keybind_panel.w // 10,
                 self.keybind_panel.labels[keybind].posy,
                 self.keybind_title.width // 2,
                 self.keybind_panel.font_size,
                 (self.change_keybind, keybind),
-                1
+                1,
+                keybind_range
             ) for keybind in list(self.app.display_config.keybinds.keys())
         }
         self.widgets += [self.keybind_title, self.keybind_panel]

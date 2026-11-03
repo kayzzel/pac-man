@@ -31,7 +31,7 @@ class Input_box(Widget):
         height: int,
         action: tuple[Callable, Any] = (lambda: 0, None),
         max_chars: int = MAX_INPUT_CHARS,
-        char_range: tuple[int, int] = (32, 125),
+        char_range: tuple[int, int] | list[int] = (32, 125),
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
             DEFAULT_COLOR,
             TEXT_COLOR,
@@ -44,7 +44,14 @@ class Input_box(Widget):
         self.textbox: tuple[int, int, int, int] = (
             self.posx, self.posy, self.w, self.h
         )
-        self.char_range: tuple[int, int] = char_range
+        self.char_range: list[int] = []
+        if isinstance(char_range, tuple):
+            self.char_range = [
+                keycode
+                for keycode in range(char_range[0], char_range[1] + 1)
+            ]
+        elif isinstance(char_range, list):
+            self.char_range = char_range
         self.max_chars: int = max_chars
         self.standin_input: str = "w" * max_chars
         self.font_size: int = Text._resize_font(
@@ -85,8 +92,8 @@ class Input_box(Widget):
 
             while key > 0:
 
-                if key >= self.char_range[0] and (
-                    key <= self.char_range[1]
+                if (
+                    key in self.char_range
                     and len(self.input) < self.max_chars
                 ):
                     self.input += chr(key)
@@ -166,7 +173,7 @@ class Keybind_input_box(Input_box):
         height: int,
         action: tuple[Callable, Any] = (lambda: 0, None),
         max_chars: int = MAX_INPUT_CHARS,
-        char_range: tuple[int, int] = (32, 125),
+        char_range: tuple(int, int) | list[int] = (32, 125),
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
             DEFAULT_COLOR,
             TEXT_COLOR,
@@ -220,10 +227,7 @@ class Keybind_input_box(Input_box):
 
             while key > 0:
 
-                if key >= self.char_range[0] and (
-                    key <= self.char_range[1]
-                    and len(self.input) < self.max_chars
-                ):
+                if key in self.char_range:
                     self.display_key = key
                     break
 
