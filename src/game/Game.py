@@ -11,7 +11,7 @@ from .entity.ghost.Inky import Inky
 from .entity.collectible.Consumable import Consumable
 from ..Config import Config
 from ..utils.maze_utils import convert_maze_to_map
-from ..utils.enum_utils import Game_state, Ghost_state
+from ..utils.enum_utils import Game_state, Ghost_state, Pacman_state
 
 from mazegenerator import MazeGenerator
 from pathlib import Path
@@ -110,7 +110,7 @@ class Game:
 
         self.player.pos_x, self.player.pos_y = cur_map.pacman_spawn
 
-        self.player.is_energized = False
+        self.player.is_energized = Pacman_state.NORMAL
 
         for ghost_name in ["BLINKY", "PINKY", "CLYDE", "INKY"]:
             ghost = self.ghosts[ghost_name]
@@ -162,7 +162,10 @@ def calculate_collision(game: Game) -> bool:
                 ):
             continue
 
-        if pacman.is_energized and not ghost.eaten_this_power:
+        if (
+                pacman.is_energized != Pacman_state.NORMAL and
+                not ghost.eaten_this_power
+        ):
             ghost.set_eaten()
             pacman.score += game.config.point_per_ghost
 
