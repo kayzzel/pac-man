@@ -45,11 +45,11 @@ class Pac_man(Entity):
             ) -> None:
         if self.is_energized != Pacman_state.NORMAL:
             if (
-                    elapsed_time >= self.__last_super_pacgum_time + 4 and
-                    self.is_energized != Pacman_state.ENERGIZED_END
+                    self.is_energized != Pacman_state.ENERGIZED_END and
+                    elapsed_time >= self.__last_super_pacgum_time + 4
             ):
                 self.is_energized = Pacman_state.ENERGIZED_END
-            elif elapsed_time >= self.__last_super_pacgum_time + 7:
+            if elapsed_time >= self.__last_super_pacgum_time + 7:
                 self.is_energized = Pacman_state.NORMAL
 
         if (modf(self.pos_x)[0] == 0.5 and modf(self.pos_y)[0] == 0.5):
