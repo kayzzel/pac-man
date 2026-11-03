@@ -153,7 +153,7 @@ class Game_view(View):
         self.show_as_modal = not self.show_as_modal
 
         if self.show_as_modal:
-            self.game.pause(Game_state.PAUSED)
+            self.game.pause()
             if not self.modal_view.show_cheat_panel:
                 self.modal_view.reset_input()
         else:
@@ -176,7 +176,8 @@ class Game_view(View):
             self._update_info_panel()
 
         if self.game.state == Game_state.WON or self.game.state == Game_state.LOST:
-            self.exit_game(Endgame_view(self.app, self.game))
+            if self.map_renderer.check_death():
+                self.exit_game(Endgame_view(self.app, self.game))
             return
 
         if not pr.is_window_resized() and not forced:

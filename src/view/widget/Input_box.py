@@ -108,6 +108,7 @@ class Input_box(Widget):
 
             if pr.is_key_pressed(kek.KEY_ENTER):
                 self.call_action()
+                self.enter_input = False
 
         else:
 
@@ -131,7 +132,7 @@ class Input_box(Widget):
         text_padding: int = (
             self.w + self.w // 8
             - Text.measure_text(self.standin_input, self.font_size)
-        )
+        ) // 2
 
         user_input: Text = Text(
             self.input,
@@ -156,7 +157,7 @@ class Input_box(Widget):
             pr.draw_text_ex(
                 Text.font,
                 "_",
-                (user_input.x + 5 + user_input.width, user_input.y + 2),
+                (user_input.x + self.w // 15, self.posy + self.h // 3),
                 float(user_input.font_size),
                 Text.spacing,
                 self.cursor_color
@@ -217,24 +218,25 @@ class Keybind_input_box(Input_box):
 
         if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT) and not self.is_in:
             self.enter_input = False
+            self.display_key = 0
 
         if self.enter_input:
 
             pr.set_mouse_cursor(mc.MOUSE_CURSOR_IBEAM)
             self.frame_counter += 1
 
-            key: int = pr.get_char_pressed()
+            key: int = pr.get_key_pressed()
 
             while key > 0:
 
-                if key in self.char_range:
+                if key in self.char_range and self.display_key == 0:
 
                     self.display_key = key
                     break
 
-                key = pr.get_char_pressed()
+                key = pr.get_key_pressed()
 
-            if pr.is_key_pressed(kek.KEY_BACKSPACE) and self.input:
+            if pr.is_key_pressed(kek.KEY_BACKSPACE) and self.display_key != 0:
                 self.display_key = 0
 
             if pr.is_key_pressed(kek.KEY_ESCAPE):
@@ -243,6 +245,7 @@ class Keybind_input_box(Input_box):
 
             if pr.is_key_pressed(kek.KEY_ENTER):
                 self.call_action()
+                self.enter_input = False
                 self.display_key = 0
 
         else:
@@ -264,6 +267,25 @@ class Keybind_input_box(Input_box):
 
         pr.draw_rectangle_lines(*self.textbox, line_color)
 
+        # displays a blinking cursor in input box
+
+        if (
+            self.enter_input and self.display_key == 0
+            and (self.frame_counter // 20) % 2 == 0
+        ):
+            cursor_x: int = self.posx + (
+                self.w - Text.measure_text("_", self.font_size)
+            ) // 2
+            cursor_y: int = self.posy + self.h // 3
+            pr.draw_text_ex(
+                Text.font,
+                "_",
+                (cursor_x, cursor_y),
+                float(self.font_size),
+                Text.spacing,
+                self.cursor_color
+            )
+
         if self.display_key == 0:
             return
 
@@ -280,22 +302,5 @@ class Keybind_input_box(Input_box):
             new_key.y += (self.h - new_key.font_size) // 2
             self.keys[self.display_key] = new_key
 
-        self.keys[self.display_key].display_widget()
-
-        # displays a blinking cursor in input box
-
-        # if (
-        #     self.enter_input
-        # ) and (
-        #     len(self.input) < self.max_chars
-        # ) and (
-        #     (self.frame_counter // 20) % 2 == 0
-        # ):
-        #     pr.draw_text_ex(
-        #         Text.font,
-        #         "_",
-        #         (user_input.x + 5 + user_input.width, user_input.y + 2),
-        #         float(user_input.font_size),
-        #         Text.spacing,
-        #         self.cursor_color
-        #     )
+        user_input: Widget = self.keys[self.display_key]
+        user_input.display_widget()

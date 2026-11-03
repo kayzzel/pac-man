@@ -139,6 +139,12 @@ class AnimIcon(Icon):
 
         self.texture: pr.Texture = pr.load_texture_from_image(self.image)
 
+    def reset_loop(self) -> None:
+
+        self.frame_counter = 0
+        self.cur_frame = 0
+        self.loop_finished = False
+
     def _update_widget(self) -> None:
 
         # updating frames for the animated image

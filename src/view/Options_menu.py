@@ -6,11 +6,6 @@ from .widget import Widget, Text, ButtonPanel, Dropdown, TextPanel, Input_box, K
 from typing import Callable, Any
 
 
-# KEYS: dict[int, str] = {
-#     kek.
-#         }
-
-
 class Options_menu(View):
 
     def _update_title(self) -> None:
@@ -55,7 +50,7 @@ class Options_menu(View):
             keybind: Keybind_input_box(
                 self.keybind_panel.posx + self.keybind_panel.w + self.keybind_panel.w // 10,
                 self.keybind_panel.labels[keybind].posy,
-                self.keybind_title.width // 2,
+                self.keybind_title.width // 3,
                 self.keybind_panel.font_size,
                 (self.change_keybind, keybind),
                 1,

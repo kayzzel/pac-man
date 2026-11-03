@@ -32,6 +32,7 @@ class Map_renderer:
         self.texture_pack: Texture_pack = Texture_pack(texture_pack)
         self.collectible_icons: dict[str, Icon] = {}
         self.sprites: dict[str, AnimIcon] = {}
+        self.end_states: list[Game_state] = [Game_state.LOST, Game_state.DIED]
 
     def update_grid(
         self,
@@ -65,7 +66,7 @@ class Map_renderer:
 
     def set_correct_dir(self, entity: Entity) -> None:
 
-        if not self.game.state == Game_state.RUNNING:
+        if self.game.state != Game_state.RUNNING and self.game.state not in self.end_states:
             return
 
         alignment: str = self.saved_dirs[entity.name][1]
@@ -91,7 +92,7 @@ class Map_renderer:
     def get_pacman_texture(self, pac_man: Pac_man) -> str:
 
         self.set_correct_dir(pac_man)
-        if self.game.state == Game_state.DIED:
+        if self.game.state in self.end_states:
             return "pacman_death"
         return self.get_entity_texture(pac_man)
 
@@ -348,6 +349,7 @@ class Map_renderer:
 
         self.collectible_icons = {}
         self.sprites = {}
+        self.current_sprites: dict[str, AnimIcon] = {}
 
     def draw_sprites(self, cell: Cell, x: int, y: int) -> None:
 
@@ -407,14 +409,24 @@ class Map_renderer:
             self.sprites[texture_path].y = en_posy
 
             self.sprites[texture_path].display_widget()
+            self.current_sprites[entity.name] = self.sprites[texture_path]
 
             self.check_death()
 
-    def check_death(self) -> None:
+    def check_death(self) -> bool:
+
+        if "pacman" not in self.current_sprites.keys() or self.game.state not in self.end_states:
+            return True
 
         pacman_death_path: str = self.texture_pack.get_texture("pacman_death")
-        if self.game.state == Game_state.DIED and pacman_death_path in self.sprites.keys() and self.sprites[pacman_death_path].loop_finished:
-            self.game.resume()
+
+        if self.game.state in self.end_states and self.current_sprites["pacman"].loop_finished and pacman_death_path == self.current_sprites["pacman"].image_path:
+            if self.game.state == Game_state.DIED:
+                self.current_sprites["pacman"].reset_loop()
+                self.game.resume()
+            return True
+
+        return False
 
     def get_neighbors(self, cell: Cell) -> None:
 
