@@ -41,7 +41,8 @@ class Pac_man(Entity):
     def update(
                 self,
                 cell: Cell,
-                elapsed_time: int
+                elapsed_time: int,
+                is_clipping: bool
             ) -> None:
         if self.is_energized != Pacman_state.NORMAL:
             if (
@@ -56,7 +57,7 @@ class Pac_man(Entity):
 
             self.__select_next_dir(cell)
 
-            if cell.walls[self.direction]:
+            if not is_clipping and cell.walls[self.direction]:
                 return
 
         self.walk()

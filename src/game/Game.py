@@ -1,4 +1,5 @@
 from .GameLoop import GameLoop
+from .GameCheats import GameCheats
 from .map.Map import Map
 from .map.Map_scores import Map_scores
 from .map.Map_storing import load_map_from_file
@@ -50,6 +51,8 @@ class Game:
         self.__thread: threading.Thread | None = None
         self.game_loop = GameLoop(update_game, duration=config.level_max_time)
         self.state: Game_state = Game_state.NOT_RUNNING
+
+        self.cheats: GameCheats = GameCheats(self)
 
     def stop(self, status: Game_state = Game_state.LOST) -> None:
         self.state = status
@@ -163,8 +166,8 @@ def calculate_collision(game: Game) -> bool:
             continue
 
         if (
-                pacman.is_energized != Pacman_state.NORMAL and
-                not ghost.eaten_this_power
+                game.cheats.is_invincible or
+                pacman.is_energized and not ghost.eaten_this_power
         ):
             ghost.set_eaten()
             pacman.score += game.config.point_per_ghost
@@ -184,7 +187,8 @@ def update_game(game: Game) -> None:
 
     pacman.update(
             cur_map.cells[int(pacman.pos_y)][int(pacman.pos_x)],
-            int(game.game_loop.elapsed_time)
+            int(game.game_loop.elapsed_time),
+            game.cheats.is_clipping
         )
 
     for ghost in game.ghosts.values():
