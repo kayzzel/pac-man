@@ -1,7 +1,8 @@
 from .Entity import Entity
+from .collectible.Collectible import Collectible
 from ..map.Cell import Cell
 from ...Config import Config
-from .collectible.Collectible import Collectible
+from ...utils.enum_utils import Pacman_state
 
 from math import modf
 
@@ -13,7 +14,7 @@ class Pac_man(Entity):
         self.__next_direction: str = ""
         self.nb_lives = config.lives
         self.collectible: list[None | Collectible] = []
-        self.is_energized: bool = False
+        self.is_energized: Pacman_state = Pacman_state.NORMAL
         self.__last_super_pacgum_time: int = -1
 
     def set_next_direction(self, direction: str) -> None:
@@ -41,16 +42,21 @@ class Pac_man(Entity):
 
     def set_energized(self, elapsed_time: int) -> None:
         self.__last_super_pacgum_time = elapsed_time
-        self.is_energized = True
+        self.is_energized = Pacman_state.ENERGIZED
 
     def update(
                 self,
                 cell: Cell,
                 elapsed_time: int
             ) -> None:
-        if self.is_energized:
-            if elapsed_time >= self.__last_super_pacgum_time + 6:
-                self.is_energized = False
+        if self.is_energized != Pacman_state.NORMAL:
+            if (
+                    self.is_energized != Pacman_state.ENERGIZED_END and
+                    elapsed_time >= self.__last_super_pacgum_time + 4
+            ):
+                self.is_energized = Pacman_state.ENERGIZED_END
+            if elapsed_time >= self.__last_super_pacgum_time + 7:
+                self.is_energized = Pacman_state.NORMAL
 
         if (modf(self.pos_x)[0] == 0.5 and modf(self.pos_y)[0] == 0.5):
 
