@@ -45,7 +45,7 @@ class Texture_pack:
             "eyes_right",
             "eyes_left",
             "afraid_blue",
-            "afraid_white"
+            "afraid_blinking"
         ]
         self.collectibles_needed: list[str] = [
             "apple",

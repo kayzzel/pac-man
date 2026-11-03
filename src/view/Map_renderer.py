@@ -1,7 +1,7 @@
 import pyray as pr
 from ..game.map.Cell import Cell
 from ..game.Game import Game
-from ..utils.enum_utils import Game_state
+from ..utils.enum_utils import Game_state, Pacman_state
 from .Texture_pack import Texture_pack
 from .widget import Icon, AnimIcon
 from ..game.entity.Pac_man import Pac_man
@@ -103,6 +103,8 @@ class Map_renderer:
             return "eyes_" + DIRECTIONS[self.saved_dirs[ghost.name][0]]
 
         elif ghost.state == Ghost_state.FRIGHTENED:
+            if self.pacman_state == Pacman_state.ENERGIZED_END:
+                return "afraid_blinking"
             return "afraid_blue"
 
         return self.get_entity_texture(ghost)
@@ -367,6 +369,9 @@ class Map_renderer:
 
             if not self.entity_is_in(entity, cell):
                 continue
+
+            if entity.name == "pacman":
+                self.pacman_state = entity.is_energized
 
             self.set_correct_dir(entity)
             en_posx: float
