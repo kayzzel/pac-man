@@ -172,7 +172,7 @@ class Keybind_input_box(Input_box):
         width: int,
         height: int,
         action: tuple[Callable, Any] = (lambda: 0, None),
-        max_chars: int = MAX_INPUT_CHARS,
+        max_chars: int = 1,
         char_range: tuple[int, int] | list[int] = (32, 125),
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
             DEFAULT_COLOR,
@@ -227,10 +227,8 @@ class Keybind_input_box(Input_box):
 
             while key > 0:
 
-                if (
-                    key in self.char_range
-                    and len(self.input) < self.max_chars
-                ):
+                if key in self.char_range:
+
                     self.display_key = key
                     break
 
