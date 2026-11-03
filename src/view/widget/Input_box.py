@@ -166,6 +166,8 @@ class Input_box(Widget):
 
 class Keybind_input_box(Input_box):
 
+    # special input box just to take single keybinds
+
     def __init__(
         self,
         x: int,
@@ -188,6 +190,8 @@ class Keybind_input_box(Input_box):
         self._update_keys()
 
     def _update_keys(self) -> None:
+
+        # initializes the icons for the arrow keys (cannot chr)
 
         icon_size: int = self.h - self.h // 3
         icon_x: int = self.posx + (self.w - icon_size) // 2
@@ -229,6 +233,7 @@ class Keybind_input_box(Input_box):
 
             while key > 0:
 
+                # if an authorized keybind is entered, the keybind is displayed
                 if key in self.char_range and self.display_key == 0:
 
                     self.display_key = key
@@ -285,6 +290,8 @@ class Keybind_input_box(Input_box):
                 Text.spacing,
                 self.cursor_color
             )
+
+        # displays the keybind entered by the user
 
         if self.display_key == 0:
             return
