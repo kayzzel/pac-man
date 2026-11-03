@@ -167,7 +167,10 @@ def calculate_collision(game: Game) -> bool:
 
         if (
                 game.cheats.is_invincible or
-                pacman.is_energized and not ghost.eaten_this_power
+                (
+                    pacman.is_energized != Pacman_state.NORMAL and
+                    not ghost.eaten_this_power
+                )
         ):
             ghost.set_eaten()
             pacman.score += game.config.point_per_ghost
