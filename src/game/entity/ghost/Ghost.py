@@ -1,7 +1,7 @@
 from ..Entity import Entity
 from ..Pac_man import Pac_man
 from ...map.Cell import Cell
-from ....utils.enum_utils import Ghost_state
+from ....utils.enum_utils import Ghost_state, Pacman_state
 from ....utils.path_utils import next_direction
 
 from abc import ABC, abstractmethod
@@ -54,7 +54,7 @@ class Ghost(Entity, ABC):
         }
 
         # A ghost can only be eaten once per power-up
-        if not pacman.is_energized:
+        if pacman.is_energized == Pacman_state.NORMAL:
             self.eaten_this_power = False
 
         if self.state == Ghost_state.EATEN:
@@ -63,7 +63,10 @@ class Ghost(Entity, ABC):
             else:
                 self.__respawned()
 
-        if pacman.is_energized and not self.eaten_this_power:
+        if (
+                pacman.is_energized != Pacman_state.NORMAL and
+                not self.eaten_this_power
+        ):
             if self.state != Ghost_state.FRIGHTENED:
                 self.direction = OPPOSITE[self.direction]
                 self.state = Ghost_state.FRIGHTENED

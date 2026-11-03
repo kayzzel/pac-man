@@ -12,6 +12,12 @@ class Game_state(str, Enum):
     ERROR = "error"
 
 
+class Pacman_state(Enum):
+    NORMAL = "normal"
+    ENERGIZED = "energized"
+    ENERGIZED_END = "energized_end"
+
+
 class Ghost_state(Enum):
     CHASE = "chase"
     EATEN = "eaten"
