@@ -150,3 +150,40 @@ class Input_box(Widget):
                 Text.spacing,
                 self.cursor_color
             )
+
+
+class Keybind_input_box(Input_box):
+
+    def __init__(
+        self,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        action: tuple[Callable, Any] = (lambda: 0, None),
+        max_chars: int = MAX_INPUT_CHARS,
+        char_range: tuple[int, int] = (32, 125),
+        colors: tuple[pr.Color, pr.Color, pr.Color] = (
+            DEFAULT_COLOR,
+            TEXT_COLOR,
+            CURSOR_COLOR
+        )
+    ) -> None:
+
+        super().__init__(
+            x, y, width, height, action, max_chars, char_range, colors
+        )
+        self._update_keys()
+
+    def _update_keys(self) -> None:
+
+        icon_size: int = self.h - self.h // 3
+        icon_x: int = self.posx + (self.w - icon_size) // 2
+        icon_y: int = self.posy + (self.h - icon_size) // 2
+        self.keys: dict[int, Widget] = {
+            kek.KEY_UP: Icon(icon_x, icon_y, ARROW_UP_PATH, (icon_size, icon_size), True),
+            kek.KEY_DOWN: Icon(icon_x, icon_y, ARROW_DOWN_PATH, (icon_size, icon_size), True),
+            kek.KEY_RIGHT: Icon(icon_x, icon_y, ARROW_RIGHT_PATH, (icon_size, icon_size), True),
+            kek.KEY_LEFT: Icon(icon_x, icon_y, ARROW_LEFT_PATH, (icon_size, icon_size), True),
+            kek.ENTER: Text("enter", 0, icon_y, icon_y, self.w - self.w // 3)
+        }
