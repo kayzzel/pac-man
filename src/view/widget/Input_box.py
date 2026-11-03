@@ -91,7 +91,6 @@ class Input_box(Widget):
                 ):
                     self.input += chr(key)
 
-                self.last_key: int = key
                 key = pr.get_char_pressed()
 
             if pr.is_key_pressed(kek.KEY_BACKSPACE) and self.input:
