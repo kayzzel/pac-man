@@ -173,7 +173,7 @@ class Keybind_input_box(Input_box):
         height: int,
         action: tuple[Callable, Any] = (lambda: 0, None),
         max_chars: int = MAX_INPUT_CHARS,
-        char_range: tuple(int, int) | list[int] = (32, 125),
+        char_range: tuple[int, int] | list[int] = (32, 125),
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
             DEFAULT_COLOR,
             TEXT_COLOR,
