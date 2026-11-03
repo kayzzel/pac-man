@@ -2,7 +2,7 @@ from .Widget import Widget
 from .Icon import Icon, AnimIcon, ClickableIcon
 from .Button import Button
 from .Panel import Panel, TextPanel, ButtonPanel
-from .Input_box import Input_box
+from .Input_box import Input_box, Keybind_input_box
 from .Dropdown import Dropdown
 from .Text import Text
 
@@ -18,5 +18,6 @@ __all__: list[str] = [
     "TextPanel",
     "Dropdown",
     "Text",
-    "Input_box"
+    "Input_box",
+    "Keybind_input_box"
 ]
