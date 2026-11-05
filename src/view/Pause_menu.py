@@ -78,10 +78,11 @@ class Pause_menu(View):
             return
 
         labels: dict[str, str] = {
-            "nb_lives": f"number of lives ({self.nb_lives})",
-            "pts_per_pacgum": f"points per pacgum ({self.pts_per_pacgum})",
-            "pts_per_spacgum": f"points per super pacgum ({self.pts_per_spacgum})",
-            "pts_per_ghost": f"points per ghost ({self.pts_per_ghost})",
+            "nb_lives": f"number of lives ({self.game.player.nb_lives})",
+            "score": f"score ({self.game.player.score})",
+            # "pts_per_pacgum": f"points per pacgum ({self.pts_per_pacgum})",
+            # "pts_per_spacgum": f"points per super pacgum ({self.pts_per_spacgum})",
+            # "pts_per_ghost": f"points per ghost ({self.pts_per_ghost})",
             "invicible_mode": "invicible mode",
             "nowalls_mode": "pass through walls"
         }
@@ -115,25 +116,32 @@ class Pause_menu(View):
                 self.cheat_panel.labels[labels[parameter]].posy,
                 panel_width // 12,
                 self.cheat_panel.font_size,
-                {("off" if not getattr(self, parameter) else "on"): (self.change_onoff_button, parameter)},
+                {("off" if cur_value else "on"): function},
                 (0, 2, 0.1),
                 -2
-            ) for parameter in ["invicible_mode", "nowalls_mode"]
+            ) for parameter, (function, cur_value) in {
+                "invicible_mode": ((self.game.cheats.toggle_invicible, None), self.game.cheats.is_invicible),
+                "nowalls_mode": ((self.game.cheats.toggle_clipping, None), self.game.cheats.is_clipping)
+            }
         }
 
     def change_parameter(self, parameter: str) -> None:
 
-        if not hasattr(self, parameter):
+        if parameter == "nb_lives":
+            function = self.game.cheats.change_life
+        elif parameter == "score":
+            function = self.game.cheats.change_score
+        elif parameter not in self.input_boxes.keys() or not isinstance(self.input_boxes[parameter].input, int):
             return
-        setattr(self, parameter, self.input_boxes[parameter].input)
+        function(self.input_boxes[parameter].input)
         self._update_cheat_panel()
 
-    def change_onoff_button(self, parameter: str) -> None:
-
-        if not hasattr(self, parameter):
-            return
-        setattr(self, parameter, not getattr(self, parameter))
-        self._update_cheat_panel()
+#     def change_onoff_button(self, parameter: str) -> None:
+# 
+#         if not hasattr(self, parameter):
+#             return
+#         setattr(self, parameter, not getattr(self, parameter))
+#         self._update_cheat_panel()
 
     def reset_input(self) -> None:
 
