@@ -17,27 +17,17 @@ class GameCheats:
     def is_clipping(self) -> bool:
         return self.__is_clipping
 
-    def add_life(self) -> None:
-        self.__game.player.nb_lives += 1
-
-    def remove_life(self) -> None:
-        if self.__game.player.nb_lives > 1:
-            self.__game.player.nb_lives -= 1
-
-    def add_points(self, points: int) -> None:
-        if points < 0:
+    def change_lives(self, lives: int) -> None:
+        if self.__game.player.nb_lives + lives < 1:
+            self.__game.player.nb_lives = 1
             return
-        self.__game.player.score += points
+        self.__game.player.nb_lives += lives
 
-    def remove_points(self, points: int) -> None:
-        if points < 0:
-            return
-
-        if self.__game.player.score - points < 0:
+    def change_points(self, points: int) -> None:
+        if self.__game.player.score + points < 0:
             self.__game.player.score = 0
             return
-
-        self.__game.player.score -= points
+        self.__game.player.score += points
 
     def toggle_invincible(self) -> None:
         self.__is_invincible = not self.__is_invincible
