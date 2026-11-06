@@ -23,14 +23,29 @@ class Pac_man(Entity):
 
         self.__next_direction = direction
 
-    def __select_next_dir(self, cell: Cell) -> None:
+    def __select_next_dir(
+            self,
+            cell: Cell,
+            is_clipping: bool,
+            map_size: tuple[int, int]
+    ) -> None:
         if not self.__next_direction:
             return
 
         if self.__next_direction == self.direction:
             return
 
-        if not cell.walls[self.__next_direction]:
+        x = int(self.pos_x)
+        y = int(self.pos_y)
+
+        can_clip = is_clipping and (
+            (self.__next_direction == "N" and y != 0) or
+            (self.__next_direction == "S" and y != map_size[1] - 1) or
+            (self.__next_direction == "W" and x != 0) or
+            (self.__next_direction == "E" and x != map_size[0] - 1)
+        )
+
+        if not cell.walls[self.__next_direction] or can_clip:
             self.direction = self.__next_direction
             self.__next_direction = ""
 
@@ -47,7 +62,9 @@ class Pac_man(Entity):
     def update(
                 self,
                 cell: Cell,
-                elapsed_time: int
+                elapsed_time: int,
+                is_clipping: bool,
+                map_size: tuple[int, int]
             ) -> None:
         if self.is_energized != Pacman_state.NORMAL:
             if (
@@ -60,9 +77,19 @@ class Pac_man(Entity):
 
         if (modf(self.pos_x)[0] == 0.5 and modf(self.pos_y)[0] == 0.5):
 
-            self.__select_next_dir(cell)
+            self.__select_next_dir(cell, is_clipping, map_size)
 
-            if cell.walls[self.direction]:
+            x = int(self.pos_x)
+            y = int(self.pos_y)
+
+            can_clip = is_clipping and (
+                (self.direction == "N" and y != 0) or
+                (self.direction == "S" and y != map_size[1] - 1) or
+                (self.direction == "W" and x != 0) or
+                (self.direction == "E" and x != map_size[0] - 1)
+            )
+
+            if (not can_clip and cell.walls[self.direction]):
                 return
 
         self.walk()
