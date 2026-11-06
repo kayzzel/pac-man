@@ -72,7 +72,7 @@ class Game_view(View):
 
         life_icon_sz: int = (
             self.info_panel.w - (life_label.x + life_label.width)
-        ) // self.game.config.lives - 10
+        ) // self.game.player.nb_lives - 10
 
         if hasattr(self, "lives"):
             for life in self.lives:
@@ -80,7 +80,7 @@ class Game_view(View):
 
         self.lives: list[Icon] = [Icon(
             10 + life_label.x + life_label.width + life_icon_sz * life,
-            life_label.y - 5,
+            life_label.y + (life_label.font_size - life_icon_sz) // 2,
             LIFE_ICON_PATH,
             (life_icon_sz, life_icon_sz),
             True

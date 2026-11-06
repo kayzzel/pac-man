@@ -25,13 +25,6 @@ class Pause_menu(View):
         self.global_view: View = global_view
         self.show_cheat_panel: bool = False
 
-        self.nb_lives: int = self.game.config.lives
-        self.pts_per_pacgum: int = self.game.config.point_per_pacgum
-        self.pts_per_spacgum: int = self.game.config.point_per_super_pacgum
-        self.pts_per_ghost: int = self.game.config.point_per_ghost
-        self.invicible_mode: bool = False
-        self.nowalls_mode: bool = False
-
         super().__init__(app)
 
     @property
@@ -77,14 +70,16 @@ class Pause_menu(View):
         if not self.show_cheat_panel:
             return
 
+        invincible_state: str = ("on" if self.game.cheats.is_invincible else "off")
+        clipping_state: str = ("on" if self.game.cheats.is_clipping else "off")
         labels: dict[str, str] = {
             "nb_lives": f"number of lives ({self.game.player.nb_lives})",
             "score": f"score ({self.game.player.score})",
             # "pts_per_pacgum": f"points per pacgum ({self.pts_per_pacgum})",
             # "pts_per_spacgum": f"points per super pacgum ({self.pts_per_spacgum})",
             # "pts_per_ghost": f"points per ghost ({self.pts_per_ghost})",
-            "invicible_mode": "invicible mode",
-            "nowalls_mode": "pass through walls"
+            "invincible_mode": f"invincible mode ({invincible_state})",
+            "nowalls_mode": f"pass through walls ({clipping_state})"
         }
 
         panel_width: int = self.w - self.left_panel.w - BORDER_THICK
@@ -116,12 +111,12 @@ class Pause_menu(View):
                 self.cheat_panel.labels[labels[parameter]].posy,
                 panel_width // 12,
                 self.cheat_panel.font_size,
-                {("off" if cur_value else "on"): function},
+                {("off" if cur_value else "on"): (self.change_onoff_button, parameter)},
                 (0, 2, 0.1),
                 -2
-            ) for parameter, (function, cur_value) in {
-                "invicible_mode": ((self.game.cheats.toggle_invincible, None), self.game.cheats.is_invicible),
-                "nowalls_mode": ((self.game.cheats.toggle_clipping, None), self.game.cheats.is_clipping)
+            ) for parameter, cur_value in {
+                "invincible_mode": self.game.cheats.is_invincible,
+                "nowalls_mode": self.game.cheats.is_clipping
             }.items()
         }
 
@@ -131,17 +126,21 @@ class Pause_menu(View):
             function = self.game.cheats.change_lives
         elif parameter == "score":
             function = self.game.cheats.change_points
-        elif parameter not in self.input_boxes.keys() or not isinstance(self.input_boxes[parameter].input, int):
+        elif parameter not in self.input_boxes.keys() or not self.input_boxes[parameter].input.isdigit():
             return
-        function(self.input_boxes[parameter].input)
+        function(int(self.input_boxes[parameter].input))
         self._update_cheat_panel()
 
-#     def change_onoff_button(self, parameter: str) -> None:
-#
-#         if not hasattr(self, parameter):
-#             return
-#         setattr(self, parameter, not getattr(self, parameter))
-#         self._update_cheat_panel()
+    def change_onoff_button(self, parameter: str) -> None:
+
+        if parameter == "invincible_mode":
+            function = self.game.cheats.toggle_invincible
+        elif parameter == "nowalls_mode":
+            function = self.game.cheats.toggle_clipping
+        elif parameter not in self.onoff_buttons.keys():
+            return
+        function()
+        self._update_cheat_panel()
 
     def reset_input(self) -> None:
 

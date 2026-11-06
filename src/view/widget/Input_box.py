@@ -130,7 +130,7 @@ class Input_box(Widget):
         pr.draw_rectangle_lines(*self.textbox, line_color)
 
         text_padding: int = (
-            self.w + self.w // 8
+            self.w
             - Text.measure_text(self.standin_input, self.font_size)
         ) // 2
 
@@ -156,9 +156,7 @@ class Input_box(Widget):
         ):
 
             cursor_x: int = user_input.x + user_input.width
-            if len(user_input.label):
-                cursor_x += self.w // 15
-            cursor_y: int = user_input.y + user_input.font_size
+            cursor_y: int = user_input.y + self.h // 8
             pr.draw_text_ex(
                 Text.font,
                 "_",
@@ -286,7 +284,7 @@ class Keybind_input_box(Input_box):
             cursor_x: int = self.posx + (
                 self.w - Text.measure_text("_", self.font_size)
             ) // 2
-            cursor_y: int = self.posy - self.h // 3
+            cursor_y: int = self.posy + self.h - self.font_size
             pr.draw_text_ex(
                 Text.font,
                 "_",

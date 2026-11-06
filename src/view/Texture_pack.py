@@ -100,6 +100,7 @@ class Texture_pack:
                 t.name.split(".")[0]: t.path
                 for t in os.scandir(folder)
                 if t.is_file() and t.name.split(".")[0] in textures
+                and t.name.endswith((".png", ".gif"))
             })
 
     def get_texture(self, texture_name: str) -> str:
