@@ -67,7 +67,7 @@ class Widget(ABC):
         if isinstance(args, tuple):
             self.action[0](*args)
 
-        if args is not None:
+        elif args is not None:
             self.action[0](args)
 
         else:
