@@ -122,22 +122,22 @@ class Pause_menu(View):
             ) for parameter, (function, cur_value) in {
                 "invicible_mode": ((self.game.cheats.toggle_invicible, None), self.game.cheats.is_invicible),
                 "nowalls_mode": ((self.game.cheats.toggle_clipping, None), self.game.cheats.is_clipping)
-            }
+            }.items()
         }
 
     def change_parameter(self, parameter: str) -> None:
 
         if parameter == "nb_lives":
-            function = self.game.cheats.change_life
+            function = self.game.cheats.change_lives
         elif parameter == "score":
-            function = self.game.cheats.change_score
+            function = self.game.cheats.change_points
         elif parameter not in self.input_boxes.keys() or not isinstance(self.input_boxes[parameter].input, int):
             return
         function(self.input_boxes[parameter].input)
         self._update_cheat_panel()
 
 #     def change_onoff_button(self, parameter: str) -> None:
-# 
+#
 #         if not hasattr(self, parameter):
 #             return
 #         setattr(self, parameter, not getattr(self, parameter))
