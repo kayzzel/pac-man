@@ -120,7 +120,7 @@ class Pause_menu(View):
                 (0, 2, 0.1),
                 -2
             ) for parameter, (function, cur_value) in {
-                "invicible_mode": ((self.game.cheats.toggle_invicible, None), self.game.cheats.is_invicible),
+                "invicible_mode": ((self.game.cheats.toggle_invincible, None), self.game.cheats.is_invicible),
                 "nowalls_mode": ((self.game.cheats.toggle_clipping, None), self.game.cheats.is_clipping)
             }.items()
         }

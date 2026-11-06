@@ -154,10 +154,15 @@ class Input_box(Widget):
         ) and (
             (self.frame_counter // 20) % 2 == 0
         ):
+
+            cursor_x: int = user_input.x + user_input.width
+            if len(user_input.label):
+                cursor_x += self.w // 15
+            cursor_y: int = user_input.y + user_input.font_size
             pr.draw_text_ex(
                 Text.font,
                 "_",
-                (user_input.x + self.w // 15, self.posy + self.h // 3),
+                (cursor_x, cursor_y),
                 float(user_input.font_size),
                 Text.spacing,
                 self.cursor_color
@@ -281,7 +286,7 @@ class Keybind_input_box(Input_box):
             cursor_x: int = self.posx + (
                 self.w - Text.measure_text("_", self.font_size)
             ) // 2
-            cursor_y: int = self.posy + self.h // 3
+            cursor_y: int = self.posy - self.h // 3
             pr.draw_text_ex(
                 Text.font,
                 "_",
