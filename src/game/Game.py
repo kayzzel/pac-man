@@ -12,7 +12,7 @@ from .entity.ghost.Inky import Inky
 from .entity.collectible.Consumable import Consumable
 from ..Config import Config
 from ..utils.maze_utils import convert_maze_to_map
-from ..utils.enum_utils import Game_state, Ghost_state, Pacman_state
+from ..utils.enum_utils import Game_state, Ghost_state, Pacman_state, Consumable_type
 
 from mazegenerator import MazeGenerator
 from pathlib import Path

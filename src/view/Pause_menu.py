@@ -124,6 +124,7 @@ class Pause_menu(View):
 
         if parameter == "nb_lives":
             function = self.game.cheats.change_lives
+            self.global_view.life_icon_init = False
         elif parameter == "score":
             function = self.game.cheats.change_points
         elif parameter not in self.input_boxes.keys() or not self.input_boxes[parameter].input.isdigit():

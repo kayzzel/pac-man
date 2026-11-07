@@ -120,13 +120,13 @@ class Options_menu(View):
                 - Text.measure_text(fps_string, self.resolution_dropdown.main_panel.font_size)
                 - fps_input_sz
             ) // 2,
-            self.resolution_dropdown.posy + self.resolution_dropdown.h + self.h // 25,
+            self.resolution_dropdown.posy + self.resolution_dropdown.h + self.h // 15,
             self.resolution_dropdown.main_panel.font_size,
             self.resolution_dropdown.w - fps_input_sz
         )
         self.fps_input: Input_box = Input_box(
             self.fps_label.posx + self.fps_label.width + self.resolution_dropdown.w // 16,
-            self.fps_label.posy,
+            self.fps_label.posy + (self.fps_label.font_size - self.graphics_title.font_size) // 2,
             self.resolution_dropdown.w // 5,
             self.graphics_title.font_size,
             (self.change_fps, None),
@@ -154,6 +154,35 @@ class Options_menu(View):
         )
         self.widgets.append(self.back_button)
 
+    def change_font(self, font: str) -> None:
+
+        Text._load_font(font)
+        self._update(True)
+
+    def _update_font_choice(self) -> None:
+
+        self.font_title: Text = Text(
+            "FONT",
+            self.p_w + (self.p_w - Text.measure_text("FONT", self.title_fontsz)) // 2,
+            self.keybind_title.posy,
+            self.title_fontsz,
+            self.w // 3
+        )
+        font_buttons: dict[str, tuple[Callable, Any]] = {
+            f"Select font (current: {Text.current_font})": (lambda: 0, None)
+        } | {
+            font: (self.change_font, font)
+            for font in Text.fonts.keys()
+        }
+        font_drdw_w: int = self.p_w - self.p_w // 3
+        self.font_dropdown: Dropdown = Dropdown(
+            self.p_w + (self.p_w - font_drdw_w) // 2,
+            self.font_title.lowerbound + self.h // 25,
+            font_drdw_w,
+            self.font_title.font_size,
+            font_buttons
+        )
+
     def change_texture_pack(self, new_pack: str) -> None:
 
         if new_pack not in TEXTURES_PACK.keys():
@@ -167,7 +196,7 @@ class Options_menu(View):
         self.texture_title: Text = Text(
             "TEXTURES",
             self.p_w + (self.p_w - Text.measure_text("TEXTURES", self.title_fontsz)) // 2,
-            self.keybind_title.posy,
+            self.font_dropdown.posy + self.font_dropdown.h + self.h // 15,
             self.title_fontsz,
             self.w // 3
         )
@@ -198,22 +227,23 @@ class Options_menu(View):
         )
         height_remaining: int = self.h - (self.preview_label.lowerbound + self.back_button.h + self.h // 15)
         height_remaining -= height_remaining // 4
-        start_x: int = (self.p_w // 2 - height_remaining) // 2
+        start_x: int = (self.p_w - height_remaining * 2 - self.p_w // 8) // 2
         self.preview_icon_pacman: AnimIcon = AnimIcon(
             self.p_w + start_x,
-            self.preview_label.lowerbound + self.h // 15,
+            self.preview_label.lowerbound + self.h // 25,
             Texture_pack(self.app.display_config.texture_pack).get_texture("pacman_right"),
             (height_remaining, height_remaining),
             True
         )
         self.preview_icon_ghost: AnimIcon = AnimIcon(
-            self.p_w + self.p_w // 2 + start_x,
-            self.preview_label.lowerbound + self.h // 15,
+            self.preview_icon_pacman.posx + height_remaining + self.p_w // 8,
+            self.preview_label.lowerbound + self.h // 25,
             Texture_pack(self.app.display_config.texture_pack).get_texture("blinky_left"),
             (height_remaining, height_remaining),
             True
         )
         self.widgets += [self.texture_title, self.preview_label, self.preview_icon_pacman, self.preview_icon_ghost, self.texture_dropdown]
+        self.widgets += [self.font_title, self.font_dropdown]
 
     def _update(self, forced: bool = False) -> None:
 
@@ -225,4 +255,5 @@ class Options_menu(View):
         self._update_back_button()
         self._update_keybinds()
         self._update_graphics()
+        self._update_font_choice()
         self._update_texture_pack()

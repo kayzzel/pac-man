@@ -16,6 +16,12 @@ class Text(Widget):
     default: bool = True
     init: bool = False
 
+    current_font: str = "default"
+    fonts: dict[str, str] = {
+        "default": DEFAULT_FONT,
+        "pac-man": PACMAN_FONT
+    }
+
     def __init__(
         self,
         label: str,
@@ -43,17 +49,15 @@ class Text(Widget):
         self.color: pr.Color = color
 
     @classmethod
-    def _load_font(cls, new_font_path: str = DEFAULT_FONT) -> None:
+    def _load_font(cls, new_font: str = "default") -> None:
 
-        if not new_font_path:
-            cls.font = pr.get_font_default()
-            cls.spacing = 5
-            cls.default = True
+        if new_font not in cls.fonts.keys():
+            return
 
-        else:
-            cls.font = pr.load_font(new_font_path)
-            cls.spacing = 2
-            cls.default = False
+        cls.font = pr.load_font(cls.fonts[new_font])
+        cls.current_font = new_font
+        cls.spacing = 2
+        cls.default = False
 
     @classmethod
     def _resize_font(cls, string: str, fontsize: int, width: int = 0) -> int:

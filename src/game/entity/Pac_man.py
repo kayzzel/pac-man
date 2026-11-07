@@ -49,12 +49,6 @@ class Pac_man(Entity):
             self.direction = self.__next_direction
             self.__next_direction = ""
 
-    def test_update(self, cell: Cell) -> None:
-
-        self.__select_next_dir(cell)
-        for _ in range(50):
-            self.walk()
-
     def set_energized(self, elapsed_time: int) -> None:
         self.__last_super_pacgum_time = elapsed_time
         self.is_energized = Pacman_state.ENERGIZED

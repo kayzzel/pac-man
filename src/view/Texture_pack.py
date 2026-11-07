@@ -48,17 +48,26 @@ class Texture_pack:
             "afraid_blinking"
         ]
         self.collectibles_needed: list[str] = [
-            "apple",
-            "strawberry",
-            "orange",
-            "cherry",
-            "melon",
-            "galaxian",
-            "bell",
-            "key",
+            "apple_c",
+            "apple_nc",
+            "strawberry_c",
+            "strawberry_nc",
+            "orange_c",
+            "orange_nc",
+            "cherry_c",
+            "cherry_nc",
+            "melon_c",
+            "melon_nc",
+            "galaxian_c",
+            "galaxian_nc",
+            "bell_c",
+            "bell_nc",
+            "key_c",
+            "key_nc",
             "pacgum",
             "super_pacgum"
         ]
+
         self.textures_needed: list[str] = (
             self.pacman_needed +
             self.ghosts_needed +

@@ -5,9 +5,10 @@ from .Pause_menu import Pause_menu
 from .Endgame_view import Endgame_view
 from .widget import Icon, Text, Widget, TextPanel
 from ..game.Game import Game
+from ..game.entity.collectible.Consumable import Consumable
 from ..game.map.Cell import Cell
 from .Map_renderer import Map_renderer
-from ..utils.enum_utils import Game_state
+from ..utils.enum_utils import Game_state, Consumable_type
 
 
 LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
@@ -22,6 +23,7 @@ class Game_view(View):
         self.game: Game = game
         self.modal_view: Pause_menu = Pause_menu(app, game, self)
         self.show_as_modal: bool = False
+        self.life_icon_init: bool = False
         self.map_renderer: Map_renderer = Map_renderer(
             self.game,
             app.display_config.texture_pack
@@ -65,27 +67,98 @@ class Game_view(View):
         life_label: Text = Text(
             "Lives : ",
             self.info_panel.w // 10,
-            self.h - self.h // 5,
+            self.info_panel.posy + self.info_panel.h + self.h // 4,
             self.info_panel.font_size
         )
-        self.info_widgets += [self.info_panel, life_label]
 
-        life_icon_sz: int = (
-            self.info_panel.w - (life_label.x + life_label.width)
-        ) // self.game.player.nb_lives - 10
+        if not self.life_icon_init:
+
+            self.life_icon_sz: int = (
+                self.info_panel.w - (life_label.x + life_label.width)
+            ) // self.game.player.nb_lives - self.info_panel.w // 30
+            self.life_icon_init = True
 
         if hasattr(self, "lives"):
             for life in self.lives:
                 life._unload_image()
 
         self.lives: list[Icon] = [Icon(
-            10 + life_label.x + life_label.width + life_icon_sz * life,
-            life_label.y + (life_label.font_size - life_icon_sz) // 2,
+            self.info_panel.w // 30 + life_label.x + life_label.width + self.life_icon_sz * life,
+            life_label.y + (life_label.font_size - self.life_icon_sz) // 2,
             LIFE_ICON_PATH,
-            (life_icon_sz, life_icon_sz),
+            (self.life_icon_sz, self.life_icon_sz),
             True
         ) for life in range(self.game.player.nb_lives)]
-        self.info_widgets += self.lives
+
+        self.info_widgets += [self.info_panel, life_label] + self.lives
+        self._update_collectibles()
+
+    def _update_collectibles(self) -> None:
+
+        collect_info: dict[str, str] = {}
+        for collectible_name in Consumable_type:
+            state: str = (
+                "_c" if collectible_name.value in [
+                    cons.name for cons in self.game.consumables
+                ] else "_nc"
+            )
+            collect_info[collectible_name.value] = (
+                self.map_renderer.texture_pack.get_texture(collectible_name.value + state)
+            )
+        nb_cons: int = len(list(collect_info.keys()))
+
+        if hasattr(self, "collectibles"):
+            for collectible in self.collectibles:
+                collectible._unload_image()
+
+        self.collectibles: list[Icon] = []
+
+        collectible_label: Text = Text(
+            "Collectibles :",
+            (self.info_panel.w - Text.measure_text("Collectibles :", self.info_panel.font_size)) // 2,
+            self.lives[0].posy + self.lives[0].i_h + self.h // 15,
+            self.info_panel.font_size
+        )
+        self.info_widgets.append(collectible_label)
+
+        height_remaining: int = self.h - collectible_label.lowerbound - self.h // 10
+        collect_h: int = height_remaining // 2
+        coll_padding: int = self.info_panel.w // 60
+        collect_w: int = (
+            self.info_panel.w // (nb_cons // 2)
+        ) - coll_padding * 2
+        if collect_w < collect_h:
+            collect_sz: int = collect_w
+        else:
+            collect_sz = collect_h
+            coll_padding = ((
+                self.info_panel.w - (collect_sz * (nb_cons // 2))
+            ) // (nb_cons // 2)) // 2
+
+        first_y: int = collectible_label.lowerbound + self.h // 30
+        second_y: int = first_y + collect_sz + self.h // 30
+
+        for i, (collect_name, collect_texture) in enumerate(collect_info.items()):
+
+            if i == 0:
+                coll_y: int = first_y
+                coll_x: int = coll_padding
+
+            if i == len(list(collect_info.keys())) // 2:
+                coll_y = second_y
+                coll_x: int = coll_padding
+
+            new_coll: Icon = Icon(
+                coll_x,
+                coll_y,
+                collect_texture,
+                (collect_sz, collect_sz),
+                True
+            )
+            coll_x += coll_padding * 2 + collect_sz
+            self.collectibles.append(new_coll)
+
+        self.info_widgets += self.collectibles
 
     @property
     def map_startx(self) -> int:

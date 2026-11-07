@@ -6,6 +6,7 @@ from .Texture_pack import Texture_pack
 from .widget import Icon, AnimIcon
 from ..game.entity.Pac_man import Pac_man
 from ..game.entity.Entity import Entity
+from ..game.entity.collectible.Consumable import Consumable
 from ..game.entity.ghost.Ghost import Ghost_state, Ghost
 
 DIRECTIONS: dict[str, str] = {
@@ -58,6 +59,7 @@ class Map_renderer:
         self.cell_padding: int = cell_size // 8 + self.line_thickness
 
         self.collectible_size: int = cell_size // 3
+        self.consumable_size: int = cell_size // 2
         self.entity_space: int = self.cell_size - self.cell_padding * 2
         self.entity_size: int = self.entity_space - self.entity_space // 8
 
@@ -333,11 +335,19 @@ class Map_renderer:
                 )
 
         if cell.collectible and cell.collectible.name not in self.collectible_icons.keys():
+
+            texture_name: str = cell.collectible.name
+            texture_size: int = self.collectible_size
+
+            if isinstance(cell.collectible, Consumable):
+                texture_name += "_c"
+                texture_size = self.consumable_size
+
             self.collectible_icons[cell.collectible.name] = Icon(
                 0,
                 0,
-                self.texture_pack.get_texture(cell.collectible.name),
-                (self.collectible_size, self.collectible_size),
+                self.texture_pack.get_texture(texture_name),
+                (texture_size, texture_size),
                 True
             )
 
@@ -358,8 +368,8 @@ class Map_renderer:
         if cell.collectible and cell.collectible.name in self.collectible_icons.keys():
 
             collectible: Icon = self.collectible_icons[cell.collectible.name]
-            collectible.x = x + (self.cell_size - self.collectible_size) // 2
-            collectible.y = y + (self.cell_size - self.collectible_size) // 2
+            collectible.x = x + (self.cell_size - collectible.i_w) // 2
+            collectible.y = y + (self.cell_size - collectible.i_h) // 2
             collectible.display_widget()
 
         entity_base_x: int = x + self.cell_padding
