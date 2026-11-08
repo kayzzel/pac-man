@@ -81,8 +81,6 @@ class App:
                 self.__previous_views.append(self.__current_view)
             self.__current_view = self.views[view]
 
-        view_names: list[str] = [type(view) for view in self.__previous_views]
-        print(f"### changed to view {type(self.__current_view)}, previous_views: {view_names}\n")
         if self.__current_view:
             self.__current_view._update(True)
 

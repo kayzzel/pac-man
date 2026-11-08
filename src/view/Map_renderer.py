@@ -334,6 +334,8 @@ class Map_renderer:
                     pr.DARKBLUE
                 )
 
+    def add_collectibles(self, cell: Cell) -> None:
+
         if cell.collectible and cell.collectible.name not in self.collectible_icons.keys():
 
             texture_name: str = cell.collectible.name
@@ -488,6 +490,7 @@ class Map_renderer:
             for cell in row:
 
                 self.draw_walls(cell, cell_x, cell_y)
+                self.add_collectibles(cell)
 
                 cell_x += self.cell_size
 
@@ -518,3 +521,76 @@ class Map_renderer:
                 cell_x += self.cell_size
 
             cell_y += self.cell_size
+
+
+class Custom_map_renderer(Map_renderer):
+
+    def __init__(self) -> None:
+        ...
+
+    def update_grid(
+        self,
+        grid: list[list[Cell]],
+        map_size: tuple[int, int],
+        map_coor: tuple[int, int],
+        cell_size: int,
+    ) -> None:
+
+        self.grid: list[list[Cell]] = grid
+
+        self.map_w, self.map_h = map_size
+        self.map_x, self.map_y = map_coor
+
+        self.cell_size: int = cell_size
+        self.line_thickness: int = 3
+        self.cell_padding: int = cell_size // 8 + self.line_thickness
+
+        self.update_texture()
+
+    def update_texture(self) -> None:
+
+        if hasattr(self, "grid_texture"):
+            pr.unload_render_texture(self.grid_texture)
+
+        self.grid_texture = pr.load_render_texture(self.map_w, self.map_h)
+        pr.end_drawing()
+        pr.begin_texture_mode(self.grid_texture)
+        pr.clear_background(pr.BLACK)
+
+        cell_y: int = 0
+
+        for row in self.grid:
+
+            cell_x: int = 0
+
+            for cell in row:
+
+                self.draw_walls(cell, cell_x, cell_y)
+
+                cell_x += self.cell_size
+
+            cell_y += self.cell_size
+
+        pr.end_texture_mode()
+        pr.begin_drawing()
+
+    def display_grid(self) -> None:
+
+        pr.draw_texture_rec(
+            self.grid_texture.texture,
+            (0, 0, float(self.map_w), -float(self.map_h)),
+            (self.map_x, self.map_y),
+            pr.RAYWHITE
+        )
+        pr.draw_rectangle_lines(self.map_x, self.map_y, self.map_w, self.map_h, pr.LIGHTGRAY)
+
+        cell_y: int = self.map_y
+        for row_i, row in enumerate(self.grid):
+            cell_x: int = self.map_x
+            for cell_i, cell in enumerate(row):
+                if row_i > 0:
+                    pr.draw_line(cell_x, cell_y, cell_x + self.cell_size, cell_y, pr.LIGHTGRAY)
+                if cell_i > 0:
+                    pr.draw_line(cell_x, cell_y, cell_x, cell_y + self.cell_size, pr.LIGHTGRAY)
+            cell_x += self.cell_size
+        cell_y += self.cell_size

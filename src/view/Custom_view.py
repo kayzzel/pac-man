@@ -5,10 +5,23 @@ from pyray import MouseButton as mb
 from abc import ABC
 from ..game.map.Map_custom import Map_custom
 from .View import View
-from .widget import Widget, Text, ButtonPanel, Input_box
+from .Map_renderer import Custom_map_renderer
+from .widget import Widget, Text, ButtonPanel, Input_box, ClickableIcon
 
 
 MSG_TIME: int = 80
+
+WALL_VER: str = "src/view/assets/icons/walls/wall_ver"
+WALL_HOR: str = "src/view/assets/icons/walls/wall_hor"
+WALL_HERE: str = "_h.png"
+WALL_NOTHERE: str = "_nh.png"
+
+WALLS: dict[str, str] = {
+    "N": WALL_HOR,
+    "S": WALL_HOR,
+    "E": WALL_VER,
+    "W": WALL_VER
+}
 
 
 class Custom_step(View, ABC):
@@ -17,14 +30,14 @@ class Custom_step(View, ABC):
         self,
         number: int,
         view: View,
-        cmap: Custom_map,
+        cmap: Map_custom,
         description: str,
         show_next: bool = False
     ) -> None:
 
         self.number: int = number
         self.main_view: View = view
-        self.map: Custom_map = cmap
+        self.map: Map_custom = cmap
         self.description_label: str = description
         self.show_next: bool = show_next
         self._update(True)
@@ -50,9 +63,9 @@ class Custom_step(View, ABC):
 
     def _update_backnext_buttons(self) -> None:
 
-        button_w: int = self.w // 10
+        button_w: int = self.w // 12
         button_h: int = self.h // 12
-        button_padx: int = self.w // 18
+        button_padx: int = self.w // 20
         button_pady: int = self.h // 25
         self.next: ButtonPanel = ButtonPanel(
             self.w - button_w - button_padx,
@@ -106,6 +119,11 @@ class Custom_step(View, ABC):
             (self.h - self.map_h - (self.h - self.back.posy))
             + (self.mid_space - self.map_h) // 2
         )
+
+    @property
+    def cell_size(self) -> int:
+
+        return self.map_w // self.map.cols
 
     def _update(self, forced: bool = False) -> None:
 
@@ -248,21 +266,33 @@ class Step_two(Custom_step):
 
     def __init__(self, main_view: View, cmap: Map_custom) -> None:
 
+        self.show_cell: bool = False
+        self.map_renderer: Custom_map_renderer = Custom_map_renderer()
         super().__init__(
             2,
             main_view,
             cmap,
-            "Place the walls (click on each cell)"
+            "Place the walls (click on each cell)",
+            True
         )
 
     def is_in_cell(self, x: int, y: int) -> bool:
 
-        if (
-            self.cur_cell[0] <= x <= self.cur_cell[0] + 1
-        ) and (
-            self.cur_cell[1] <= y <= self.cur_cell[1] + 1
-        ):
-            return True
+        cell_y: int = self.map_y
+        for row_i, row in enumerate(self.map.map.cells):
+
+            cell_x: int = self.map_x
+            for cell_i, cell in enumerate(row):
+
+                if (
+                    cell_x <= x < cell_x + self.cell_size
+                ) and (
+                    cell_y <= y < cell_y + self.cell_size
+                ):
+                    return True
+
+            cell_x += self.cell_size
+        cell_y += self.cell_size
 
         return False
 
@@ -277,20 +307,154 @@ class Step_two(Custom_step):
 
         return False
 
+    @property
+    def cell_space(self) -> int:
+
+        return self.map_h // 2
+
+    @property
+    def cell_x(self) -> int:
+
+        return (self.w - self.cell_space) // 2
+
+    @property
+    def cell_y(self) -> int:
+
+        return self.map_y + (self.map_h - self.cell_space) // 2
+
+    def randomize_walls(self) -> None:
+
+        self.map.randomize_wall()
+        self._update(True)
+
+    def _update_randomize_button(self) -> None:
+
+        h_rem: int = self.h - (self.map_y + self.map_h)
+        button_h: int = h_rem // 2
+        self.rand_button: ButtonPanel = ButtonPanel(
+            -2,
+            self.h - button_h - h_rem // 4,
+            self.w // 7,
+            button_h,
+            {"randomize walls": (self.randomize_walls, None)}
+        )
+        self.widgets.append(self.rand_button)
+
+    def _update_walls(self) -> None:
+
+        if hasattr(self, "walls"):
+
+            for icons in self.walls.values():
+                icons[0]._unload_image()
+                icons[1]._unload_image()
+
+        wall_pad: int = self.cell_space // 12
+        wall_w: int = self.cell_space // 8
+        wall_h: int = self.cell_space - (wall_pad + wall_w) * 2
+        self.wall_pos: dict[str, tuple[int, int, int, int]] = {
+            "N": (
+                self.cell_x + wall_pad + wall_w, self.cell_y + wall_pad,
+                wall_h, wall_w
+            ),
+            "S": (
+                self.cell_x + wall_pad + wall_w,
+                self.cell_x + self.cell_space - wall_pad - wall_w,
+                wall_h, wall_w
+            ),
+            "E": (
+                self.cell_x + wall_pad, self.cell_y + wall_pad + wall_w,
+                wall_w, wall_h
+            ),
+            "W": (
+                self.cell_x + self.cell_space - wall_pad - wall_w,
+                self.cell_y + wall_pad + wall_w,
+                wall_w, wall_h
+            )
+        }
+        self.walls: dict[str, tuple[ClickableIcon, ClickableIcon]] = {}
+        for wall in ["N", "S", "E", "W"]:
+            self.walls[wall] = (
+                ClickableIcon(
+                    self.wall_pos[wall][0],
+                    self.wall_pos[wall][1],
+                    WALLS[wall] + WALL_HERE,
+                    (self.map.change_wall, (wall, *self.cur_cell)),
+                    (self.wall_pos[wall][2], self.wall_pos[wall][3]),
+                    True,
+                    False
+                ),
+                ClickableIcon(
+                    self.wall_pos[wall][0],
+                    self.wall_pos[wall][1],
+                    WALLS[wall] + WALL_NOTHERE,
+                    (self.map.change_wall, (wall, *self.cur_cell)),
+                    (self.wall_pos[wall][2], self.wall_pos[wall][3]),
+                    True,
+                    False
+                )
+            )
+
+    def display_cell(self) -> None:
+
+        if not self.show_cell:
+            return
+
+        pr.draw_rectangle(self.cell_x, self.cell_y, self.cell_space, self.cell_space, pr.DARKGRAY)
+        pr.draw_rectangle_lines(self.cell_x, self.cell_y, self.cell_space, self.cell_space, pr.LIGHTGRAY)
+
+        for wall, state in self.map.get_walls(*self.cur_cell).items():
+
+            wall_show: int = 1
+
+            if True in state:
+                wall_show = 0
+
+            self.walls[wall][wall_show].display_widget()
+
+    def set_cur_cell(self, x: int, y: int) -> None:
+
+        self.show_cell = True
+        self.cur_cell: tuple[int, int] = (x, y)
+        self._update_walls()
+
     def handle_input(self, x: int, y: int) -> None:
 
         if self.show_cell and not self.is_in_cell(x, y):
             self.show_cell = False
+            self._update(True)
 
         elif not self.show_cell and self.is_in_map(x, y):
             self.set_cur_cell(x, y)
 
         return
 
-    def _update(self) -> None:
+    def _update(self, forced: bool = False) -> None:
 
         if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT):
             self.handle_input(pr.get_mouse_x(), pr.get_mouse_y())
+
+        if not pr.is_window_resized() and not forced:
+            return
+
+        super()._update(True)
+        self._update_randomize_button()
+        self.map_renderer.update_grid(
+            self.map.map.cells,
+            (self.map_w, self.map_h),
+            (self.map_x, self.map_y),
+            self.cell_size
+        )
+
+    def display_view(self) -> None:
+
+        self._update()
+
+        self.map_renderer.display_grid()
+
+        super().display_view()
+
+        if self.show_cell:
+            self.display_cell()
 
 
 class Custom_view(View):
@@ -300,7 +464,8 @@ class Custom_view(View):
         self.app = app
         self.map: Map_custom = Map_custom(self.app.map_folder)
         self.steps: list[Custom_step] = [
-            Step_one(self, self.map)
+            Step_one(self, self.map),
+            Step_two(self, self.map)
         ]
 
         self.cur_step: int = 0
