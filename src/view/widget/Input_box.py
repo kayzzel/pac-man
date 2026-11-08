@@ -77,6 +77,7 @@ class Input_box(Widget):
         # if click inside text box for first time, input activated
         if self.is_pressed and not self.enter_input:
             self.enter_input = True
+            self.text_color = self.base_colors[1]
 
         # if click outside the box, input deactivated
 

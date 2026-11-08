@@ -65,18 +65,24 @@ class App:
         #     self.current_view.show_as_modal = False
         #     return
 
+        if isinstance(self.previous_view, type(self.__current_view)):
+            self.remove_last_view()
         self.change_view(self.previous_view)
 
     def change_view(self, view: View | str) -> None:
 
         if isinstance(view, View):
-            self.__previous_views.append(self.__current_view)
+            if not isinstance(self.__current_view, type(self.previous_view)):
+                self.__previous_views.append(self.__current_view)
             self.__current_view = view
 
         elif isinstance(view, str) and view in self.views.keys():
-            self.__previous_views.append(self.__current_view)
+            if not self.previous_view == self.__current_view:
+                self.__previous_views.append(self.__current_view)
             self.__current_view = self.views[view]
 
+        view_names: list[str] = [type(view) for view in self.__previous_views]
+        print(f"### changed to view {type(self.__current_view)}, previous_views: {view_names}\n")
         if self.__current_view:
             self.__current_view._update(True)
 
@@ -124,6 +130,16 @@ class App:
             return None
 
         return self.__previous_views[-1]
+
+    def remove_last_view(self) -> None:
+
+        if not self.__previous_views:
+            return
+
+        if self.previous_view == self.views["main_menu"]:
+            return
+
+        self.__previous_views.pop()
 
     @property
     def config(self) -> Config:

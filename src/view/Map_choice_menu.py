@@ -2,6 +2,7 @@ import pyray as pr
 from typing import Callable, Any
 from .View import View
 from .Game_view import Game_view
+from .Custom_view import Custom_view
 from .widget import Widget, Text, ButtonPanel, Icon
 from ..game.Game import mandatory_game
 
@@ -51,9 +52,7 @@ class Map_choice_menu(View):
         self.button_actions: dict[str, tuple[Callable, Any]] = {
             "MANDATORY": (self.app.change_view, Game_view(self.app, mandatory_game(self.app.config))),
             "ARCADE": (self.app.change_view, Game_view(self.app, mandatory_game(self.app.config))),
-            "CUSTOM": (lambda: print(
-                "Action for button 'custom' is not yet coded\n"
-            ), None)
+            "CUSTOM": (self.app.change_view, Custom_view(self.app))
         }
 
         self.calculate_panel_spacing()
