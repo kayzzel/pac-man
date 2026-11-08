@@ -8,7 +8,7 @@ from .widget import Widget, Text, ButtonPanel, TextPanel, Dropdown
 
 
 # DEFAULT_MAPS: list[str] = ["MANDATORY", "ARCADE", "CUSTOM", "ADDONE", "ADDTWO", "ADDTHREE", "ADDFOUR", "ADDFIVE", "ADDSIX"]
-# 
+#
 # TEST_SCORES: dict[str, int] = {
 #     "figue": 123456789,
 #     "banane": 12345678,

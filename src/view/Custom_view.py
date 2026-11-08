@@ -1,7 +1,9 @@
 import pyray as pr
 # from pyray import get_screen_width as sw
 # from pyray import get_screen_height as sh
-from abc import ABC, abstractmethod
+from pyray import MouseButton as mb
+from abc import ABC
+from ..game.map.Map_custom import Map_custom
 from .View import View
 from .widget import Widget, Text, ButtonPanel, Input_box
 
@@ -15,12 +17,14 @@ class Custom_step(View, ABC):
         self,
         number: int,
         view: View,
+        cmap: Custom_map,
         description: str,
         show_next: bool = False
     ) -> None:
 
         self.number: int = number
         self.main_view: View = view
+        self.map: Custom_map = cmap
         self.description_label: str = description
         self.show_next: bool = show_next
         self._update(True)
@@ -74,6 +78,35 @@ class Custom_step(View, ABC):
         )
         return h_rem
 
+    @property
+    def map_w(self) -> int:
+
+        if self.map.cols >= self.map.rows:
+            return self.mid_space - self.mid_space // 10
+
+        return (self.map_h // self.map.rows) * self.map.cols
+
+    @property
+    def map_h(self) -> int:
+
+        if self.map.rows >= self.map.cols:
+            return self.mid_space - self.mid_space // 10
+
+        return (self.map_w // self.map.cols) * self.map.rows
+
+    @property
+    def map_x(self) -> int:
+
+        return (self.w - self.map_w) // 2
+
+    @property
+    def map_y(self) -> int:
+
+        return (
+            (self.h - self.map_h - (self.h - self.back.posy))
+            + (self.mid_space - self.map_h) // 2
+        )
+
     def _update(self, forced: bool = False) -> None:
 
         if not pr.is_window_resized() and not forced:
@@ -94,44 +127,41 @@ class Custom_step(View, ABC):
 
 class Step_one(Custom_step):
 
-    def __init__(self, main_view: View) -> None:
+    def __init__(self, main_view: View, cmap: Map_custom) -> None:
 
-        self.map_width: int = 0
-        self.map_height: int = 0
         self.show_message: str = ""
         super().__init__(
             1,
             main_view,
+            cmap,
             "Choose map size (min 5x5, max 20x20)"
         )
 
     def validate_width(self) -> None:
 
         input_w = self.w_input.input
-        if not input_w.isdigit() or not (5 <= int(input_w) <= 20):
+        if not input_w.isdigit() or not (10 <= int(input_w) <= 30):
 
             self.show_message = "Width is invalid, try again"
             self.frame_counter: int = 0
-            self.w_input.input = ""
-            self.map_width = 0
+            self.w_input.input = str(self.map.cols)
             return
 
         self.w_input.text_color = pr.GREEN
-        self.map_width = int(input_w)
+        self.map.set_cols(int(input_w))
 
     def validate_height(self) -> None:
 
         input_h = self.h_input.input
-        if not input_h.isdigit() or not (5 <= int(input_h) <= 20):
+        if not input_h.isdigit() or not (10 <= int(input_h) <= 30):
 
             self.show_message = "Height is invalid, try again"
             self.frame_counter = 0
-            self.h_input.input = ""
-            self.map_height = 0
+            self.h_input.input = str(self.map.rows)
             return
 
         self.h_input.text_color = pr.GREEN
-        self.map_height = int(input_h)
+        self.map.set_rows(int(input_h))
 
     def _update_inputboxes(self) -> None:
 
@@ -167,6 +197,8 @@ class Step_one(Custom_step):
             2,
             (48, 57)
         )
+        self.w_input.input = str(self.map.cols)
+        self.h_input.input = str(self.map.rows)
         self.widgets += [self.x_sign, self.w_input, self.h_input]
 
     def display_message(self) -> None:
@@ -190,7 +222,7 @@ class Step_one(Custom_step):
 
     def _update(self, forced: bool = False) -> None:
 
-        if self.map_width != 0 and self.map_height != 0:
+        if self.map.cols != 0 and self.map.rows != 0:
             self.show_next = True
 
         else:
@@ -212,13 +244,63 @@ class Step_one(Custom_step):
         super().display_view()
 
 
+class Step_two(Custom_step):
+
+    def __init__(self, main_view: View, cmap: Map_custom) -> None:
+
+        super().__init__(
+            2,
+            main_view,
+            cmap,
+            "Place the walls (click on each cell)"
+        )
+
+    def is_in_cell(self, x: int, y: int) -> bool:
+
+        if (
+            self.cur_cell[0] <= x <= self.cur_cell[0] + 1
+        ) and (
+            self.cur_cell[1] <= y <= self.cur_cell[1] + 1
+        ):
+            return True
+
+        return False
+
+    def is_in_map(self, x: int, y: int) -> bool:
+
+        if (
+            self.map_x <= x <= self.map_x + self.map_w
+        ) and (
+            self.map_y <= y <= self.map_y + self.map_h
+        ):
+            return True
+
+        return False
+
+    def handle_input(self, x: int, y: int) -> None:
+
+        if self.show_cell and not self.is_in_cell(x, y):
+            self.show_cell = False
+
+        elif not self.show_cell and self.is_in_map(x, y):
+            self.set_cur_cell(x, y)
+
+        return
+
+    def _update(self) -> None:
+
+        if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT):
+            self.handle_input(pr.get_mouse_x(), pr.get_mouse_y())
+
+
 class Custom_view(View):
 
     def __init__(self, app) -> None:
 
         self.app = app
+        self.map: Map_custom = Map_custom(self.app.map_folder)
         self.steps: list[Custom_step] = [
-            Step_one(self)
+            Step_one(self, self.map)
         ]
 
         self.cur_step: int = 0
