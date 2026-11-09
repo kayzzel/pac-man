@@ -104,6 +104,8 @@ class Icon(Widget):
     def display_widget(self) -> None:
 
         self._update_widget()
+        # if self.image_path.endswith("idle.png"):
+        #     print(f"### trying to display texture {self.image_path} at position {self.posx, self.posy}")
         pr.draw_texture(self.texture, self.posx, self.posy, pr.WHITE)
 
 

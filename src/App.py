@@ -102,9 +102,7 @@ class App:
 
             pr.begin_drawing()
             pr.clear_background(pr.BLACK)
-
             self.display_app()
-
             pr.end_drawing()
 
     def stop_app(self) -> None:

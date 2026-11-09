@@ -146,7 +146,7 @@ class Game_view(View):
 
             if i == len(list(collect_info.keys())) // 2:
                 coll_y = second_y
-                coll_x: int = coll_padding
+                coll_x = coll_padding
 
             new_coll: Icon = Icon(
                 coll_x,

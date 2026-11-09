@@ -47,7 +47,7 @@ class Custom_step(View, ABC):
 
     def go_next(self) -> None:
 
-        self.main_view.change_step(-1)
+        self.main_view.step_forward()
 
     def _update_title(self) -> None:
 
@@ -79,14 +79,14 @@ class Custom_step(View, ABC):
             self.h - button_h - button_pady,
             button_w,
             button_h,
-            {"next": (self.main_view.change_step, 1)}
+            {"next": (self.go_next, None)}
         )
         self.back: ButtonPanel = ButtonPanel(
             self.w - (button_w + button_padx) * 2,
             self.h - button_h - button_pady,
             button_w,
             button_h,
-            {"back": (self.go_next, None)}
+            {"back": (self.main_view.step_back, None)}
         )
         self.widgets.append(self.back)
 
@@ -205,7 +205,7 @@ class Step_one(Custom_step):
             1,
             main_view,
             cmap,
-            "Choose map size (min 5x5, max 20x20)"
+            "Choose map size (min 10x10, max 30x30)"
         )
 
     def validate_width(self) -> None:
@@ -320,6 +320,7 @@ class Step_two(Custom_step):
     def __init__(self, main_view: View, cmap: Map_custom) -> None:
 
         self.show_cell: bool = False
+        self.is_init: bool = False
         super().__init__(
             2,
             main_view,
@@ -327,6 +328,7 @@ class Step_two(Custom_step):
             "Place the walls (click on each cell)",
             True
         )
+        self.is_init = True
 
     def go_next(self) -> None:
 
@@ -441,7 +443,7 @@ class Step_two(Custom_step):
 
     def _update(self, forced: bool = False) -> None:
 
-        if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT):
+        if self.is_init and pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT):
             self.handle_input(pr.get_mouse_x(), pr.get_mouse_y())
 
         if not pr.is_window_resized() and not forced:
@@ -453,14 +455,15 @@ class Step_two(Custom_step):
             self.map.map.cells,
             (self.map_w, self.map_h),
             (self.map_x, self.map_y),
-            self.cell_size
+            self.cell_size,
+            True
         )
 
     def display_view(self) -> None:
 
         self._update()
 
-        self.map_renderer.display_grid(True)
+        self.map_renderer.display_grid()
 
         super().display_view()
 
@@ -483,6 +486,26 @@ class Step_three(Custom_step):
             cmap,
             "Place the spawn point of PacMan and the Ghosts"
         )
+
+    @property
+    def map_x(self) -> int:
+        return self.main_view.steps_completed[-1].map_x
+
+    @property
+    def map_y(self) -> int:
+        return self.main_view.steps_completed[-1].map_y
+
+    @property
+    def map_w(self) -> int:
+        return self.main_view.steps_completed[-1].map_w
+
+    @property
+    def map_h(self) -> int:
+        return self.main_view.steps_completed[-1].map_h
+
+    @property
+    def cell_size(self) -> int:
+        return self.main_view.steps_completed[-1].cell_size
 
     def calculate_cell_pos(self, x: int, y: int) -> tuple[int, int] | None:
 
@@ -556,7 +579,7 @@ class Step_three(Custom_step):
             t_name: ClickableIcon(
                 0,
                 0,
-                self.texture_pack.get_texture(t_name + "_right"),
+                self.texture_pack.get_texture(t_name + "_idle"),
                 (self.try_place_entity, t_name),
                 (self.texture_size, self.texture_size),
                 True,
@@ -572,18 +595,20 @@ class Step_three(Custom_step):
             t_name: ClickableIcon(
                 t_x,
                 self.map_y + i * (side_text_sz + t_pad * 2) + t_pad,
-                self.texture_pack.get_texture(t_name + "_right"),
+                self.texture_pack.get_texture(t_name + "_idle"),
                 (self.activate_entity, t_name),
                 (side_text_sz, side_text_sz),
                 True,
                 False
             ) for i, t_name in enumerate(self.entities)
         }
+        # print(f"### all side textures: {[f"{name}: {icon.x, icon.y}, " for name, icon in self.side_textures.items()]}")
 
     def display_textures(self) -> None:
 
         for entity, (x, y) in self.entities_set.items():
 
+            print(f"### the entity {entity} is set on the map")
             icon: ClickableIcon = self.textures[entity]
             rect_pad: int = self.cell_size // 20
             pr.draw_rectangle(
@@ -598,6 +623,7 @@ class Step_three(Custom_step):
             icon.display_widget()
 
         for side_texture in self.side_textures.values():
+            print()
             side_texture.display_widget()
 
         if self.current_entity:
@@ -670,13 +696,13 @@ class Step_three(Custom_step):
 
         self._update()
 
-        super().display_view()
+        # super().display_view()
 
-        self.map_renderer.display_grid()
+        # self.map_renderer.display_grid()
         self.display_textures()
 
-        if self.show_message:
-            self.display_message()
+        # if self.show_message:
+        #     self.display_message()
 
 
 class Custom_view(View):
@@ -685,34 +711,41 @@ class Custom_view(View):
 
         self.app = app
         self.map: Map_custom = Map_custom(self.app.map_folder)
-        self.steps: list[Custom_step] = [
-            Step_one(self, self.map),
-            Step_two(self, self.map),
-            Step_three(self, self.map)
+        self.steps: list = [
+            Step_one,
+            Step_two,
+            Step_three
         ]
+        self.steps_completed: list[Custom_step] = []
 
-        self.cur_step: int = 0
+        self.cur_step_index: int = 0
+        self.cur_step: Custom_step = self.steps[0](self, self.map)
 
     def create_map(self) -> None:
 
         ...
 
-    def change_step(self, new: int = 1) -> None:
+    def step_back(self) -> None:
 
-        if self.cur_step + new == len(self.steps):
-            self.create_map()
-            return
-
-        if self.cur_step + new == -1:
+        if self.cur_step_index == 0:
             self.app.return_to_prev_view()
             self.app.remove_last_view()
             return
 
-        if not (0 <= self.cur_step + new < len(self.steps)):
+        self.cur_step_index -= 1
+        self.cur_step = self.steps_completed[-1]
+        self.steps_completed.pop()
+
+    def step_forward(self) -> None:
+
+        if self.cur_step_index + 1 == len(self.steps):
+            self.create_map()
             return
 
-        self.cur_step += new
+        self.cur_step_index += 1
+        self.steps_completed.append(self.cur_step)
+        self.cur_step = self.steps[self.cur_step_index](self, self.map)
 
     def display_view(self) -> None:
 
-        self.steps[self.cur_step].display_view()
+        self.cur_step.display_view()
