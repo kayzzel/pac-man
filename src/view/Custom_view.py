@@ -125,6 +125,52 @@ class Custom_step(View, ABC):
 
         return self.map_w // self.map.cols
 
+    @property
+    def cell_space(self) -> int:
+
+        return self.map_h // 2
+
+    @property
+    def cell_x(self) -> int:
+
+        return (self.w - self.cell_space) // 2
+
+    @property
+    def cell_y(self) -> int:
+
+        return self.map_y + (self.map_h - self.cell_space) // 2
+
+    def is_in_cell(self, x: int, y: int) -> Cell | None:
+
+        cell_y: int = self.map_y
+        for row_i, row in enumerate(self.map.map.cells):
+
+            cell_x: int = self.map_x
+            for cell_i, cell in enumerate(row):
+
+                if (
+                    cell_x <= x < cell_x + self.cell_size
+                ) and (
+                    cell_y <= y < cell_y + self.cell_size
+                ):
+                    return cell
+
+            cell_x += self.cell_size
+        cell_y += self.cell_size
+
+        return None
+
+    def is_in_map(self, x: int, y: int) -> bool:
+
+        if (
+            self.map_x <= x <= self.map_x + self.map_w
+        ) and (
+            self.map_y <= y <= self.map_y + self.map_h
+        ):
+            return True
+
+        return False
+
     def _update(self, forced: bool = False) -> None:
 
         if not pr.is_window_resized() and not forced:
@@ -276,52 +322,6 @@ class Step_two(Custom_step):
             True
         )
 
-    def is_in_cell(self, x: int, y: int) -> bool:
-
-        cell_y: int = self.map_y
-        for row_i, row in enumerate(self.map.map.cells):
-
-            cell_x: int = self.map_x
-            for cell_i, cell in enumerate(row):
-
-                if (
-                    cell_x <= x < cell_x + self.cell_size
-                ) and (
-                    cell_y <= y < cell_y + self.cell_size
-                ):
-                    return True
-
-            cell_x += self.cell_size
-        cell_y += self.cell_size
-
-        return False
-
-    def is_in_map(self, x: int, y: int) -> bool:
-
-        if (
-            self.map_x <= x <= self.map_x + self.map_w
-        ) and (
-            self.map_y <= y <= self.map_y + self.map_h
-        ):
-            return True
-
-        return False
-
-    @property
-    def cell_space(self) -> int:
-
-        return self.map_h // 2
-
-    @property
-    def cell_x(self) -> int:
-
-        return (self.w - self.cell_space) // 2
-
-    @property
-    def cell_y(self) -> int:
-
-        return self.map_y + (self.map_h - self.cell_space) // 2
-
     def randomize_walls(self) -> None:
 
         self.map.randomize_wall()
@@ -455,6 +455,173 @@ class Step_two(Custom_step):
 
         if self.show_cell:
             self.display_cell()
+
+
+class Step_three(Custom_step):
+
+    def __init__(self, main_view: View, cmap: Map_custom) -> None:
+
+        self.show_message: str = ""
+        self.texture_pack: Texture_pack = Texture_pack(self.main_view.app.display_config.texture_pack)
+        self.entities: list[str] = ["pacman", "blinky", "inky", "pinky", "clyde"]
+        self.entities_set: dict[str, tuple[int, int]] = {}
+        self.current_entity: str = ""
+        super().__init__(
+            3,
+            main_view,
+            cmap,
+            "Place the spawn point of PacMan and the Ghosts"
+        )
+
+    def calculate_cell_pos(self, x: int, y: int) -> tuple[int, int] | None:
+
+        if x < 0 or x >= self.map.cols:
+            return None
+
+        if y < 0 or y >= self.map.rows:
+            return None
+
+        return (
+            self.map_x + self.cell_size * x,
+            self.map_y + self.cell_size * y
+        )
+
+    def activate_entity(self, en_name: str) -> None:
+
+        self.current_entity = en_name
+
+        if en_name in self.entities_set.keys():
+            self.entities_set.pop(en_name)
+
+    def set_entity(self, x: int, y: int, en_name: str) -> bool:
+
+        if en_name == "pacman":
+            return self.map.set_pacman_spawn(x, y)
+        return self.map.set_ghost_spawn(x, y, en_name)
+
+    def try_place_entity(self, en_name: str) -> None:
+
+        if en_name not in self.textures:
+            return
+
+        if en_name in self.entities_set:
+            return
+
+        cell: Cell | None = self.is_in_cell(
+            pr.get_mouse_x(),
+            pr.get_mouse_y()
+        )
+        if not cell:
+            return
+
+        cell_pos: tuple[int, int] | None = self.calculate_cell_pos(cell.posx, cell.posy)
+
+        if self.set_entity(cell.posx, cell.posy, en_name) and cell_pos:
+
+            self.entities_set[en_name] = (
+                cell_pos[0] + self.text_pad,
+                cell_pos[1] + self.text_pad
+            )
+            self.current_entity = ""
+
+        else:
+
+            self.show_message = f"Cannot place {en_name.capitalize()} here, try elsewhere"
+            self.frame_counter = 0
+
+    def _update_textures(self) -> None:
+
+        if hasattr(self, "textures"):
+            for icon in self.textures.values():
+                icon._unload_image()
+
+        if hasattr(self, "side_textures"):
+            for icon in self.side_textures.values():
+                icon._unload_image()
+
+        self.text_pad: int = self.cell_size // 16
+        self.texture_size: int = self.cell_size - self.text_pad * 2
+        self.textures: dict[str, ClickableIcon] = {
+            ClickableIcon(
+                0,
+                0,
+                self.texture_pack.get_texture(t_name),
+                (self.try_place_entity, t_name),
+                (self.texture_size, self.texture_size),
+                True,
+                False
+            ) for t_name in [
+                entity_name + "_right"
+                for entity_name in self.entities
+            ]
+        }
+
+        side_text_sz: int = self.map_h // len(self.entities)
+        t_pad: int = self.map_h // 10
+        side_text_sz -= t_pad * 2
+        t_x: int = (self.map_x - side_text_sz) // 2
+        self.side_textures: dict[str, ClickableIcon] = {
+            ClickableIcon(
+                t_x,
+                self.map_y + i * (side_text_sz + t_pad * 2) + t_pad,
+                self.texture_pack.get_texture(t_name),
+                (self.activate_entity, t_name),
+                (side_text_sz, side_text_sz),
+                True,
+                False
+            ) for i, t_name in enumerate([
+                entity_name + "_right"
+                for entity_name in self.entities
+            ])
+        }
+
+    def display_textures(self) -> None:
+
+        for entity, (x, y) in self.entities_set.items():
+
+            icon: ClickableIcon = self.textures[entity]
+            rect_pad: int = self.cell_size // 20
+            pr.draw_rectangle(
+                x - self.text_pad + rect_pad,
+                y - self.text_pad + rect_pad,
+                self.icon.i_w + rect_pad * 2,
+                self.icon_i_h + rect_pad * 2,
+                pr.GREEN
+            )
+            icon.x = x
+            icon.y = y
+            icon.display_widget()
+
+        for side_texture in self.side_textures.values():
+            side_texture.display_widget()
+
+        if self.current_entity:
+
+            cell: Cell | None = self.is_in_cell(
+                pr.get_mouse_x(),
+                pr.get_mouse_y()
+            )
+            if not cell:
+                return
+
+            cell_pos: tuple[int, int] | None = self.calculate_cell_pos(cell.posx, cell.posy)
+            if not cell_pos:
+                return
+
+            icon: ClickableIcon = self.textures[self.current_entity]
+            rect_pad: int = self.cell_size // 20
+            pr.draw_rectangle(
+                cell_pos[0] - self.text_pad + rect_pad,
+                cell_pos[1] - self.text_pad + rect_pad,
+                self.icon.i_w + rect_pad * 2,
+                self.icon_i_h + rect_pad * 2,
+                pr.LIGHTGRAY
+            )
+            icon.x, icon_y = cell_pos
+            icon.display_widget()
+
+    def _update(self, forced: bool = False) -> None:
+        ...
 
 
 class Custom_view(View):
