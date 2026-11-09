@@ -64,7 +64,7 @@ class Game_view(View):
         #     self.left_w
         # ) for i, label in enumerate(self.labels)]
 
-        life_label: Text = Text(
+        self.life_label: Text = Text(
             "Lives : ",
             self.info_panel.w // 10,
             self.info_panel.posy + self.info_panel.h + self.h // 4,
@@ -74,7 +74,7 @@ class Game_view(View):
         if not self.life_icon_init:
 
             self.life_icon_sz: int = (
-                self.info_panel.w - (life_label.x + life_label.width)
+                self.info_panel.w - (self.life_label.x + self.life_label.width)
             ) // self.game.player.nb_lives - self.info_panel.w // 30
             self.life_icon_init = True
 
@@ -83,14 +83,14 @@ class Game_view(View):
                 life._unload_image()
 
         self.lives: list[Icon] = [Icon(
-            self.info_panel.w // 30 + life_label.x + life_label.width + self.life_icon_sz * life,
-            life_label.y + (life_label.font_size - self.life_icon_sz) // 2,
+            self.info_panel.w // 30 + self.life_label.x + self.life_label.width + self.life_icon_sz * life,
+            self.life_label.y + (self.life_label.font_size - self.life_icon_sz) // 2,
             LIFE_ICON_PATH,
             (self.life_icon_sz, self.life_icon_sz),
             True
         ) for life in range(self.game.player.nb_lives)]
 
-        self.info_widgets += [self.info_panel, life_label] + self.lives
+        self.info_widgets += [self.info_panel, self.life_label] + self.lives
         self._update_collectibles()
 
     def _update_collectibles(self) -> None:
@@ -116,7 +116,7 @@ class Game_view(View):
         collectible_label: Text = Text(
             "Collectibles :",
             (self.info_panel.w - Text.measure_text("Collectibles :", self.info_panel.font_size)) // 2,
-            self.lives[0].posy + self.lives[0].i_h + self.h // 15,
+            self.life_label.lowerbound + self.h // 15,
             self.info_panel.font_size
         )
         self.info_widgets.append(collectible_label)

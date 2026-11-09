@@ -389,18 +389,15 @@ class Map_renderer:
             en_posx: float
             en_posy: float
             en_posx, en_posy = self.saved_dirs[entity.name][2]
-            # print(f"cell pos {x, y}, entity coor : {en_posx, en_posy}")
-            entity_offset_x: int = int((en_posx - cell.pos_x) * 10)
-            entity_offset_y: int = int((en_posy - cell.pos_y) * 10)
-            # print(f"offset before : {entity_offset_x, entity_offset_y}")
 
-            en_posx = entity_base_x - self.entity_size // 2
-            if entity_offset_x > 0:
-                en_posx += (self.entity_space // 10) * entity_offset_x
-            en_posy = entity_base_y - self.entity_size // 2
-            if entity_offset_y > 0:
-                en_posy += (self.entity_space // 10) * entity_offset_y
-            # print(f"entity {entity.name}: entity pos {en_posx, en_posy} offset_x: {entity_offset_x} offset_y : {entity_offset_y}\n")
+            en_posx = (
+                entity_base_x - self.entity_size // 2
+                + int(self.entity_space * (en_posx - cell.pos_x))
+            )
+            en_posy = (
+                entity_base_y - self.entity_size // 2
+                + int(self.entity_space * (en_posy - cell.pos_y))
+            )
 
             texture_path = self.texture_pack.get_texture((
                 self.get_pacman_texture(entity)
