@@ -574,7 +574,7 @@ class Custom_map_renderer(Map_renderer):
         pr.end_texture_mode()
         pr.begin_drawing()
 
-    def display_grid(self) -> None:
+    def display_grid(self, show_lines: bool = False) -> None:
 
         pr.draw_texture_rec(
             self.grid_texture.texture,
@@ -582,15 +582,17 @@ class Custom_map_renderer(Map_renderer):
             (self.map_x, self.map_y),
             pr.RAYWHITE
         )
-        pr.draw_rectangle_lines(self.map_x, self.map_y, self.map_w, self.map_h, pr.LIGHTGRAY)
 
-        cell_y: int = self.map_y
-        for row_i, row in enumerate(self.grid):
-            cell_x: int = self.map_x
-            for cell_i, cell in enumerate(row):
-                if row_i > 0:
-                    pr.draw_line(cell_x, cell_y, cell_x + self.cell_size, cell_y, pr.LIGHTGRAY)
-                if cell_i > 0:
-                    pr.draw_line(cell_x, cell_y, cell_x, cell_y + self.cell_size, pr.LIGHTGRAY)
-            cell_x += self.cell_size
-        cell_y += self.cell_size
+        if show_lines:
+            pr.draw_rectangle_lines(self.map_x, self.map_y, self.map_w, self.map_h, pr.LIGHTGRAY)
+
+            cell_y: int = self.map_y
+            for row_i, row in enumerate(self.grid):
+                cell_x: int = self.map_x
+                for cell_i, cell in enumerate(row):
+                    if row_i > 0:
+                        pr.draw_line(cell_x, cell_y, cell_x + self.cell_size, cell_y, pr.LIGHTGRAY)
+                    if cell_i > 0:
+                        pr.draw_line(cell_x, cell_y, cell_x, cell_y + self.cell_size, pr.LIGHTGRAY)
+                cell_x += self.cell_size
+            cell_y += self.cell_size
