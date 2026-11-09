@@ -3,7 +3,7 @@ from ..game.map.Cell import Cell
 from ..game.Game import Game
 from ..utils.enum_utils import Game_state, Pacman_state
 from .Texture_pack import Texture_pack
-from .widget import Icon, AnimIcon
+from .widget import Icon, AnimIcon, ClickableIcon
 from ..game.entity.Pac_man import Pac_man
 from ..game.entity.Entity import Entity
 from ..game.entity.collectible.Consumable import Consumable
@@ -353,6 +353,21 @@ class Map_renderer:
                 True
             )
 
+    def calculate_entity_pos(self, cell: Cell, x: int, y: int, en_posx: float, en_posy: float) -> tuple[int, int]:
+
+        entity_base_x: int = x + self.cell_padding
+        entity_base_y: int = y + self.cell_padding
+
+        posx = (
+            entity_base_x - self.entity_size // 2
+            + int(self.entity_space * (en_posx - cell.pos_x))
+        )
+        posy = (
+            entity_base_y - self.entity_size // 2
+            + int(self.entity_space * (en_posy - cell.pos_y))
+        )
+        return (posx, posy)
+
     def update_sprites(self) -> None:
 
         for icon in self.collectible_icons.values():
@@ -374,9 +389,6 @@ class Map_renderer:
             collectible.y = y + (self.cell_size - collectible.i_h) // 2
             collectible.display_widget()
 
-        entity_base_x: int = x + self.cell_padding
-        entity_base_y: int = y + self.cell_padding
-
         for entity in self.entities:
 
             if not self.entity_is_in(entity, cell):
@@ -386,17 +398,10 @@ class Map_renderer:
                 self.pacman_state = entity.is_energized
 
             self.set_correct_dir(entity)
-            en_posx: float
-            en_posy: float
-            en_posx, en_posy = self.saved_dirs[entity.name][2]
-
-            en_posx = (
-                entity_base_x - self.entity_size // 2
-                + int(self.entity_space * (en_posx - cell.pos_x))
-            )
-            en_posy = (
-                entity_base_y - self.entity_size // 2
-                + int(self.entity_space * (en_posy - cell.pos_y))
+            en_posx: int
+            en_posy: int
+            en_posx, en_posy = self.calculate_entity_pos(
+                cell, x, y, *self.saved_dirs[entity.name][2]
             )
 
             texture_path = self.texture_pack.get_texture((
@@ -543,6 +548,11 @@ class Custom_map_renderer(Map_renderer):
         self.line_thickness: int = 3
         self.cell_padding: int = cell_size // 8 + self.line_thickness
 
+        self.collectible_size: int = cell_size // 3
+        self.consumable_size: int = cell_size // 2
+        self.entity_space: int = self.cell_size - self.cell_padding * 2
+        self.entity_size: int = self.entity_space - self.entity_space // 8
+
         self.update_texture(show_lines)
 
     def update_texture(self, show_lines: bool = False) -> None:
@@ -603,6 +613,17 @@ class Custom_map_renderer(Map_renderer):
         pr.end_texture_mode()
         # pr.begin_drawing()
 
+    def get_cell_coor(self, cell_to_find: Cell) -> tuple[int, int]:
+
+        cell_y = self.map_y + self.cell_padding * 2 - self.line_thickness
+        for row_i, row in enumerate(self.grid):
+            cell_x = self.map_x + self.cell_padding * 2
+            for cell_i, cell in enumerate(row):
+                if cell == cell_to_find:
+                    return (cell_x, cell_y)
+                cell_x += self.cell_size
+            cell_y += self.cell_size
+
     def display_grid(self) -> None:
 
         pr.draw_texture_rec(
@@ -611,3 +632,33 @@ class Custom_map_renderer(Map_renderer):
             (self.map_x, self.map_y),
             pr.RAYWHITE
         )
+
+    def display_set_sprites(
+        self,
+        textures_set: list[tuple[Icon, Cell]]
+    ) -> None:
+
+        rect_pad: int = self.entity_size // 20
+        for icon, cell in textures_set:
+            icon.x, icon.y = self.get_cell_coor(cell)
+            pr.draw_rectangle(
+                icon.x - rect_pad,
+                icon.y - rect_pad,
+                self.entity_size + rect_pad * 2,
+                self.entity_size + rect_pad * 2,
+                pr.GREEN
+            )
+            icon.display_widget()
+
+    def display_cur_sprite(self, cur_t: Icon, cell: Cell) -> None:
+
+        rect_pad: int = self.entity_size // 20
+        cur_t.x, cur_t.y = self.get_cell_coor(cell)
+        pr.draw_rectangle(
+            cur_t.x - rect_pad,
+            cur_t.y - rect_pad,
+            self.entity_size + rect_pad * 2,
+            self.entity_size + rect_pad * 2,
+            pr.DARKGRAY
+        )
+        cur_t.display_widget()

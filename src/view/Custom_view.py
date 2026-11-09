@@ -8,7 +8,7 @@ from ..game.map.Cell import Cell
 from .View import View
 from .Texture_pack import Texture_pack
 from .Map_renderer import Custom_map_renderer
-from .widget import Widget, Text, ButtonPanel, Input_box, ClickableIcon
+from .widget import Widget, Text, ButtonPanel, Input_box, ClickableIcon, Icon
 
 
 MSG_TIME: int = 80
@@ -149,22 +149,13 @@ class Custom_step(View, ABC):
 
     def is_in_cell(self, x: int, y: int) -> Cell | None:
 
-        cell_y: int = self.map_y
-        for row_i, row in enumerate(self.map.map.cells):
+        if not self.is_in_map(x, y):
+            return None
 
-            cell_x: int = self.map_x
-            for cell_i, cell in enumerate(row):
-
-                if (
-                    cell_x <= x < cell_x + self.cell_size
-                ) and (
-                    cell_y <= y < cell_y + self.cell_size
-                ):
-                    return cell
-
-            cell_x += self.cell_size
-        cell_y += self.cell_size
-
+        col: int = (x - self.map_x) // self.cell_size
+        row: int = (y - self.map_y) // self.cell_size
+        if 0 <= row < self.map.rows and 0 <= col < self.map.cols:
+            return self.map.map.cells[row][col]
         return None
 
     def is_in_map(self, x: int, y: int) -> bool:
@@ -371,14 +362,14 @@ class Step_two(Custom_step):
             ),
             "S": (
                 self.cell_x + wall_pad + wall_w,
-                self.cell_x + self.cell_space - wall_pad - wall_w,
+                self.cell_y + self.cell_space - wall_pad - wall_w,
                 wall_h, wall_w
             ),
-            "E": (
+            "W": (
                 self.cell_x + wall_pad, self.cell_y + wall_pad + wall_w,
                 wall_w, wall_h
             ),
-            "W": (
+            "E": (
                 self.cell_x + self.cell_space - wall_pad - wall_w,
                 self.cell_y + wall_pad + wall_w,
                 wall_w, wall_h
@@ -391,7 +382,7 @@ class Step_two(Custom_step):
                     self.wall_pos[wall][0],
                     self.wall_pos[wall][1],
                     WALLS[wall] + WALL_HERE,
-                    (self.map.change_wall, (wall, *self.cur_cell)),
+                    (self.change_wall, wall),
                     (self.wall_pos[wall][2], self.wall_pos[wall][3]),
                     True,
                     False
@@ -400,12 +391,19 @@ class Step_two(Custom_step):
                     self.wall_pos[wall][0],
                     self.wall_pos[wall][1],
                     WALLS[wall] + WALL_NOTHERE,
-                    (self.map.change_wall, (wall, *self.cur_cell)),
+                    (self.change_wall, wall),
                     (self.wall_pos[wall][2], self.wall_pos[wall][3]),
                     True,
                     False
                 )
             )
+
+    def change_wall(self, wall: str) -> None:
+
+        if not self.show_cell:
+            return
+
+        self.map.change_wall(*self.cur_cell, wall)
 
     def display_cell(self) -> None:
 
@@ -430,16 +428,35 @@ class Step_two(Custom_step):
         self.cur_cell: tuple[int, int] = (x, y)
         self._update_walls()
 
+    def is_in_bigcell(self, x: int, y: int) -> bool:
+
+        return (
+            self.cell_x <= x <= self.cell_x + self.cell_space
+            and self.cell_y <= y <= self.cell_y + self.cell_space
+        )
+
     def handle_input(self, x: int, y: int) -> None:
 
-        if self.show_cell and not self.is_in_cell(x, y):
+        if self.show_cell and not self.is_in_bigcell(x, y):
             self.show_cell = False
-            # self._update(True)
+            self._update_grid()
 
         elif not self.show_cell and self.is_in_map(x, y):
-            self.set_cur_cell(x, y)
+            cell: Cell | None = self.is_in_cell(x, y)
+            if cell:
+                self.set_cur_cell(cell.pos_x, cell.pos_y)
 
         return
+
+    def _update_grid(self) -> None:
+
+        self.map_renderer.update_grid(
+            self.map.map.cells,
+            (self.map_w, self.map_h),
+            (self.map_x, self.map_y),
+            self.cell_size,
+            True
+        )
 
     def _update(self, forced: bool = False) -> None:
 
@@ -451,13 +468,7 @@ class Step_two(Custom_step):
 
         super()._update(True)
         self._update_randomize_button()
-        self.map_renderer.update_grid(
-            self.map.map.cells,
-            (self.map_w, self.map_h),
-            (self.map_x, self.map_y),
-            self.cell_size,
-            True
-        )
+        self._update_grid()
 
     def display_view(self) -> None:
 
@@ -478,7 +489,7 @@ class Step_three(Custom_step):
         self.show_message: str = ""
         self.texture_pack: Texture_pack = Texture_pack(main_view.app.display_config.texture_pack)
         self.entities: list[str] = ["pacman", "blinky", "inky", "pinky", "clyde"]
-        self.entities_set: dict[str, tuple[int, int]] = {}
+        self.entities_set: dict[str, Cell] = {}
         self.current_entity: str = ""
         super().__init__(
             3,
@@ -533,12 +544,15 @@ class Step_three(Custom_step):
             return self.map.set_pacman_spawn(x, y)
         return self.map.set_ghost_spawn(x, y, en_name)
 
-    def try_place_entity(self, en_name: str) -> None:
+    def try_place_entity(self) -> None:
 
-        if en_name not in self.textures:
+        if not self.current_entity:
             return
 
-        if en_name in self.entities_set:
+        if self.current_entity not in self.textures:
+            return
+
+        if self.current_entity in self.entities_set:
             return
 
         cell: Cell | None = self.is_in_cell(
@@ -548,19 +562,14 @@ class Step_three(Custom_step):
         if not cell:
             return
 
-        cell_pos: tuple[int, int] | None = self.calculate_cell_pos(cell.posx, cell.posy)
+        if self.set_entity(cell.pos_x, cell.pos_y, self.current_entity):
 
-        if self.set_entity(cell.posx, cell.posy, en_name) and cell_pos:
-
-            self.entities_set[en_name] = (
-                cell_pos[0] + self.text_pad,
-                cell_pos[1] + self.text_pad
-            )
+            self.entities_set[self.current_entity] = cell
             self.current_entity = ""
 
         else:
 
-            self.show_message = f"Cannot place {en_name.capitalize()} here, try elsewhere"
+            self.show_message = f"Cannot place {self.current_entity.capitalize()} here, try elsewhere"
             self.frame_counter = 0
 
     def _update_textures(self) -> None:
@@ -573,24 +582,21 @@ class Step_three(Custom_step):
             for icon in self.side_textures.values():
                 icon._unload_image()
 
-        self.text_pad: int = self.cell_size // 16
-        self.texture_size: int = self.cell_size - self.text_pad * 2
-        self.textures: dict[str, ClickableIcon] = {
-            t_name: ClickableIcon(
+        self.texture_size: int = self.map_renderer.entity_size
+        self.textures: dict[str, Icon] = {
+            t_name: Icon(
                 0,
                 0,
                 self.texture_pack.get_texture(t_name + "_idle"),
-                (self.try_place_entity, t_name),
                 (self.texture_size, self.texture_size),
-                True,
-                False
+                True
             ) for t_name in self.entities
         }
 
         side_text_sz: int = self.map_h // len(self.entities)
-        t_pad: int = self.map_h // 10
-        side_text_sz -= t_pad * 2
-        t_x: int = (self.map_x - side_text_sz) // 2
+        t_pad: int = self.map_h // 50
+        side_text_sz = min(side_text_sz - t_pad * 2, self.map_x * 3 // 4)
+        t_x: int = (self.map_x - side_text_sz) // 3 * 2
         self.side_textures: dict[str, ClickableIcon] = {
             t_name: ClickableIcon(
                 t_x,
@@ -606,24 +612,12 @@ class Step_three(Custom_step):
 
     def display_textures(self) -> None:
 
-        for entity, (x, y) in self.entities_set.items():
-
-            print(f"### the entity {entity} is set on the map")
-            icon: ClickableIcon = self.textures[entity]
-            rect_pad: int = self.cell_size // 20
-            pr.draw_rectangle(
-                x - self.text_pad + rect_pad,
-                y - self.text_pad + rect_pad,
-                icon.i_w + rect_pad * 2,
-                icon.i_h + rect_pad * 2,
-                pr.GREEN
-            )
-            icon.x = x
-            icon.y = y
-            icon.display_widget()
+        self.map_renderer.display_set_sprites([
+            (self.textures[en_name], cell)
+            for en_name, cell in self.entities_set.items()
+        ])
 
         for side_texture in self.side_textures.values():
-            print()
             side_texture.display_widget()
 
         if self.current_entity:
@@ -635,20 +629,7 @@ class Step_three(Custom_step):
             if not cell:
                 return
 
-            cell_pos: tuple[int, int] | None = self.calculate_cell_pos(cell.posx, cell.posy)
-            if not cell_pos:
-                return
-
-            icon = self.textures[self.current_entity]
-            pr.draw_rectangle(
-                cell_pos[0] - self.text_pad + rect_pad,
-                cell_pos[1] - self.text_pad + rect_pad,
-                icon.i_w + rect_pad * 2,
-                icon.i_h + rect_pad * 2,
-                pr.LIGHTGRAY
-            )
-            icon.x, icon_y = cell_pos
-            icon.display_widget()
+            self.map_renderer.display_cur_sprite(self.textures[self.current_entity], cell)
 
     def display_message(self) -> None:
 
@@ -680,29 +661,32 @@ class Step_three(Custom_step):
         else:
             self.show_next = False
 
+        if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT):
+            self.try_place_entity()
+
         if not pr.is_window_resized() and not forced:
             return
 
         super()._update(True)
-        self._update_textures()
         self.map_renderer.update_grid(
             self.map.map.cells,
             (self.map_w, self.map_h),
             (self.map_x, self.map_y),
             self.cell_size
         )
+        self._update_textures()
 
     def display_view(self) -> None:
 
         self._update()
 
-        # super().display_view()
+        super().display_view()
 
-        # self.map_renderer.display_grid()
+        self.map_renderer.display_grid()
         self.display_textures()
 
-        # if self.show_message:
-        #     self.display_message()
+        if self.show_message:
+            self.display_message()
 
 
 class Custom_view(View):
