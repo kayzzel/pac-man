@@ -284,11 +284,7 @@ class Step_one(Custom_step):
 
     def _update(self, forced: bool = False) -> None:
 
-        if self.map.cols != 0 and self.map.rows != 0:
-            self.show_next = True
-
-        else:
-            self.show_next = False
+        self.show_next = (self.map.cols != 0 and self.map.rows != 0)
 
         if not pr.is_window_resized() and not forced:
             return
@@ -486,17 +482,24 @@ class Step_three(Custom_step):
 
     def __init__(self, main_view: View, cmap: Map_custom) -> None:
 
-        self.show_message: str = ""
-        self.texture_pack: Texture_pack = Texture_pack(main_view.app.display_config.texture_pack)
-        self.entities: list[str] = ["pacman", "blinky", "inky", "pinky", "clyde"]
-        self.entities_set: dict[str, Cell] = {}
-        self.current_entity: str = ""
+        self._init_names()
+        self.sprites: list[str] = ["pacman_idle"] + self.consumable_names + self.collectible_names
         super().__init__(
             3,
             main_view,
             cmap,
             "Place the spawn point of PacMan and the Ghosts"
         )
+
+    def _init_names(self) -> None:
+
+        self.show_message: str = ""
+        self.texture_pack: Texture_pack = Texture_pack(main_view.app.display_config.texture_pack)
+        self.entity_names: list[str] = ["pacman", "blinky", "inky", "pinky", "clyde"]
+        self.consumable_names: list[str] = ["cherry", "galaxian", "apple", "orange", "strawberry", "key", "bell", "melon"]
+        self.collectible_names: list[str] = self.consumable_names + ["pacgum", "super_pacgum"]
+        self.sprites_set: dict[str, Cell] = {}
+        self.current_sprite: str = ""
 
     @property
     def map_x(self) -> int:
@@ -531,28 +534,34 @@ class Step_three(Custom_step):
             self.map_y + self.cell_size * y
         )
 
-    def activate_entity(self, en_name: str) -> None:
+    def activate_sprite(self, spr_name: str) -> None:
 
-        self.current_entity = en_name
+        self.current_sprite = spr_name
 
-        if en_name in self.entities_set.keys():
-            self.entities_set.pop(en_name)
+        if spr_name in self.sprites_set.keys():
+            self.sprites_set.pop(spr_name)
 
-    def set_entity(self, x: int, y: int, en_name: str) -> bool:
+    def set_sprite(self, x: int, y: int, spr_name: str) -> bool:
 
-        if en_name == "pacman":
+        if spr_name == "pacman_idle":
             return self.map.set_pacman_spawn(x, y)
-        return self.map.set_ghost_spawn(x, y, en_name)
+        elif spr_name in self.consumable_names:
+            return self.map.set_collectible(x, y, Consumable(spr_name, x, y, 100))
+        elif spr_name == "super_pacgum":
+            return self.map.set_collectible(x, y, Super_pacgum(x, y, 50))
+        elif spr_name == "pacgum":
+            return self.map.set_collectible(x, y, Pacgum(x, y, 10))
+        return False
 
-    def try_place_entity(self) -> None:
+    def try_place_sprite(self) -> None:
 
-        if not self.current_entity:
+        if not self.current_sprite:
             return
 
-        if self.current_entity not in self.textures:
+        if self.current_sprite not in self.textures:
             return
 
-        if self.current_entity in self.entities_set:
+        if self.current_sprite in self.sprites_set:
             return
 
         cell: Cell | None = self.is_in_cell(
@@ -562,15 +571,25 @@ class Step_three(Custom_step):
         if not cell:
             return
 
-        if self.set_entity(cell.pos_x, cell.pos_y, self.current_entity):
+        if self.set_sprite(cell.pos_x, cell.pos_y, self.current_sprite):
 
-            self.entities_set[self.current_entity] = cell
-            self.current_entity = ""
+            self.sprites_set[self.current_sprite] = cell
+            self.current_sprite = ""
 
         else:
 
-            self.show_message = f"Cannot place {self.current_entity.capitalize()} here, try elsewhere"
+            self.show_message = f"Cannot place {self.current_sprite.capitalize()} here, try elsewhere"
             self.frame_counter = 0
+
+    def texture_size(self, sprite_name: str) -> int:
+
+        if any(sprite_name.startswith(en_name) for en_name in self.entity_names):
+            return self.map_renderer.entity_size
+        elif sprite_name in self.consumable_names:
+            return self.map_renderer.consumable_size
+        elif sprite_name in self.collectible_names:
+            return self.map_renderer.collectible_size
+        return 0
 
     def _update_textures(self) -> None:
 
@@ -582,45 +601,60 @@ class Step_three(Custom_step):
             for icon in self.side_textures.values():
                 icon._unload_image()
 
-        self.texture_size: int = self.map_renderer.entity_size
         self.textures: dict[str, Icon] = {
             t_name: Icon(
                 0,
                 0,
-                self.texture_pack.get_texture(t_name + "_idle"),
-                (self.texture_size, self.texture_size),
+                self.texture_pack.get_texture(t_name),
+                (self.texture_size(t_name), self.texture_size(t_name)),
                 True
-            ) for t_name in self.entities
+            ) for t_name in self.sprites
         }
+        self._update_sidetextures()
 
-        side_text_sz: int = self.map_h // len(self.entities)
+    def _update_sidetextures(self) -> None:
+
+        side_text_sz: int = self.map_h // (len(self.collectible_names) // 2 + 1)
         t_pad: int = self.map_h // 50
         side_text_sz = min(side_text_sz - t_pad * 2, self.map_x * 3 // 4)
         t_x: int = (self.map_x - side_text_sz) // 3 * 2
+        pacman_icon: ClickableIcon = ClickableIcon(
+            (self.map_x - side_text_sz) // 2,
+            self.map_y + t_pad,
+            self.texture_pack.get_texture("pacman_idle"),
+            (self.activate_sprite, "pacman_idle"),
+            (side_text_sz, side_text_sz),
+            True,
+            False
+        )
+        fst_x: 
         self.side_textures: dict[str, ClickableIcon] = {
+            "pacman_idle": pacman_icon
+        }
+        for {
             t_name: ClickableIcon(
                 t_x,
                 self.map_y + i * (side_text_sz + t_pad * 2) + t_pad,
-                self.texture_pack.get_texture(t_name + "_idle"),
-                (self.activate_entity, t_name),
+                self.texture_pack.get_texture(t_name),
+                (self.activate_sprite, t_name),
                 (side_text_sz, side_text_sz),
                 True,
                 False
-            ) for i, t_name in enumerate(self.entities)
+            ) for i, t_name in enumerate(self.sprites)
         }
         # print(f"### all side textures: {[f"{name}: {icon.x, icon.y}, " for name, icon in self.side_textures.items()]}")
 
     def display_textures(self) -> None:
 
         self.map_renderer.display_set_sprites([
-            (self.textures[en_name], cell)
-            for en_name, cell in self.entities_set.items()
+            (self.textures[spr_name], cell)
+            for spr_name, cell in self.sprites_set.items()
         ])
 
         for side_texture in self.side_textures.values():
             side_texture.display_widget()
 
-        if self.current_entity:
+        if self.current_sprite:
 
             cell: Cell | None = self.is_in_cell(
                 pr.get_mouse_x(),
@@ -629,7 +663,7 @@ class Step_three(Custom_step):
             if not cell:
                 return
 
-            self.map_renderer.display_cur_sprite(self.textures[self.current_entity], cell)
+            self.map_renderer.display_cur_sprite(self.textures[self.current_sprite], cell)
 
     def display_message(self) -> None:
 
@@ -653,16 +687,16 @@ class Step_three(Custom_step):
 
             self.show_message = ""
 
+    def check_next(self) -> None:
+
+        self.show_next = (self.map.pacman_spawn_set and self.map.map.collectible_count > 0)
+
     def _update(self, forced: bool = False) -> None:
 
-        if self.map.pacman_spawn_set and all(list(self.map.ghost_spawn_set.values())):
-            self.show_next = True
-
-        else:
-            self.show_next = False
+        self.check_next()
 
         if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT):
-            self.try_place_entity()
+            self.try_place_sprite()
 
         if not pr.is_window_resized() and not forced:
             return
@@ -687,6 +721,86 @@ class Step_three(Custom_step):
 
         if self.show_message:
             self.display_message()
+
+
+class Step_four(Step_three):
+
+    def __init__(self, view: View, cmap: Map_custom) -> None:
+
+        self._init_names()
+        self.spawn_sprites: list[str] = [
+            en_name + "_idle" for en_name in self.entity_names if en_name != "pacman"
+        ]
+        self.scatter_sprites: list[str] = [
+            en_name + "_scatter" for en_name in self.entity_names if en_name != "pacman"
+        ]
+        self.sprites: list[str] = self.spawn_sprites + self.scatter_sprites
+        super(Step_three, self).__init__(
+            4,
+            view,
+            cmap,
+            "Place the Ghosts spawn and scatter points (spawn first)"
+        )
+
+    def activate_sprite(self, spr_name: str) -> None:
+
+        if spr_name in self.scatter_sprites and not self.map.ghost_spawn_set[spr_name.removesuffix("_scatter")]:
+            self.show_message = (
+                f"Spawn point for {spr_name.removesuffix('_scatter')}"
+                " not placed, try again afterwards"
+            )
+            self.frame_counter = 0
+            return
+
+        self.current_sprite = spr_name
+
+        if spr_name in self.sprites_set.keys():
+            self.sprites_set.pop(spr_name)
+
+    def set_sprite(self, x: int, y: int, spr_name: str) -> bool:
+
+        if spr_name in self.spawn_sprites:
+            return self.map.set_ghost_spawn(x, y, spr_name.removesuffix("_idle"))
+        elif spr_name in self.scatter_sprites:
+            return self.map.set_ghost_scatter(x, y, spr_name.removesuffix("_scatter"))
+        return False
+
+    def _update_sidetextures(self) -> None:
+
+        side_text_sz: int = self.map_h // len(self.sprites)
+        t_pad: int = self.map_h // 50
+        side_text_sz = min(side_text_sz - t_pad * 2, self.map_x * 3 // 4)
+        fst_t_x: int = (self.map_x - side_text_sz * 2 - side_text_sz // 2) // 2
+        scd_t_x: int = fst_t_x + side_text_sz + side_text_sz // 2
+        self.side_textures: dict[str, ClickableIcon] = {
+            t_name: ClickableIcon(
+                fst_t_x,
+                self.map_y + i * (side_text_sz + t_pad * 2) + t_pad,
+                self.texture_pack.get_texture(t_name),
+                (self.activate_sprite, t_name),
+                (side_text_sz, side_text_sz),
+                True,
+                False
+            ) for i, t_name in enumerate(self.spawn_sprites)
+        } | {
+            t_name: ClickableIcon(
+                scd_t_x,
+                self.map_y + i * (side_text_sz + t_pad * 2) + t_pad,
+                self.texture_pack.get_texture(t_name),
+                (self.activate_sprite, t_name),
+                (side_text_sz, side_text_sz),
+                True,
+                False
+            ) for i, t_name in enumerate(self.scatter_sprites)
+        }
+        # print(f"### all side textures: {[f"{name}: {icon.x, icon.y}, " for name, icon in self.side_textures.items()]}")
+
+    def check_next(self) -> None:
+
+        self.show_next = (
+            all(self.map.ghost_spawn_set.values())
+            and all(self.map.ghost_scatter_set.values())
+        )
 
 
 class Custom_view(View):

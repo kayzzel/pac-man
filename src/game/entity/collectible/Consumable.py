@@ -12,7 +12,7 @@ class Consumable(Collectible):
                 name: Consumable_type,
                 x: int,
                 y: int,
-                points: int
+                points: int = 200
             ) -> None:
         super().__init__(name, x, y, points)
 

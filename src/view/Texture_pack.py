@@ -21,7 +21,6 @@ class Texture_pack:
             "pacman_down",
             "pacman_right",
             "pacman_left",
-            "pacman_idle",
             "pacman_death"
         ]
         self.ghosts_needed: list[str] = [
@@ -29,28 +28,35 @@ class Texture_pack:
             "blinky_left",
             "blinky_up",
             "blinky_down",
-            "blinky_idle",
             "pinky_right",
             "pinky_left",
             "pinky_up",
             "pinky_down",
-            "pinky_idle",
             "inky_right",
             "inky_left",
             "inky_up",
             "inky_down",
-            "inky_idle",
             "clyde_right",
             "clyde_left",
             "clyde_up",
             "clyde_down",
-            "clyde_idle",
             "eyes_up",
             "eyes_down",
             "eyes_right",
             "eyes_left",
             "afraid_blue",
             "afraid_blinking"
+        ]
+        self.idle_needed: list[str] = [
+            "clyde_idle",
+            "clyde_scatter",
+            "inky_idle",
+            "inky_scatter",
+            "blinky_idle",
+            "blinky_scatter",
+            "pinky_idle",
+            "pinky_scatter",
+            "pacman_idle"
         ]
         self.collectibles_needed: list[str] = [
             "apple_c",
@@ -76,6 +82,7 @@ class Texture_pack:
         self.textures_needed: list[str] = (
             self.pacman_needed +
             self.ghosts_needed +
+            self.idle_needed +
             self.collectibles_needed
         )
         self.special_movements: list[str] = [
