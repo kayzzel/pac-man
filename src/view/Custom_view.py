@@ -3,15 +3,22 @@ import pyray as pr
 # from pyray import get_screen_height as sh
 from pyray import MouseButton as mb
 from abc import ABC
+from typing import Callable, Any
+from ..game.Game import custom_game
+from ..game.map.Map_storing import get_stored_map_list
 from ..game.map.Map_custom import Map_custom
 from ..game.map.Cell import Cell
+from ..game.entity.collectible.Consumable import Consumable
+from ..game.entity.collectible.Pacgum import Pacgum
+from ..game.entity.collectible.Super_Pacgum import Super_Pacgum
 from .View import View
 from .Texture_pack import Texture_pack
 from .Map_renderer import Custom_map_renderer
-from .widget import Widget, Text, ButtonPanel, Input_box, ClickableIcon, Icon
+from .Game_view import Game_view
+from .widget import Widget, Text, ButtonPanel, Input_box, ClickableIcon, Icon, Dropdown
 
 
-MSG_TIME: int = 80
+MSG_TIME: int = 120
 
 WALL_VER: str = "src/view/assets/icons/walls/wall_ver"
 WALL_HOR: str = "src/view/assets/icons/walls/wall_hor"
@@ -32,18 +39,23 @@ class Custom_step(View, ABC):
         self,
         number: int,
         view: View,
-        cmap: Map_custom,
         description: str,
         show_next: bool = False
     ) -> None:
 
         self.number: int = number
         self.main_view: View = view
-        self.map: Map_custom = cmap
+        self.map: Map_custom = view.map
         self.map_renderer: Custom_map_renderer = Custom_map_renderer()
         self.description_label: str = description
         self.show_next: bool = show_next
+        self.show_message: str = ""
+        self.frame_counter: int = 0
         self._update(True)
+
+    def go_back(self) -> None:
+
+        self.main_view.step_back()
 
     def go_next(self) -> None:
 
@@ -86,7 +98,7 @@ class Custom_step(View, ABC):
             self.h - button_h - button_pady,
             button_w,
             button_h,
-            {"back": (self.main_view.step_back, None)}
+            {"back": (self.go_back, None)}
         )
         self.widgets.append(self.back)
 
@@ -178,10 +190,19 @@ class Custom_step(View, ABC):
         self._update_title()
         self._update_backnext_buttons()
 
+    def display_message(self) -> None:
+
+        ...
+
     def display_view(self) -> None:
+
+        self._update()
 
         for widget in self.widgets:
             widget.display_widget()
+
+        if self.show_message:
+            self.display_message()
 
         if self.show_next:
             self.next.display_widget()
@@ -189,15 +210,18 @@ class Custom_step(View, ABC):
 
 class Step_one(Custom_step):
 
-    def __init__(self, main_view: View, cmap: Map_custom) -> None:
+    def __init__(self, main_view: View) -> None:
 
-        self.show_message: str = ""
+        self.is_init: bool = False
+        self.width_set: bool = True
+        self.height_set: bool = True
         super().__init__(
             1,
             main_view,
-            cmap,
             "Choose map size (min 10x10, max 30x30)"
         )
+        self.w_input.text_color = pr.GREEN
+        self.h_input.text_color = pr.GREEN
 
     def validate_width(self) -> None:
 
@@ -205,12 +229,13 @@ class Step_one(Custom_step):
         if not input_w.isdigit() or not (10 <= int(input_w) <= 30):
 
             self.show_message = "Width is invalid, try again"
-            self.frame_counter: int = 0
             self.w_input.input = str(self.map.cols)
+            self.width_set = False
             return
 
         self.w_input.text_color = pr.GREEN
         self.map.set_cols(int(input_w))
+        self.width_set = True
 
     def validate_height(self) -> None:
 
@@ -218,12 +243,13 @@ class Step_one(Custom_step):
         if not input_h.isdigit() or not (10 <= int(input_h) <= 30):
 
             self.show_message = "Height is invalid, try again"
-            self.frame_counter = 0
             self.h_input.input = str(self.map.rows)
+            self.height_set = False
             return
 
         self.h_input.text_color = pr.GREEN
         self.map.set_rows(int(input_h))
+        self.height_set = True
 
     def _update_inputboxes(self) -> None:
 
@@ -261,6 +287,7 @@ class Step_one(Custom_step):
         )
         self.w_input.input = str(self.map.cols)
         self.h_input.input = str(self.map.rows)
+        self.is_init = True
         self.widgets += [self.x_sign, self.w_input, self.h_input]
 
     def display_message(self) -> None:
@@ -281,10 +308,14 @@ class Step_one(Custom_step):
         else:
 
             self.show_message = ""
+            self.frame_counter = 0
 
     def _update(self, forced: bool = False) -> None:
 
-        self.show_next = (self.map.cols != 0 and self.map.rows != 0)
+        if self.is_init:
+            self.width_set = not self.w_input.enter_input
+            self.height_set = not self.h_input.enter_input
+        self.show_next = (self.width_set and self.height_set)
 
         if not pr.is_window_resized() and not forced:
             return
@@ -292,34 +323,32 @@ class Step_one(Custom_step):
         super()._update(True)
         self._update_inputboxes()
 
-    def display_view(self) -> None:
-
-        self._update()
-
-        if self.show_message:
-            self.display_message()
-
-        super().display_view()
-
 
 class Step_two(Custom_step):
 
-    def __init__(self, main_view: View, cmap: Map_custom) -> None:
+    def __init__(self, main_view: View) -> None:
 
         self.show_cell: bool = False
         self.is_init: bool = False
         super().__init__(
             2,
             main_view,
-            cmap,
             "Place the walls (click on each cell)",
             True
         )
         self.is_init = True
 
+    def go_back(self) -> None:
+
+        self.map.reset()
+        super().go_back()
+
     def go_next(self) -> None:
 
         self.map.walls_set = True
+        self.main_view.set_map_properties(
+            self.map_x, self.map_y, self.map_w, self.map_h, self.cell_size
+        )
         super().go_next()
 
     def randomize_walls(self) -> None:
@@ -480,46 +509,44 @@ class Step_two(Custom_step):
 
 class Step_three(Custom_step):
 
-    def __init__(self, main_view: View, cmap: Map_custom) -> None:
+    def __init__(self, main_view: View) -> None:
 
-        self._init_names()
+        self._init_names(main_view)
         self.sprites: list[str] = ["pacman_idle"] + self.consumable_names + self.collectible_names
         super().__init__(
             3,
             main_view,
-            cmap,
-            "Place the spawn point of PacMan and the Ghosts"
+            "Place PacMan and the collectibles (at least 1 collectible)"
         )
 
-    def _init_names(self) -> None:
+    def _init_names(self, main_view: View) -> None:
 
-        self.show_message: str = ""
         self.texture_pack: Texture_pack = Texture_pack(main_view.app.display_config.texture_pack)
         self.entity_names: list[str] = ["pacman", "blinky", "inky", "pinky", "clyde"]
-        self.consumable_names: list[str] = ["cherry", "galaxian", "apple", "orange", "strawberry", "key", "bell", "melon"]
+        self.consumable_names: list[str] = ["cherry_c", "galaxian_c", "apple_c", "orange_c", "strawberry_c", "key_c", "bell_c", "melon_c"]
         self.collectible_names: list[str] = self.consumable_names + ["pacgum", "super_pacgum"]
-        self.sprites_set: dict[str, Cell] = {}
+        self.sprites_set: dict[str, list[Cell]] = {}
         self.current_sprite: str = ""
 
     @property
     def map_x(self) -> int:
-        return self.main_view.steps_completed[-1].map_x
+        return self.main_view.map_x
 
     @property
     def map_y(self) -> int:
-        return self.main_view.steps_completed[-1].map_y
+        return self.main_view.map_y
 
     @property
     def map_w(self) -> int:
-        return self.main_view.steps_completed[-1].map_w
+        return self.main_view.map_w
 
     @property
     def map_h(self) -> int:
-        return self.main_view.steps_completed[-1].map_h
+        return self.main_view.map_h
 
     @property
     def cell_size(self) -> int:
-        return self.main_view.steps_completed[-1].cell_size
+        return self.main_view.cell_size
 
     def calculate_cell_pos(self, x: int, y: int) -> tuple[int, int] | None:
 
@@ -536,6 +563,18 @@ class Step_three(Custom_step):
 
     def activate_sprite(self, spr_name: str) -> None:
 
+        if spr_name in self.collectible_names and self.map.pacman_spawn_set is False:
+            self.show_message = "Please place PacMan before collectibles"
+            return
+
+        elif spr_name.startswith("pacman"):
+            to_remove: list[str] = [
+                t_name for t_name in self.sprites_set.keys()
+                if t_name in self.collectible_names
+            ]
+            for spr in to_remove:
+                self.sprites_set.pop(spr)
+
         self.current_sprite = spr_name
 
         if spr_name in self.sprites_set.keys():
@@ -546,11 +585,11 @@ class Step_three(Custom_step):
         if spr_name == "pacman_idle":
             return self.map.set_pacman_spawn(x, y)
         elif spr_name in self.consumable_names:
-            return self.map.set_collectible(x, y, Consumable(spr_name, x, y, 100))
+            return self.map.set_collectible(x, y, Consumable(spr_name.removesuffix("_c"), x, y))
         elif spr_name == "super_pacgum":
-            return self.map.set_collectible(x, y, Super_pacgum(x, y, 50))
+            return self.map.set_collectible(x, y, Super_Pacgum(x, y))
         elif spr_name == "pacgum":
-            return self.map.set_collectible(x, y, Pacgum(x, y, 10))
+            return self.map.set_collectible(x, y, Pacgum(x, y))
         return False
 
     def try_place_sprite(self) -> None:
@@ -573,13 +612,16 @@ class Step_three(Custom_step):
 
         if self.set_sprite(cell.pos_x, cell.pos_y, self.current_sprite):
 
-            self.sprites_set[self.current_sprite] = cell
-            self.current_sprite = ""
+            if self.current_sprite in self.collectible_names and self.current_sprite in self.sprites_set.keys():
+                self.sprites_set[self.current_sprite].append(cell)
+            else:
+                self.sprites_set[self.current_sprite] = [cell]
+            if self.current_sprite not in self.collectible_names:
+                self.current_sprite = ""
 
         else:
 
-            self.show_message = f"Cannot place {self.current_sprite.capitalize()} here, try elsewhere"
-            self.frame_counter = 0
+            self.show_message = "Cannot place here, try elsewhere"
 
     def texture_size(self, sprite_name: str) -> int:
 
@@ -608,7 +650,7 @@ class Step_three(Custom_step):
                 self.texture_pack.get_texture(t_name),
                 (self.texture_size(t_name), self.texture_size(t_name)),
                 True
-            ) for t_name in self.sprites
+            ) for t_name in (self.sprites + list(self.sprites_set.keys()))
         }
         self._update_sidetextures()
 
@@ -617,7 +659,6 @@ class Step_three(Custom_step):
         side_text_sz: int = self.map_h // (len(self.collectible_names) // 2 + 1)
         t_pad: int = self.map_h // 50
         side_text_sz = min(side_text_sz - t_pad * 2, self.map_x * 3 // 4)
-        t_x: int = (self.map_x - side_text_sz) // 3 * 2
         pacman_icon: ClickableIcon = ClickableIcon(
             (self.map_x - side_text_sz) // 2,
             self.map_y + t_pad,
@@ -627,28 +668,37 @@ class Step_three(Custom_step):
             True,
             False
         )
-        fst_x: 
+        w_rem: int = self.map_x - side_text_sz * 2
+        fst_x: int = w_rem // 5 * 2
+        scd_x: int = fst_x + side_text_sz + w_rem // 5
         self.side_textures: dict[str, ClickableIcon] = {
             "pacman_idle": pacman_icon
         }
-        for {
-            t_name: ClickableIcon(
+        t_x: int = fst_x
+        t_y: int = self.map_y + (t_pad + side_text_sz) * 2
+        for i, t_name in enumerate(self.collectible_names):
+
+            if i == len(self.collectible_names) // 2:
+                t_x = scd_x
+                t_y = self.map_y + (t_pad + side_text_sz) * 2
+
+            self.side_textures[t_name] = ClickableIcon(
                 t_x,
-                self.map_y + i * (side_text_sz + t_pad * 2) + t_pad,
+                t_y,
                 self.texture_pack.get_texture(t_name),
                 (self.activate_sprite, t_name),
                 (side_text_sz, side_text_sz),
                 True,
                 False
-            ) for i, t_name in enumerate(self.sprites)
-        }
+            )
+            t_y += side_text_sz + t_pad
         # print(f"### all side textures: {[f"{name}: {icon.x, icon.y}, " for name, icon in self.side_textures.items()]}")
 
     def display_textures(self) -> None:
 
         self.map_renderer.display_set_sprites([
-            (self.textures[spr_name], cell)
-            for spr_name, cell in self.sprites_set.items()
+            (self.textures[spr_name], cells)
+            for spr_name, cells in self.sprites_set.items()
         ])
 
         for side_texture in self.side_textures.values():
@@ -686,6 +736,7 @@ class Step_three(Custom_step):
         else:
 
             self.show_message = ""
+            self.frame_counter = 0
 
     def check_next(self) -> None:
 
@@ -719,15 +770,12 @@ class Step_three(Custom_step):
         self.map_renderer.display_grid()
         self.display_textures()
 
-        if self.show_message:
-            self.display_message()
-
 
 class Step_four(Step_three):
 
-    def __init__(self, view: View, cmap: Map_custom) -> None:
+    def __init__(self, main_view: View) -> None:
 
-        self._init_names()
+        self._init_names(main_view)
         self.spawn_sprites: list[str] = [
             en_name + "_idle" for en_name in self.entity_names if en_name != "pacman"
         ]
@@ -735,21 +783,23 @@ class Step_four(Step_three):
             en_name + "_scatter" for en_name in self.entity_names if en_name != "pacman"
         ]
         self.sprites: list[str] = self.spawn_sprites + self.scatter_sprites
+        for step in main_view.steps_completed:
+            if step.number == 3:
+                self.sprites_set = {
+                    k: val for k, val in step.sprites_set.items()
+                }
         super(Step_three, self).__init__(
             4,
-            view,
-            cmap,
+            main_view,
             "Place the Ghosts spawn and scatter points (spawn first)"
         )
 
     def activate_sprite(self, spr_name: str) -> None:
 
-        if spr_name in self.scatter_sprites and not self.map.ghost_spawn_set[spr_name.removesuffix("_scatter")]:
+        if spr_name in self.scatter_sprites and not self.map.ghost_spawn_set[spr_name.removesuffix("_scatter").upper()]:
             self.show_message = (
-                f"Spawn point for {spr_name.removesuffix('_scatter')}"
-                " not placed, try again afterwards"
+                f"Spawn point for {spr_name.removesuffix('_scatter')} not placed"
             )
-            self.frame_counter = 0
             return
 
         self.current_sprite = spr_name
@@ -760,14 +810,14 @@ class Step_four(Step_three):
     def set_sprite(self, x: int, y: int, spr_name: str) -> bool:
 
         if spr_name in self.spawn_sprites:
-            return self.map.set_ghost_spawn(x, y, spr_name.removesuffix("_idle"))
+            return self.map.set_ghost_spawn(x, y, spr_name.removesuffix("_idle").upper())
         elif spr_name in self.scatter_sprites:
-            return self.map.set_ghost_scatter(x, y, spr_name.removesuffix("_scatter"))
+            return self.map.set_ghost_scatter(x, y, spr_name.removesuffix("_scatter").upper())
         return False
 
     def _update_sidetextures(self) -> None:
 
-        side_text_sz: int = self.map_h // len(self.sprites)
+        side_text_sz: int = self.map_h // (len(self.sprites) // 2)
         t_pad: int = self.map_h // 50
         side_text_sz = min(side_text_sz - t_pad * 2, self.map_x * 3 // 4)
         fst_t_x: int = (self.map_x - side_text_sz * 2 - side_text_sz // 2) // 2
@@ -803,25 +853,265 @@ class Step_four(Step_three):
         )
 
 
+class Step_five(Custom_step):
+
+    def __init__(self, main_view: View) -> None:
+
+        super().__init__(
+            5,
+            main_view,
+            "Choose a name for your map"
+        )
+
+    def validate_name(self) -> None:
+
+        if self.map.set_name(self.input_box.input):
+            self.show_message = f"Saved the name '{self.input_box.input}' for your custom map"
+            self.input_box.text_color = pr.GREEN
+            self.input_box.cursor_color = pr.DARKGREEN
+        else:
+            self.show_message = f"Name '{self.input_box.input}' invalid"
+            self.input_box.text_color = pr.RED
+            self.input_box.cursor_color = pr.MAROON
+
+    def _update_inputbox(self) -> None:
+
+        all_characters: list[int] = [45, 95]
+        for crange in [(48, 58), (65, 91), (97, 123)]:
+            all_characters += [i for i in range(*crange)]
+
+        self.input_box: Input_box = Input_box(
+            -2,
+            -2,
+            self.w // 3,
+            self.h // 10,
+            (self.validate_name, None),
+            20,
+            all_characters
+        )
+        h_rem: int = self.h - self.description.lowerbound - (self.h - self.input_box.posy)
+        self.input_label: Text = Text(
+            "enter name (only alphabetical and '_', '-' allowed) :",
+            -2,
+            self.description.lowerbound + h_rem // 3 * 2 - self.h // 25,
+            self.h // 25
+        )
+        self.widgets += [self.input_label, self.input_box]
+
+    def display_message(self) -> None:
+
+        if self.frame_counter < MSG_TIME:
+
+            message: Text = Text(
+                self.show_message,
+                -2,
+                self.input_box.posy + self.input_box.h + self.h // 10,
+                self.h // 25,
+                self.w // 2,
+                self.input_box.text_color
+            )
+            message.display_widget()
+            self.frame_counter += 1
+
+        else:
+
+            self.show_message = ""
+            self.input_box.text_color = (
+                self.input_box.base_colors[1]
+            )
+            self.input_box.cursor_color = (
+                self.input_box.base_colors[2]
+            )
+            self.frame_counter = 0
+
+    def go_next(self) -> None:
+
+        self.map.save_map()
+        super().go_next()
+
+    def go_back(self) -> None:
+
+        self.map.name_set = False
+        super().go_back()
+
+    def _update(self, forced: bool = False) -> None:
+
+        self.show_next = self.map.name_set
+
+        if not pr.is_window_resized() and not forced:
+            return
+
+        super()._update(True)
+        self.next.buttons["next"].label = "save"
+        self._update_inputbox()
+
+
+class Step_six(Custom_step):
+
+    def __init__(self, main_view: View) -> None:
+
+        self.main_view: View = main_view
+        self._update(True)
+
+    def _update_widgets(self) -> None:
+
+        button_w: int = self.w // 15
+        button_h: int = self.h // 10
+        self.yes_button: ButtonPanel = ButtonPanel(
+            (self.w - button_w * 3) // 2,
+            -2,
+            button_w,
+            button_h,
+            {"yes": (self.main_view.launch_game, self.main_menu.map.map.name)}
+        )
+        self.no_button: ButtonPanel = ButtonPanel(
+            self.yes_button.posx + button_w * 2,
+            -2,
+            button_w,
+            button_h,
+            {"no": (self.main_view.go_to_menu, None)}
+        )
+        self.question: Text = Text(
+            "Start the game?",
+            -2,
+            (self.h - self.yes_button.posy) // 3,
+            self.h // 10
+        )
+        self.description: Text = Text(
+            "(you can load your map at any time from the menu)",
+            -2,
+            self.question.lowerbound + self.h // 25,
+            self.h // 20
+        )
+        self.widgets: list[Widget] = [self.yes_button, self.no_button, self.question, self.description]
+
+    def _update(self, forced: bool = False) -> None:
+
+        if not pr.is_window_resized() and not forced:
+            return
+
+        self._update_widgets()
+
+    def display_view(self) -> None:
+
+        self._update()
+        for widget in self.widgets:
+            widget.display_widget
+
+
+class Step_zero(Custom_step):
+
+    def __init__(self, main_view: View) -> None:
+
+        self.number: int = 0
+        self.maps: list[str] = get_stored_map_list(main_view.app.map_folder)
+        self.main_view: View = main_view
+        self._update(True)
+
+    def _update_title(self) -> None:
+
+        self.title: Text = Text(
+            "LOAD EXISTING MAP",
+            -2,
+            self.h // 4,
+            self.h // 8
+        )
+        self.widgets.append(self.title)
+
+    def _update_buttons(self) -> None:
+
+        button_w: int = self.w // 10
+        button_h: int = self.h // 12
+        button_padx: int = self.w // 20
+        button_pady: int = self.h // 25
+        self.back: ButtonPanel = ButtonPanel(
+            (self.w - button_w * 2 - button_padx) // 2,
+            self.h - button_h - button_pady,
+            button_w,
+            button_h,
+            {"back": (self.go_back, None)}
+        )
+        self.next: ButtonPanel = ButtonPanel(
+            self.back.posx + button_w + button_padx,
+            self.h - button_h - button_pady,
+            button_w,
+            button_h,
+            {"new map": (self.go_next, None)}
+        )
+        self.widgets += [self.back, self.next]
+
+    def _update_dropdown(self) -> None:
+
+        load_label: str = "Select a map"
+        dropdown_buttons: dict[str, tuple[Callable, Any]] = {
+            load_label: (lambda: 0, None)
+        } | {
+            map_name: (self.main_view.launch_game, map_name)
+            for map_name in self.maps
+        }
+        self.map_dropdown: Dropdown = Dropdown(
+            -2,
+            self.title.y + self.title.font_size + self.h // 15,
+            self.w // 4,
+            self.h // 15,
+            dropdown_buttons
+        )
+        self.widgets.append(self.map_dropdown)
+
+    def _update(self, forced: bool = False) -> None:
+
+        if not pr.is_window_resized() and not forced:
+            return
+
+        self.widgets: list[Widget] = []
+        self._update_title()
+        self._update_buttons()
+        self._update_dropdown()
+
+    def display_view(self) -> None:
+
+        self._update()
+        for widget in self.widgets:
+            widget.display_widget()
+
+
 class Custom_view(View):
 
     def __init__(self, app) -> None:
 
         self.app = app
         self.map: Map_custom = Map_custom(self.app.map_folder)
-        self.steps: list = [
+        self.steps: list = []
+        maps: list[str] = get_stored_map_list(self.app.map_folder)
+        if maps != ["mandatory", "arcade"]:
+            self.steps.append(Step_zero)
+        self.steps += [
             Step_one,
             Step_two,
-            Step_three
+            Step_three,
+            Step_four,
+            Step_five,
+            Step_six
         ]
         self.steps_completed: list[Custom_step] = []
+        self.sprites_set: list[tuple[Icon, Cell]] = []
 
         self.cur_step_index: int = 0
-        self.cur_step: Custom_step = self.steps[0](self, self.map)
+        self.cur_step: Custom_step = self.steps[0](self)
 
-    def create_map(self) -> None:
+    def set_map_properties(self, x: int, y: int, w: int, h: int, cell_sz: int) -> None:
 
-        ...
+        self.map_x, self.map_y, self.map_w, self.map_h, self.cell_size = (x, y, w, h, cell_sz)
+
+    def launch_game(self, map_name: str) -> None:
+
+        game = custom_game(map_name, self.app.map_folder)
+        if game:
+            self.app.change_view(Game_view(self.app, game))
+
+    def go_to_menu(self) -> None:
+
+        self.app.change_view("main_menu")
 
     def step_back(self) -> None:
 
@@ -837,12 +1127,11 @@ class Custom_view(View):
     def step_forward(self) -> None:
 
         if self.cur_step_index + 1 == len(self.steps):
-            self.create_map()
             return
 
         self.cur_step_index += 1
         self.steps_completed.append(self.cur_step)
-        self.cur_step = self.steps[self.cur_step_index](self, self.map)
+        self.cur_step = self.steps[self.cur_step_index](self)
 
     def display_view(self) -> None:
 

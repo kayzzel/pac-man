@@ -635,20 +635,21 @@ class Custom_map_renderer(Map_renderer):
 
     def display_set_sprites(
         self,
-        textures_set: list[tuple[Icon, Cell]]
+        textures_set: list[tuple[Icon, list[Cell]]]
     ) -> None:
 
         rect_pad: int = self.entity_size // 20
-        for icon, cell in textures_set:
-            icon.x, icon.y = self.get_cell_coor(cell)
-            pr.draw_rectangle(
-                icon.x - rect_pad,
-                icon.y - rect_pad,
-                self.entity_size + rect_pad * 2,
-                self.entity_size + rect_pad * 2,
-                pr.GREEN
-            )
-            icon.display_widget()
+        for icon, cells in textures_set:
+            for cell in cells:
+                icon.x, icon.y = self.get_cell_coor(cell)
+                pr.draw_rectangle(
+                    icon.x - rect_pad,
+                    icon.y - rect_pad,
+                    self.entity_size + rect_pad * 2,
+                    self.entity_size + rect_pad * 2,
+                    pr.GREEN
+                )
+                icon.display_widget()
 
     def display_cur_sprite(self, cur_t: Icon, cell: Cell) -> None:
 

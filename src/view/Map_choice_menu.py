@@ -73,19 +73,17 @@ class Map_choice_menu(View):
             None
         )
 
-        back_width: int = (
-            Text.measure_text(back_label, self.button_font_sz)
-        ) + self.button_font_sz - 5
-        back_height: int = self.button_font_sz * 2 - 5
+        back_width: int = self.w // 8
+        back_height: int = self.h // 15
 
-        self.widgets.append(ButtonPanel(
-            self.w - back_width - 10,
-            self.h - back_height - 10,
+        self.back_button: ButtonPanel = ButtonPanel(
+            self.w - back_width - self.w // 25,
+            self.h - back_height - self.h // 40,
             back_width,
             back_height,
-            {back_label: self.button_actions[back_label]},
-            ((self.button_font_sz - 5)// 2, 2, 0.1)
-        ))
+            {back_label: self.button_actions[back_label]}
+        )
+        self.widgets.append(self.back_button)
 
     def calculate_panel_spacing(self) -> None:
 

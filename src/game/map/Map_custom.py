@@ -58,6 +58,9 @@ class Map_custom:
         for key in self.ghost_scatter_set.keys():
             self.ghost_scatter_set[key] = False
 
+    def reset(self) -> None:
+        self.__reset()
+
     def set_cols(self, nbr: int) -> bool:
         if not isinstance(nbr, int) or nbr < 10 or nbr > 50:
             return False
@@ -241,15 +244,19 @@ class Map_custom:
         self.collectibles_set = True
 
         if y >= self.__rows or y < 0 or x >= self.__cols or x < 0:
+            print(f"invalid coordinates for ghost {name} placement")
             return False
 
         if all(self.__map.cells[y][x].walls.values()):
+            print(f"### ghost {name} is surrounded by walls")
             return False
 
         if (x + 0.5, y + 0.5) == self.__map.pacman_spawn:
+            print(f"### ghost {name} is trying to be set in pacman place")
             return False
 
         if name not in self.ghost_spawn_set.keys():
+            print(f"### ghost {name} not in the dict")
             return False
 
         if not any(
