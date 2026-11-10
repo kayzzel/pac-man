@@ -6,12 +6,33 @@ from ...utils.json_utils import (
 
 from sys import stderr
 from pathlib import Path
-from pydantic import BaseModel, Field, ValidationError, TypeAdapter
+from pydantic import (
+    BaseModel,
+    Field,
+    ValidationError,
+    TypeAdapter,
+    field_validator
+)
 
 
 class Score(BaseModel):
     name: str = Field(min_length=1, max_length=10)
     score: int = Field(ge=0)
+
+    @field_validator("name")
+    @classmethod
+    def check_name(cls, value: str) -> str:
+        if (
+                not all(
+                    char.isascii() and char.isalnum() or
+                    char == " " for char in value
+                )
+                or not value.strip()
+        ):
+            raise ValueError(
+                "name must be alphanumeric characters and spaces only"
+            )
+        return value
 
 
 class Map_scores:
@@ -39,6 +60,7 @@ class Map_scores:
             return
 
         self.scores.sort(key=(lambda e: e.score), reverse=True)
+        self.scores = self.scores[0:10]
 
     def add_score(self, name: str, score: int) -> bool:
         try:
@@ -53,6 +75,7 @@ class Map_scores:
 
         self.scores.append(entry)
         self.scores.sort(key=(lambda e: e.score), reverse=True)
+        self.scores = self.scores[0:10]
         write_json_to_file(
                 str(self.score_file),
                 [e.model_dump() for e in self.scores]
