@@ -11,10 +11,9 @@ from .entity.ghost.Clyde import Clyde
 from .entity.ghost.Inky import Inky
 from .entity.collectible.Consumable import Consumable
 from ..Config import Config
-from ..utils.maze_utils import convert_maze_to_map
+from ..utils.maze_utils import convert_maze_to_map, generate_maze
 from ..utils.enum_utils import Game_state, Ghost_state, Pacman_state
 
-from mazegenerator import MazeGenerator
 from pathlib import Path
 
 import os
@@ -100,13 +99,15 @@ class Game:
             open(os.devnull, "w") as devnull,
             contextlib.redirect_stdout(devnull),
         ):
-            generator: MazeGenerator = MazeGenerator(
-                    (width, height), False, seed=seed
-                )
+            maze: list[list[int]] = generate_maze(width, height, seed)
 
-            new_map = convert_maze_to_map(generator.maze, self.config)
-
-        return new_map
+        try:
+            return convert_maze_to_map(maze, self.config)
+        except Exception as err:
+            raise ValueError(
+                    "failed to build the map from the generated "
+                    f"maze: {err}"
+                ) from err
 
     def start_position(self) -> None:
         cur_map = self.map[self.map_index]
@@ -214,18 +215,29 @@ def update_game(game: Game) -> None:
         game.stop(Game_state.FINISHED_MAP)
 
 
-def mandatory_game(config: Config) -> Game:
+def mandatory_game(config: Config) -> Game | None:
+    """Start an async mandatory game on the generated levels.
+
+    Returns None, with a clear message, if the external
+    A-Maze-ing generator fails.
+    """
     game = Game(config, "Mandatory", Path(config.highscore_filename))
     first = True
 
     width, height = config.levels_dimensions
 
-    for _ in range(config.nb_level):
-        if first:
-            game.map.append(game.generate_map(width, height, config.seed))
-            first = False
-        else:
-            game.map.append(game.generate_map(width, height))
+    try:
+        for _ in range(config.nb_level):
+            if first:
+                game.map.append(
+                        game.generate_map(width, height, config.seed)
+                    )
+                first = False
+            else:
+                game.map.append(game.generate_map(width, height))
+    except ValueError as err:
+        print(err, file=sys.stderr)
+        return None
 
     game.start_async()
 

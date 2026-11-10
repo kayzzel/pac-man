@@ -4,6 +4,7 @@ from ..entity.collectible.Collectible import Collectible
 from ...utils.maze_utils import generate_empty_map, generate_walls
 from ...utils.path_utils import next_direction
 
+from sys import stderr
 from pathlib import Path
 
 import json
@@ -104,13 +105,19 @@ class Map_custom:
         return True
 
     def randomize_wall(self) -> None:
+        try:
+            cells = generate_walls(self.__cols, self.__rows)
+        except ValueError as err:
+            print(err, file=stderr)
+            return
+
         self.walls_set = False
         self.pacman_spawn_set = False
         for key in self.ghost_spawn_set.keys():
             self.ghost_spawn_set[key] = False
         for key in self.ghost_scatter_set.keys():
             self.ghost_scatter_set[key] = False
-        self.__map.cells = generate_walls(self.__cols, self.__rows)
+        self.__map.cells = cells
 
     def get_walls(self, x: int, y: int) -> dict[str, tuple[bool, bool]]:
         if y >= self.__rows or y < 0 or x >= self.__cols or x < 0:

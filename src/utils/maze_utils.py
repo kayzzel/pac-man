@@ -4,10 +4,34 @@ from ..game.map.Cell import Cell
 from ..game.entity.collectible.Pacgum import Pacgum
 from ..game.entity.collectible.Super_Pacgum import Super_Pacgum
 
-from mazegenerator import MazeGenerator
-
 import os
 import contextlib
+
+
+def generate_maze(width: int, height: int, seed: int = 0) -> list[list[int]]:
+    """Call the external A-Maze-ing package and return its maze grid.
+
+    A missing, broken or incompatible package always becomes a
+    clean ValueError here, never a traceback.
+    """
+    try:
+        from mazegenerator import MazeGenerator
+    except ImportError as err:
+        raise ValueError(
+                "the A-Maze-ing package is missing or broken, "
+                f"it must be re-installed ({err})"
+            ) from err
+
+    try:
+        generator: MazeGenerator = MazeGenerator(
+                (width, height), False, seed=seed
+            )
+        return generator.maze
+    except Exception as err:
+        raise ValueError(
+                "the A-Maze-ing generator failed (is the installed "
+                f"version compatible?): {err}"
+            ) from err
 
 
 def generate_empty_map(width: int, height: int) -> list[list[Cell]]:
@@ -51,12 +75,10 @@ def generate_walls(width: int, height: int, seed: int = 0) -> list[list[Cell]]:
         open(os.devnull, "w") as devnull,
         contextlib.redirect_stdout(devnull),
     ):
-        generator: MazeGenerator = MazeGenerator(
-                (width, height), False, seed=seed
-            )
+        maze: list[list[int]] = generate_maze(width, height, seed)
 
     cells: list[list[Cell]] = []
-    for y, row in enumerate(generator.maze):
+    for y, row in enumerate(maze):
         cells_row: list[Cell] = []
         for x, nbr in enumerate(row):
             cell = Cell(x, y)
