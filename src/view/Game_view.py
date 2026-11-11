@@ -12,6 +12,7 @@ from ..utils.enum_utils import Game_state, Consumable_type
 
 
 LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
+COUNTDOWN_TIME: int = 60
 
 MIDDLE_LINE_THICKNESS: int = 10
 
@@ -28,10 +29,41 @@ class Game_view(View):
             self.game,
             app.display_config.texture_pack
         )
-
-        self.game.resume()
+        self.game_start: bool = False
+        self.countdown: int = 3
 
         super().__init__(app)
+
+    def _update_countdown(self) -> None:
+
+        if self.countdown == -1:
+
+            if self.frame_counter <= COUNTDOWN_TIME:
+                self.frame_counter += 1
+                return
+
+            self.game_start = True
+            self.game.resume()
+            self._update(True)
+            return
+
+        if not hasattr(self, "frame_counter") or self.frame_counter > COUNTDOWN_TIME:
+
+            self.frame_counter: int = 0
+            label: str = str(self.countdown)
+            if self.countdown == 0:
+                label = "START !!!"
+            self.countdown_label: Text = Text(
+                label,
+                -2,
+                (self.h - self.h // 6) // 2,
+                self.h // 6
+            )
+            self.countdown -= 1
+
+        else:
+
+            self.frame_counter += 1
 
     def _update_info_panel(self) -> None:
 
@@ -249,8 +281,13 @@ class Game_view(View):
             self._update_info_panel()
 
         if self.game.state == Game_state.WON or self.game.state == Game_state.LOST:
+            state: bool = self.game.state == Game_state.WON
             if self.map_renderer.check_death():
-                self.exit_game(Endgame_view(self.app, self.game))
+                self.exit_game(Endgame_view(self.app, self.game, state))
+            return
+
+        if not self.game_start:
+            self._update_countdown()
             return
 
         if not pr.is_window_resized() and not forced:
@@ -265,6 +302,10 @@ class Game_view(View):
     def display_view(self) -> None:
 
         self._update()
+
+        if not self.game_start:
+            self.countdown_label.display_widget()
+            return
 
         if self.show_as_modal:
             self.modal_view.display_view()

@@ -208,6 +208,82 @@ class Custom_step(View, ABC):
             self.next.display_widget()
 
 
+class Step_zero(Custom_step):
+
+    def __init__(self, main_view: View) -> None:
+
+        self.number: int = 0
+        self.maps: list[str] = get_stored_map_list(main_view.app.map_folder)
+        self.main_view: View = main_view
+        self._update(True)
+
+    def _update_title(self) -> None:
+
+        self.title: Text = Text(
+            "LOAD EXISTING MAP",
+            -2,
+            self.h // 4,
+            self.h // 8
+        )
+        self.widgets.append(self.title)
+
+    def _update_buttons(self) -> None:
+
+        button_w: int = self.w // 7
+        button_h: int = self.h // 12
+        button_padx: int = self.w // 20
+        button_pady: int = self.h // 25
+        self.back: ButtonPanel = ButtonPanel(
+            (self.w - button_w * 2 - button_padx) // 2,
+            self.h - button_h - button_pady,
+            button_w,
+            button_h,
+            {"back": (self.go_back, None)}
+        )
+        self.next: ButtonPanel = ButtonPanel(
+            self.back.posx + button_w + button_padx,
+            self.h - button_h - button_pady,
+            button_w,
+            button_h,
+            {"new map": (self.go_next, None)}
+        )
+        self.widgets += [self.back, self.next]
+
+    def _update_dropdown(self) -> None:
+
+        load_label: str = "Select a map"
+        dropdown_buttons: dict[str, tuple[Callable, Any]] = {
+            load_label: (lambda: 0, None)
+        } | {
+            map_name: (self.main_view.launch_game, map_name)
+            for map_name in self.maps
+        }
+        self.map_dropdown: Dropdown = Dropdown(
+            -2,
+            self.title.y + self.title.font_size + self.h // 15,
+            self.w // 4,
+            self.h // 15,
+            dropdown_buttons
+        )
+        self.widgets.append(self.map_dropdown)
+
+    def _update(self, forced: bool = False) -> None:
+
+        if not pr.is_window_resized() and not forced:
+            return
+
+        self.widgets: list[Widget] = []
+        self._update_title()
+        self._update_buttons()
+        self._update_dropdown()
+
+    def display_view(self) -> None:
+
+        self._update()
+        for widget in self.widgets:
+            widget.display_widget()
+
+
 class Step_one(Custom_step):
 
     def __init__(self, main_view: View) -> None:
@@ -577,7 +653,7 @@ class Step_three(Custom_step):
 
         self.current_sprite = spr_name
 
-        if spr_name in self.sprites_set.keys():
+        if spr_name in self.sprites_set.keys() and spr_name not in self.collectible_names:
             self.sprites_set.pop(spr_name)
 
     def set_sprite(self, x: int, y: int, spr_name: str) -> bool:
@@ -600,7 +676,7 @@ class Step_three(Custom_step):
         if self.current_sprite not in self.textures:
             return
 
-        if self.current_sprite in self.sprites_set:
+        if self.current_sprite in self.sprites_set and self.current_sprite not in self.collectible_names:
             return
 
         cell: Cell | None = self.is_in_cell(
@@ -796,9 +872,9 @@ class Step_four(Step_three):
 
     def activate_sprite(self, spr_name: str) -> None:
 
-        if spr_name in self.scatter_sprites and not self.map.ghost_spawn_set[spr_name.removesuffix("_scatter").upper()]:
+        if spr_name in self.scatter_sprites and not all(self.map.ghost_spawn_set.values()):
             self.show_message = (
-                f"Spawn point for {spr_name.removesuffix('_scatter')} not placed"
+                f"Place the spawn points of all ghosts first"
             )
             return
 
@@ -952,6 +1028,7 @@ class Step_six(Custom_step):
 
         self.main_view: View = main_view
         self._update(True)
+        print("initialized the step six")
 
     def _update_widgets(self) -> None:
 
@@ -962,7 +1039,7 @@ class Step_six(Custom_step):
             -2,
             button_w,
             button_h,
-            {"yes": (self.main_view.launch_game, self.main_menu.map.map.name)}
+            {"yes": (self.main_view.launch_game, self.main_view.map.map.name)}
         )
         self.no_button: ButtonPanel = ButtonPanel(
             self.yes_button.posx + button_w * 2,
@@ -983,80 +1060,7 @@ class Step_six(Custom_step):
             self.question.lowerbound + self.h // 25,
             self.h // 20
         )
-        self.widgets: list[Widget] = [self.yes_button, self.no_button, self.question, self.description]
-
-    def _update(self, forced: bool = False) -> None:
-
-        if not pr.is_window_resized() and not forced:
-            return
-
-        self._update_widgets()
-
-    def display_view(self) -> None:
-
-        self._update()
-        for widget in self.widgets:
-            widget.display_widget
-
-
-class Step_zero(Custom_step):
-
-    def __init__(self, main_view: View) -> None:
-
-        self.number: int = 0
-        self.maps: list[str] = get_stored_map_list(main_view.app.map_folder)
-        self.main_view: View = main_view
-        self._update(True)
-
-    def _update_title(self) -> None:
-
-        self.title: Text = Text(
-            "LOAD EXISTING MAP",
-            -2,
-            self.h // 4,
-            self.h // 8
-        )
-        self.widgets.append(self.title)
-
-    def _update_buttons(self) -> None:
-
-        button_w: int = self.w // 10
-        button_h: int = self.h // 12
-        button_padx: int = self.w // 20
-        button_pady: int = self.h // 25
-        self.back: ButtonPanel = ButtonPanel(
-            (self.w - button_w * 2 - button_padx) // 2,
-            self.h - button_h - button_pady,
-            button_w,
-            button_h,
-            {"back": (self.go_back, None)}
-        )
-        self.next: ButtonPanel = ButtonPanel(
-            self.back.posx + button_w + button_padx,
-            self.h - button_h - button_pady,
-            button_w,
-            button_h,
-            {"new map": (self.go_next, None)}
-        )
-        self.widgets += [self.back, self.next]
-
-    def _update_dropdown(self) -> None:
-
-        load_label: str = "Select a map"
-        dropdown_buttons: dict[str, tuple[Callable, Any]] = {
-            load_label: (lambda: 0, None)
-        } | {
-            map_name: (self.main_view.launch_game, map_name)
-            for map_name in self.maps
-        }
-        self.map_dropdown: Dropdown = Dropdown(
-            -2,
-            self.title.y + self.title.font_size + self.h // 15,
-            self.w // 4,
-            self.h // 15,
-            dropdown_buttons
-        )
-        self.widgets.append(self.map_dropdown)
+        self.widgets += [self.yes_button, self.no_button, self.question, self.description]
 
     def _update(self, forced: bool = False) -> None:
 
@@ -1064,9 +1068,7 @@ class Step_zero(Custom_step):
             return
 
         self.widgets: list[Widget] = []
-        self._update_title()
-        self._update_buttons()
-        self._update_dropdown()
+        self._update_widgets()
 
     def display_view(self) -> None:
 
@@ -1108,6 +1110,8 @@ class Custom_view(View):
         game = custom_game(map_name, self.app.map_folder)
         if game:
             self.app.change_view(Game_view(self.app, game))
+        else:
+            print("the game creation has not worked")
 
     def go_to_menu(self) -> None:
 

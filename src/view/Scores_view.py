@@ -49,8 +49,7 @@ class Scores_view(View):
             self.scores.append("No scores yet")
         if hasattr(self, "map_dropdown"):
             self.map_dropdown.invert_show()
-            self._update_title()
-            self._update_scores()
+            self._update(True)
 
     def _update_buttons(self) -> None:
 

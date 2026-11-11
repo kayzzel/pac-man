@@ -2,28 +2,30 @@ import pyray as pr
 from .View import View
 from .Save_score_view import Save_score_view
 from ..game.Game import Game
-from ..utils.enum_utils import Game_state
 from .widget import Widget, ButtonPanel, TextPanel, Text
 
 
 class Endgame_view(View):
 
-    def __init__(self, app, game: Game) -> None:
+    def __init__(self, app, game: Game, state: bool = False) -> None:
 
         self.game: Game = game
+        self.state: bool = state
         self.scores: list[str] = []
         if self.game.scores.scores:
             self.scores = [
                 pl.name + ": " + str(pl.score)
                 for pl in self.game.scores.scores
             ]
+        if not self.scores:
+            self.scores.append("No scores yet")
         super().__init__(app)
 
     def _update_title(self) -> None:
 
         self.title: Text = Text(
             (
-                "VICTORY" if self.game.state == Game_state.WON
+                "VICTORY" if self.state
                 else "GAME OVER"
             ),
             -2,
