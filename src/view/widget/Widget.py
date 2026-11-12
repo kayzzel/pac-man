@@ -41,18 +41,10 @@ class Widget(ABC):
         # generic property for all widgets to know if widget is pressed
         # mostly used only for clickable widgets
 
-        return (pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT) and self.is_in)
-        # mpres: bool = pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT)
-        # if mpres:
-        #     print(f"mouse click detected: mouse position ({pr.get_mouse_x(), pr.get_mouse_y()}) ; widget {self.label} position ({self.posx, self.posy, self.posx + self.w, self.posy + self.h}) \n")
-        # if (
-        #     mpres
-        #     and self.is_in
-        # ):
-        #     print("button is being pressed")
-        #     return True
-
-        # return False
+        return (
+            pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT)
+            and self.is_in
+        )
 
     def _update_widget(self) -> None:
 

@@ -157,9 +157,15 @@ class Input_box(Widget):
         ):
 
             cursor_x: int = user_input.x + user_input.width
+
             if len(self.input) == self.max_chars:
-                cursor_x -= Text.measure_text(user_input.label[:-1], user_input.font_size)
+                cursor_x -= Text.measure_text(
+                    user_input.label[:-1],
+                    user_input.font_size
+                )
+
             cursor_y: int = user_input.y + self.h // 8
+
             pr.draw_text_ex(
                 Text.font,
                 "_",

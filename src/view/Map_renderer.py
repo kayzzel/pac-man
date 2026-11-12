@@ -3,7 +3,7 @@ from ..game.map.Cell import Cell
 from ..game.Game import Game
 from ..utils.enum_utils import Game_state, Pacman_state
 from .Texture_pack import Texture_pack
-from .widget import Icon, AnimIcon, ClickableIcon
+from .widget import Icon, AnimIcon
 from ..game.entity.Pac_man import Pac_man
 from ..game.entity.Entity import Entity
 from ..game.entity.collectible.Consumable import Consumable
@@ -89,7 +89,11 @@ class Map_renderer:
                 case "W":
                     alignment = "L"
 
-        self.saved_dirs[entity.name] = (entity.direction, alignment, (entity.pos_x, entity.pos_y))
+        self.saved_dirs[entity.name] = (
+            entity.direction,
+            alignment,
+            (entity.pos_x, entity.pos_y)
+        )
 
     def get_pacman_texture(self, pac_man: Pac_man) -> str:
 
@@ -152,7 +156,11 @@ class Map_renderer:
 
                 if cell.neighbors["W"] and cell.neighbors["W"].walls["N"]:
                     sx = x
-                elif cell.neighbors["W"] and cell.neighbors["N"] and cell.neighbors["N"].walls["W"]:
+                elif (
+                    cell.neighbors["W"]
+                    and cell.neighbors["N"]
+                    and cell.neighbors["N"].walls["W"]
+                ):
                     sx = x - self.cell_padding
                 else:
                     draw_corner_left = True
@@ -161,7 +169,11 @@ class Map_renderer:
 
                 if cell.neighbors["E"] and cell.neighbors["E"].walls["N"]:
                     ex = end_x
-                elif cell.neighbors["E"] and cell.neighbors["N"] and cell.neighbors["N"].walls["E"]:
+                elif (
+                    cell.neighbors["E"]
+                    and cell.neighbors["N"]
+                    and cell.neighbors["N"].walls["E"]
+                ):
                     ex = end_x + self.cell_padding - self.line_thickness
                 else:
                     draw_corner_right = True
@@ -201,7 +213,11 @@ class Map_renderer:
 
                 if cell.neighbors["W"] and cell.neighbors["W"].walls["S"]:
                     sx = x
-                elif cell.neighbors["W"] and cell.neighbors["S"] and cell.neighbors["S"].walls["W"]:
+                elif (
+                    cell.neighbors["W"]
+                    and cell.neighbors["S"]
+                    and cell.neighbors["S"].walls["W"]
+                ):
                     sx = x - self.cell_padding
                 else:
                     draw_corner_left = True
@@ -210,7 +226,11 @@ class Map_renderer:
 
                 if cell.neighbors["E"] and cell.neighbors["E"].walls["S"]:
                     ex = end_x
-                elif cell.neighbors["E"] and cell.neighbors["S"] and cell.neighbors["S"].walls["E"]:
+                elif (
+                    cell.neighbors["E"]
+                    and cell.neighbors["S"]
+                    and cell.neighbors["S"].walls["E"]
+                ):
                     ex = end_x + self.cell_padding - self.line_thickness
                 else:
                     draw_corner_right = True
@@ -250,7 +270,11 @@ class Map_renderer:
 
                 if cell.neighbors["N"] and cell.neighbors["N"].walls["W"]:
                     sy = y
-                elif cell.neighbors["N"] and cell.neighbors["W"] and cell.neighbors["W"].walls["N"]:
+                elif (
+                    cell.neighbors["N"]
+                    and cell.neighbors["W"]
+                    and cell.neighbors["W"].walls["N"]
+                ):
                     sy = y - self.cell_padding
                 else:
                     draw_corner_up = True
@@ -259,7 +283,11 @@ class Map_renderer:
 
                 if cell.neighbors["S"] and cell.neighbors["S"].walls["W"]:
                     ey = end_y
-                elif cell.neighbors["S"] and cell.neighbors["W"] and cell.neighbors["W"].walls["S"]:
+                elif (
+                    cell.neighbors["S"]
+                    and cell.neighbors["W"]
+                    and cell.neighbors["W"].walls["S"]
+                ):
                     ey = end_y + self.cell_padding
                 else:
                     draw_corner_down = True
@@ -299,7 +327,11 @@ class Map_renderer:
 
                 if cell.neighbors["N"] and cell.neighbors["N"].walls["E"]:
                     sy = y
-                elif cell.neighbors["N"] and cell.neighbors["E"] and cell.neighbors["E"].walls["N"]:
+                elif (
+                    cell.neighbors["N"]
+                    and cell.neighbors["E"]
+                    and cell.neighbors["E"].walls["N"]
+                ):
                     sy = y - self.cell_padding
                 else:
                     draw_corner_up = True
@@ -308,7 +340,11 @@ class Map_renderer:
 
                 if cell.neighbors["S"] and cell.neighbors["S"].walls["E"]:
                     ey = end_y
-                elif cell.neighbors["S"] and cell.neighbors["E"] and cell.neighbors["E"].walls["S"]:
+                elif (
+                    cell.neighbors["S"]
+                    and cell.neighbors["E"]
+                    and cell.neighbors["E"].walls["S"]
+                ):
                     ey = end_y + self.cell_padding
                 else:
                     draw_corner_down = True
@@ -336,7 +372,10 @@ class Map_renderer:
 
     def add_collectibles(self, cell: Cell) -> None:
 
-        if cell.collectible and cell.collectible.name not in self.collectible_icons.keys():
+        if (
+            cell.collectible
+            and cell.collectible.name not in self.collectible_icons.keys()
+        ):
 
             texture_name: str = cell.collectible.name
             texture_size: int = self.collectible_size
@@ -353,7 +392,14 @@ class Map_renderer:
                 True
             )
 
-    def calculate_entity_pos(self, cell: Cell, x: int, y: int, en_posx: float, en_posy: float) -> tuple[int, int]:
+    def calculate_entity_pos(
+        self,
+        cell: Cell,
+        x: int,
+        y: int,
+        en_posx: float,
+        en_posy: float
+    ) -> tuple[int, int]:
 
         entity_base_x: int = x + self.cell_padding
         entity_base_y: int = y + self.cell_padding
@@ -368,7 +414,7 @@ class Map_renderer:
         )
         return (posx, posy)
 
-    def update_sprites(self) -> None:
+    def _unload_images(self) -> None:
 
         for icon in self.collectible_icons.values():
             icon._unload_image()
@@ -376,13 +422,21 @@ class Map_renderer:
         for sprite in self.sprites.values():
             sprite._unload_image()
 
+        if hasattr(self, "grid_texture"):
+            pr.unload_render_texture(self.grid_texture)
+
+    def update_sprites(self) -> None:
+
         self.collectible_icons = {}
         self.sprites = {}
         self.current_sprites: dict[str, AnimIcon] = {}
 
     def draw_sprites(self, cell: Cell, x: int, y: int) -> None:
 
-        if cell.collectible and cell.collectible.name in self.collectible_icons.keys():
+        if (
+            cell.collectible
+            and cell.collectible.name in self.collectible_icons.keys()
+        ):
 
             collectible: Icon = self.collectible_icons[cell.collectible.name]
             collectible.x = x + (self.cell_size - collectible.i_w) // 2
@@ -410,7 +464,10 @@ class Map_renderer:
                 else self.get_ghost_texture(entity)
             ))
 
-            if texture_path not in self.sprites.keys() or texture_path != self.sprites[texture_path].image_path:
+            if (
+                texture_path not in self.sprites.keys()
+                or texture_path != self.sprites[texture_path].image_path
+            ):
 
                 sprite_frames: int = 6
                 if "death" in texture_path:
@@ -434,12 +491,19 @@ class Map_renderer:
 
     def check_death(self) -> bool:
 
-        if "pacman" not in self.current_sprites.keys() or self.game.state not in self.end_states:
+        if (
+            "pacman" not in self.current_sprites.keys()
+            or self.game.state not in self.end_states
+        ):
             return True
 
         pacman_death_path: str = self.texture_pack.get_texture("pacman_death")
 
-        if self.game.state in self.end_states and self.current_sprites["pacman"].loop_finished and pacman_death_path == self.current_sprites["pacman"].image_path:
+        if (
+            self.game.state in self.end_states
+            and self.current_sprites["pacman"].loop_finished
+            and pacman_death_path == self.current_sprites["pacman"].image_path
+        ):
             if self.game.state == Game_state.DIED:
                 self.current_sprites["pacman"].reset_loop()
                 self.game.resume()
@@ -448,11 +512,6 @@ class Map_renderer:
         return False
 
     def get_neighbors(self, cell: Cell) -> None:
-
-        cell.neighbors: dict[str, Cell | None] = {
-            direction: None
-            for direction in ["N", "S", "E", "W"]
-        }
 
         if cell.pos_x > 0:
             cell.neighbors["W"] = self.grid[cell.pos_y][cell.pos_x - 1]
@@ -475,11 +534,7 @@ class Map_renderer:
 
     def update_texture(self) -> None:
 
-        if hasattr(self, "grid_texture"):
-            pr.unload_render_texture(self.grid_texture)
-
         self.grid_texture = pr.load_render_texture(self.map_w, self.map_h)
-        pr.end_drawing()
         pr.begin_texture_mode(self.grid_texture)
         pr.clear_background(pr.BLACK)
 
@@ -499,7 +554,6 @@ class Map_renderer:
             cell_y += self.cell_size
 
         pr.end_texture_mode()
-        pr.begin_drawing()
 
     def display_grid(self) -> None:
 
@@ -555,16 +609,17 @@ class Custom_map_renderer(Map_renderer):
 
         self.update_texture(show_lines)
 
-    def update_texture(self, show_lines: bool = False) -> None:
+    def _unload_images(self) -> None:
 
         if hasattr(self, "grid_texture"):
             pr.unload_render_texture(self.grid_texture)
+
+    def update_texture(self, show_lines: bool = False) -> None:
 
         self.grid_texture = pr.load_render_texture(
             self.map_w + self.cell_padding,
             self.map_h + self.cell_padding - self.line_thickness
         )
-        # pr.end_drawing()
         pr.begin_texture_mode(self.grid_texture)
         pr.clear_background(pr.BLACK)
 
@@ -584,9 +639,13 @@ class Custom_map_renderer(Map_renderer):
                         line_y += self.cell_padding // 2
 
                     if row_i > 0:
-                        pr.draw_line(cell_x, cell_y, line_x, cell_y, pr.LIGHTGRAY)
+                        pr.draw_line(
+                            cell_x, cell_y, line_x, cell_y, pr.LIGHTGRAY
+                        )
                     if cell_i > 0:
-                        pr.draw_line(cell_x, cell_y, cell_x, line_y, pr.LIGHTGRAY)
+                        pr.draw_line(
+                            cell_x, cell_y, cell_x, line_y, pr.LIGHTGRAY
+                        )
 
                     cell_x += self.cell_size
                     if cell_i == 0:
@@ -597,69 +656,98 @@ class Custom_map_renderer(Map_renderer):
                     cell_y += self.cell_padding // 2
 
         pr.draw_rectangle_lines_ex(
-            (0, 0, self.map_w + self.cell_padding, self.map_h + self.cell_padding - self.line_thickness),
+            (
+                0,
+                0,
+                self.map_w + self.cell_padding,
+                self.map_h + self.cell_padding - self.line_thickness
+            ),
             self.line_thickness,
             pr.DARKBLUE
         )
 
         cell_y = self.cell_padding // 2 - self.line_thickness // 2
+
         for row_i, row in enumerate(self.grid):
+
             cell_x = self.cell_padding // 2 + self.line_thickness
+
             for cell_i, cell in enumerate(row):
+
                 self.draw_walls(cell, cell_x, cell_y)
+
                 cell_x += self.cell_size
+
             cell_y += self.cell_size
 
         pr.end_texture_mode()
-        # pr.begin_drawing()
 
     def get_cell_coor(self, cell_to_find: Cell) -> tuple[int, int]:
 
         cell_y = self.map_y + self.cell_padding * 2 - self.line_thickness
+
         for row_i, row in enumerate(self.grid):
+
             cell_x = self.map_x + self.cell_padding * 2
+
             for cell_i, cell in enumerate(row):
+
                 if cell == cell_to_find:
                     return (cell_x, cell_y)
+
                 cell_x += self.cell_size
+
             cell_y += self.cell_size
+
+        return (-1, -1)
 
     def display_grid(self) -> None:
 
         pr.draw_texture_rec(
             self.grid_texture.texture,
-            (0, 0, float(self.map_w + self.cell_padding), -float(self.map_h + self.cell_padding - self.line_thickness)),
+            (
+                0,
+                0,
+                float(self.map_w + self.cell_padding),
+                -float(self.map_h + self.cell_padding - self.line_thickness)
+            ),
             (self.map_x, self.map_y),
             pr.RAYWHITE
         )
 
     def display_set_sprites(
         self,
-        textures_set: list[tuple[Icon, list[Cell]]]
+        textures_set: list[tuple[Icon, list[Cell], int]]
     ) -> None:
 
-        rect_pad: int = self.entity_size // 20
-        for icon, cells in textures_set:
+        for icon, cells, size in textures_set:
+
+            rect_pad: int = size // 20
+
             for cell in cells:
+
                 icon.x, icon.y = self.get_cell_coor(cell)
                 pr.draw_rectangle(
                     icon.x - rect_pad,
                     icon.y - rect_pad,
-                    self.entity_size + rect_pad * 2,
-                    self.entity_size + rect_pad * 2,
+                    size + rect_pad * 2,
+                    size + rect_pad * 2,
                     pr.GREEN
                 )
                 icon.display_widget()
 
-    def display_cur_sprite(self, cur_t: Icon, cell: Cell) -> None:
+    def display_cur_sprite(self, cur_t: Icon, cell: Cell, size: int) -> None:
 
-        rect_pad: int = self.entity_size // 20
+        rect_pad: int = size // 20
+
         cur_t.x, cur_t.y = self.get_cell_coor(cell)
+
         pr.draw_rectangle(
             cur_t.x - rect_pad,
             cur_t.y - rect_pad,
-            self.entity_size + rect_pad * 2,
-            self.entity_size + rect_pad * 2,
+            size + rect_pad * 2,
+            size + rect_pad * 2,
             pr.DARKGRAY
         )
+
         cur_t.display_widget()

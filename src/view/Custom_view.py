@@ -15,7 +15,15 @@ from .View import View
 from .Texture_pack import Texture_pack
 from .Map_renderer import Custom_map_renderer
 from .Game_view import Game_view
-from .widget import Widget, Text, ButtonPanel, Input_box, ClickableIcon, Icon, Dropdown
+from .widget import (
+    Widget,
+    Text,
+    ButtonPanel,
+    Input_box,
+    ClickableIcon,
+    Icon,
+    Dropdown
+)
 
 
 MSG_TIME: int = 120
@@ -159,6 +167,11 @@ class Custom_step(View, ABC):
 
         return self.map_y + (self.map_h - self.cell_space) // 2
 
+    @property
+    def cell_outline(self) -> tuple[int, int, int, int]:
+
+        return (self.cell_x, self.cell_y, self.cell_space, self.cell_space)
+
     def is_in_cell(self, x: int, y: int) -> Cell | None:
 
         if not self.is_in_map(x, y):
@@ -186,7 +199,7 @@ class Custom_step(View, ABC):
         if not pr.is_window_resized() and not forced:
             return
 
-        self.widgets: list[Widget] = []
+        super()._update(True)
         self._update_title()
         self._update_backnext_buttons()
 
@@ -272,16 +285,14 @@ class Step_zero(Custom_step):
         if not pr.is_window_resized() and not forced:
             return
 
-        self.widgets: list[Widget] = []
+        super(Custom_step, self)._update(True)
         self._update_title()
         self._update_buttons()
         self._update_dropdown()
 
     def display_view(self) -> None:
 
-        self._update()
-        for widget in self.widgets:
-            widget.display_widget()
+        super(Custom_step, self).display_view()
 
 
 class Step_one(Custom_step):
@@ -445,13 +456,15 @@ class Step_two(Custom_step):
         )
         self.widgets.append(self.rand_button)
 
-    def _update_walls(self) -> None:
+    def _unload_images(self) -> None:
 
         if hasattr(self, "walls"):
 
             for icons in self.walls.values():
                 icons[0]._unload_image()
                 icons[1]._unload_image()
+
+    def _update_walls(self) -> None:
 
         wall_pad: int = self.cell_space // 12
         wall_w: int = self.cell_space // 8
@@ -511,8 +524,8 @@ class Step_two(Custom_step):
         if not self.show_cell:
             return
 
-        pr.draw_rectangle(self.cell_x, self.cell_y, self.cell_space, self.cell_space, pr.DARKGRAY)
-        pr.draw_rectangle_lines(self.cell_x, self.cell_y, self.cell_space, self.cell_space, pr.LIGHTGRAY)
+        pr.draw_rectangle(*self.cell_outline, pr.DARKGRAY)
+        pr.draw_rectangle_lines(*self.cell_outline, pr.LIGHTGRAY)
 
         for wall, state in self.map.get_walls(*self.cur_cell).items():
 
@@ -527,6 +540,7 @@ class Step_two(Custom_step):
 
         self.show_cell = True
         self.cur_cell: tuple[int, int] = (x, y)
+        self._unload_images()
         self._update_walls()
 
     def is_in_bigcell(self, x: int, y: int) -> bool:
@@ -567,17 +581,16 @@ class Step_two(Custom_step):
         if not pr.is_window_resized() and not forced:
             return
 
-        super()._update(True)
+        self._update_title()
+        self._update_backnext_buttons()
         self._update_randomize_button()
         self._update_grid()
 
     def display_view(self) -> None:
 
-        self._update()
+        super().display_view()
 
         self.map_renderer.display_grid()
-
-        super().display_view()
 
         if self.show_cell:
             self.display_cell()
@@ -588,7 +601,11 @@ class Step_three(Custom_step):
     def __init__(self, main_view: View) -> None:
 
         self._init_names(main_view)
-        self.sprites: list[str] = ["pacman_idle"] + self.consumable_names + self.collectible_names
+        self.sprites: list[str] = (
+            ["pacman_idle"]
+            + self.consumable_names
+            + self.collectible_names
+        )
         super().__init__(
             3,
             main_view,
@@ -597,32 +614,42 @@ class Step_three(Custom_step):
 
     def _init_names(self, main_view: View) -> None:
 
-        self.texture_pack: Texture_pack = Texture_pack(main_view.app.display_config.texture_pack)
-        self.entity_names: list[str] = ["pacman", "blinky", "inky", "pinky", "clyde"]
-        self.consumable_names: list[str] = ["cherry_c", "galaxian_c", "apple_c", "orange_c", "strawberry_c", "key_c", "bell_c", "melon_c"]
-        self.collectible_names: list[str] = self.consumable_names + ["pacgum", "super_pacgum"]
-        self.sprites_set: dict[str, list[Cell]] = {}
+        self.texture_pack: Texture_pack = Texture_pack(
+            main_view.app.display_config.texture_pack
+        )
+        self.entity_names: list[str] = [
+            "pacman", "blinky", "inky", "pinky", "clyde"
+        ]
+        self.consumable_names: list[str] = [
+            "cherry_c", "galaxian_c", "apple_c", "orange_c",
+            "strawberry_c", "key_c", "bell_c", "melon_c"
+        ]
+        self.collectible_names: list[str] = (
+            self.consumable_names
+            + ["pacgum", "super_pacgum"]
+        )
+        self.sprites_set: dict[str, tuple[list[Cell], int]] = {}
         self.current_sprite: str = ""
 
     @property
     def map_x(self) -> int:
-        return self.main_view.map_x
+        return int(self.main_view.map_x)
 
     @property
     def map_y(self) -> int:
-        return self.main_view.map_y
+        return int(self.main_view.map_y)
 
     @property
     def map_w(self) -> int:
-        return self.main_view.map_w
+        return int(self.main_view.map_w)
 
     @property
     def map_h(self) -> int:
-        return self.main_view.map_h
+        return int(self.main_view.map_h)
 
     @property
     def cell_size(self) -> int:
-        return self.main_view.cell_size
+        return int(self.main_view.cell_size)
 
     def calculate_cell_pos(self, x: int, y: int) -> tuple[int, int] | None:
 
@@ -639,7 +666,10 @@ class Step_three(Custom_step):
 
     def activate_sprite(self, spr_name: str) -> None:
 
-        if spr_name in self.collectible_names and self.map.pacman_spawn_set is False:
+        if (
+            spr_name in self.collectible_names
+            and self.map.pacman_spawn_set is False
+        ):
             self.show_message = "Please place PacMan before collectibles"
             return
 
@@ -653,7 +683,10 @@ class Step_three(Custom_step):
 
         self.current_sprite = spr_name
 
-        if spr_name in self.sprites_set.keys() and spr_name not in self.collectible_names:
+        if (
+            spr_name in self.sprites_set.keys()
+            and spr_name not in self.collectible_names
+        ):
             self.sprites_set.pop(spr_name)
 
     def set_sprite(self, x: int, y: int, spr_name: str) -> bool:
@@ -661,7 +694,9 @@ class Step_three(Custom_step):
         if spr_name == "pacman_idle":
             return self.map.set_pacman_spawn(x, y)
         elif spr_name in self.consumable_names:
-            return self.map.set_collectible(x, y, Consumable(spr_name.removesuffix("_c"), x, y))
+            return self.map.set_collectible(
+                x, y, Consumable(spr_name.removesuffix("_c"), x, y)
+            )
         elif spr_name == "super_pacgum":
             return self.map.set_collectible(x, y, Super_Pacgum(x, y))
         elif spr_name == "pacgum":
@@ -676,7 +711,10 @@ class Step_three(Custom_step):
         if self.current_sprite not in self.textures:
             return
 
-        if self.current_sprite in self.sprites_set and self.current_sprite not in self.collectible_names:
+        if (
+            self.current_sprite in self.sprites_set
+            and self.current_sprite not in self.collectible_names
+        ):
             return
 
         cell: Cell | None = self.is_in_cell(
@@ -688,10 +726,16 @@ class Step_three(Custom_step):
 
         if self.set_sprite(cell.pos_x, cell.pos_y, self.current_sprite):
 
-            if self.current_sprite in self.collectible_names and self.current_sprite in self.sprites_set.keys():
-                self.sprites_set[self.current_sprite].append(cell)
+            if (
+                self.current_sprite in self.collectible_names
+                and self.current_sprite in self.sprites_set.keys()
+            ):
+                self.sprites_set[self.current_sprite][0].append(cell)
             else:
-                self.sprites_set[self.current_sprite] = [cell]
+                self.sprites_set[self.current_sprite] = (
+                    [cell],
+                    self.texture_size(self.current_sprite)
+                )
             if self.current_sprite not in self.collectible_names:
                 self.current_sprite = ""
 
@@ -701,7 +745,7 @@ class Step_three(Custom_step):
 
     def texture_size(self, sprite_name: str) -> int:
 
-        if any(sprite_name.startswith(en_name) for en_name in self.entity_names):
+        if any(sprite_name.startswith(e_name) for e_name in self.entity_names):
             return self.map_renderer.entity_size
         elif sprite_name in self.consumable_names:
             return self.map_renderer.consumable_size
@@ -709,7 +753,7 @@ class Step_three(Custom_step):
             return self.map_renderer.collectible_size
         return 0
 
-    def _update_textures(self) -> None:
+    def _unload_images(self) -> None:
 
         if hasattr(self, "textures"):
             for icon in self.textures.values():
@@ -718,6 +762,11 @@ class Step_three(Custom_step):
         if hasattr(self, "side_textures"):
             for icon in self.side_textures.values():
                 icon._unload_image()
+
+        if hasattr(self, "map_renderer"):
+            self.map_renderer._unload_images()
+
+    def _update_textures(self) -> None:
 
         self.textures: dict[str, Icon] = {
             t_name: Icon(
@@ -732,9 +781,12 @@ class Step_three(Custom_step):
 
     def _update_sidetextures(self) -> None:
 
-        side_text_sz: int = self.map_h // (len(self.collectible_names) // 2 + 1)
+        side_text_sz: int = (
+            self.map_h // (len(self.collectible_names) // 2 + 1)
+        )
         t_pad: int = self.map_h // 50
         side_text_sz = min(side_text_sz - t_pad * 2, self.map_x * 3 // 4)
+
         pacman_icon: ClickableIcon = ClickableIcon(
             (self.map_x - side_text_sz) // 2,
             self.map_y + t_pad,
@@ -744,14 +796,18 @@ class Step_three(Custom_step):
             True,
             False
         )
+
         w_rem: int = self.map_x - side_text_sz * 2
         fst_x: int = w_rem // 5 * 2
         scd_x: int = fst_x + side_text_sz + w_rem // 5
+
         self.side_textures: dict[str, ClickableIcon] = {
             "pacman_idle": pacman_icon
         }
+
         t_x: int = fst_x
         t_y: int = self.map_y + (t_pad + side_text_sz) * 2
+
         for i, t_name in enumerate(self.collectible_names):
 
             if i == len(self.collectible_names) // 2:
@@ -768,13 +824,12 @@ class Step_three(Custom_step):
                 False
             )
             t_y += side_text_sz + t_pad
-        # print(f"### all side textures: {[f"{name}: {icon.x, icon.y}, " for name, icon in self.side_textures.items()]}")
 
     def display_textures(self) -> None:
 
         self.map_renderer.display_set_sprites([
-            (self.textures[spr_name], cells)
-            for spr_name, cells in self.sprites_set.items()
+            (self.textures[spr_name], cells, size)
+            for spr_name, (cells, size) in self.sprites_set.items()
         ])
 
         for side_texture in self.side_textures.values():
@@ -789,7 +844,11 @@ class Step_three(Custom_step):
             if not cell:
                 return
 
-            self.map_renderer.display_cur_sprite(self.textures[self.current_sprite], cell)
+            self.map_renderer.display_cur_sprite(
+                self.textures[self.current_sprite],
+                cell,
+                self.texture_size(self.current_sprite)
+            )
 
     def display_message(self) -> None:
 
@@ -816,7 +875,10 @@ class Step_three(Custom_step):
 
     def check_next(self) -> None:
 
-        self.show_next = (self.map.pacman_spawn_set and self.map.map.collectible_count > 0)
+        self.show_next = (
+            self.map.pacman_spawn_set
+            and self.map.map.collectible_count > 0
+        )
 
     def _update(self, forced: bool = False) -> None:
 
@@ -839,8 +901,6 @@ class Step_three(Custom_step):
 
     def display_view(self) -> None:
 
-        self._update()
-
         super().display_view()
 
         self.map_renderer.display_grid()
@@ -853,10 +913,14 @@ class Step_four(Step_three):
 
         self._init_names(main_view)
         self.spawn_sprites: list[str] = [
-            en_name + "_idle" for en_name in self.entity_names if en_name != "pacman"
+            en_name + "_idle"
+            for en_name in self.entity_names
+            if en_name != "pacman"
         ]
         self.scatter_sprites: list[str] = [
-            en_name + "_scatter" for en_name in self.entity_names if en_name != "pacman"
+            en_name + "_scatter"
+            for en_name in self.entity_names
+            if en_name != "pacman"
         ]
         self.sprites: list[str] = self.spawn_sprites + self.scatter_sprites
         for step in main_view.steps_completed:
@@ -872,9 +936,12 @@ class Step_four(Step_three):
 
     def activate_sprite(self, spr_name: str) -> None:
 
-        if spr_name in self.scatter_sprites and not all(self.map.ghost_spawn_set.values()):
+        if (
+            spr_name in self.scatter_sprites
+            and not all(self.map.ghost_spawn_set.values())
+        ):
             self.show_message = (
-                f"Place the spawn points of all ghosts first"
+                "Place the spawn points of all ghosts first"
             )
             return
 
@@ -886,9 +953,13 @@ class Step_four(Step_three):
     def set_sprite(self, x: int, y: int, spr_name: str) -> bool:
 
         if spr_name in self.spawn_sprites:
-            return self.map.set_ghost_spawn(x, y, spr_name.removesuffix("_idle").upper())
+            return self.map.set_ghost_spawn(
+                x, y, spr_name.removesuffix("_idle").upper()
+            )
         elif spr_name in self.scatter_sprites:
-            return self.map.set_ghost_scatter(x, y, spr_name.removesuffix("_scatter").upper())
+            return self.map.set_ghost_scatter(
+                x, y, spr_name.removesuffix("_scatter").upper()
+            )
         return False
 
     def _update_sidetextures(self) -> None:
@@ -898,6 +969,7 @@ class Step_four(Step_three):
         side_text_sz = min(side_text_sz - t_pad * 2, self.map_x * 3 // 4)
         fst_t_x: int = (self.map_x - side_text_sz * 2 - side_text_sz // 2) // 2
         scd_t_x: int = fst_t_x + side_text_sz + side_text_sz // 2
+
         self.side_textures: dict[str, ClickableIcon] = {
             t_name: ClickableIcon(
                 fst_t_x,
@@ -919,7 +991,6 @@ class Step_four(Step_three):
                 False
             ) for i, t_name in enumerate(self.scatter_sprites)
         }
-        # print(f"### all side textures: {[f"{name}: {icon.x, icon.y}, " for name, icon in self.side_textures.items()]}")
 
     def check_next(self) -> None:
 
@@ -942,7 +1013,9 @@ class Step_five(Custom_step):
     def validate_name(self) -> None:
 
         if self.map.set_name(self.input_box.input):
-            self.show_message = f"Saved the name '{self.input_box.input}' for your custom map"
+            self.show_message = (
+                f"Saved the name '{self.input_box.input}' for your custom map"
+            )
             self.input_box.text_color = pr.GREEN
             self.input_box.cursor_color = pr.DARKGREEN
         else:
@@ -965,7 +1038,12 @@ class Step_five(Custom_step):
             20,
             all_characters
         )
-        h_rem: int = self.h - self.description.lowerbound - (self.h - self.input_box.posy)
+
+        h_rem: int = (
+            self.h
+            - self.description.lowerbound
+            - (self.h - self.input_box.posy)
+        )
         self.input_label: Text = Text(
             "enter name (only alphabetical and '_', '-' allowed) :",
             -2,
@@ -1028,7 +1106,6 @@ class Step_six(Custom_step):
 
         self.main_view: View = main_view
         self._update(True)
-        print("initialized the step six")
 
     def _update_widgets(self) -> None:
 
@@ -1060,7 +1137,12 @@ class Step_six(Custom_step):
             self.question.lowerbound + self.h // 25,
             self.h // 20
         )
-        self.widgets += [self.yes_button, self.no_button, self.question, self.description]
+        self.widgets += [
+            self.yes_button,
+            self.no_button,
+            self.question,
+            self.description
+        ]
 
     def _update(self, forced: bool = False) -> None:
 
@@ -1072,9 +1154,7 @@ class Step_six(Custom_step):
 
     def display_view(self) -> None:
 
-        self._update()
-        for widget in self.widgets:
-            widget.display_widget()
+        super(Custom_step, self).display_view()
 
 
 class Custom_view(View):
@@ -1083,10 +1163,13 @@ class Custom_view(View):
 
         self.app = app
         self.map: Map_custom = Map_custom(self.app.map_folder)
+
         self.steps: list = []
+
         maps: list[str] = get_stored_map_list(self.app.map_folder)
         if maps != ["mandatory", "arcade"]:
             self.steps.append(Step_zero)
+
         self.steps += [
             Step_one,
             Step_two,
@@ -1101,9 +1184,25 @@ class Custom_view(View):
         self.cur_step_index: int = 0
         self.cur_step: Custom_step = self.steps[0](self)
 
-    def set_map_properties(self, x: int, y: int, w: int, h: int, cell_sz: int) -> None:
+    def set_map_properties(
+        self,
+        x: int,
+        y: int,
+        w: int,
+        h: int,
+        cell_sz: int
+    ) -> None:
 
-        self.map_x, self.map_y, self.map_w, self.map_h, self.cell_size = (x, y, w, h, cell_sz)
+        self.map_x, self.map_y, self.map_w, self.map_h, self.cell_size = (
+            x, y, w, h, cell_sz
+        )
+
+    def _unload_images(self) -> None:
+
+        for step in self.steps_completed:
+            step._unload_images()
+        if hasattr(self, "cur_step"):
+            self.cur_step._unload_images()
 
     def launch_game(self, map_name: str) -> None:
 
@@ -1125,6 +1224,7 @@ class Custom_view(View):
             return
 
         self.cur_step_index -= 1
+        self._unload_images()
         self.cur_step = self.steps_completed[-1]
         self.steps_completed.pop()
 

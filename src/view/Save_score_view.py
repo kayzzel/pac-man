@@ -1,6 +1,8 @@
 import pyray as pr
+from pyray import KeyboardKey as kek
+from ..game.Game import Game
 from .View import View
-from .widget import Widget, Text, Input_box, ButtonPanel
+from .widget import Text, Input_box, ButtonPanel
 
 
 MAX_INPUT_LENGTH: int = 20
@@ -13,9 +15,9 @@ SCORE_CHAR_RANGE: tuple[int, int] = (48, 57)
 
 class Save_score_view(View):
 
-    def __init__(self, app, game) -> None:
+    def __init__(self, app, game: Game) -> None:
 
-        self.game = game
+        self.game: Game = game
         self.show_message: list[str] = []
         super().__init__(app)
 
@@ -32,21 +34,20 @@ class Save_score_view(View):
     def _update_back_button(self) -> None:
 
         back_label: str = "back <-|"
-        back_font_sz: int = self.h // 20
-        back_padding: int = back_font_sz - 5
+        self.button_actions[back_label] = (
+            self.app.return_to_prev_view,
+            None
+        )
 
-        back_width: int = (
-            Text.measure_text(back_label, back_font_sz)
-        ) + back_padding
-        back_height: int = back_font_sz + back_padding
+        back_width: int = self.w // 8
+        back_height: int = self.h // 15
 
         self.back_button: ButtonPanel = ButtonPanel(
-            self.w - back_width - 10,
-            self.h - back_height - 10,
+            self.w - back_width - self.w // 25,
+            self.h - back_height - self.h // 40,
             back_width,
             back_height,
-            {back_label: (self.app.return_to_prev_view, None)},
-            (back_padding // 2, 2, 0.1)
+            {back_label: self.button_actions[back_label]}
         )
         self.widgets.append(self.back_button)
 
@@ -79,13 +80,13 @@ class Save_score_view(View):
 
     def _update(self, forced: bool = False) -> None:
 
-        if pr.is_key_pressed(pr.KEY_ESCAPE) and not self.show_message:
+        if pr.is_key_pressed(kek.KEY_ESCAPE) and not self.show_message:
             self.app.return_to_prev_view()
 
         if not pr.is_window_resized() and not forced:
             return
 
-        self.widgets: list[Widget] = []
+        super()._update(True)
         self._update_title()
         self._update_back_button()
         self._update_input_box()
@@ -119,28 +120,20 @@ class Save_score_view(View):
 
         if self.msg_frame_counter < MSG_DISPLAY_TIME:
 
-            max_msg: str = max(self.show_message, key=lambda msg: len(msg))
-            msg_font_sz: int = Text._resize_font(max_msg, self.h // 25, self.w - self.w // 3)
-
             msg_y: int = self.input_box.posy + self.input_box.h + self.h // 15
 
             for msg in self.show_message:
 
-                msg_x: int = (self.w - int(pr.measure_text_ex(
-                    Text.font,
+                text: Text = Text(
                     msg,
-                    msg_font_sz,
-                    Text.spacing
-                ).x)) // 2
-                pr.draw_text_ex(
-                    Text.font,
-                    msg,
-                    (msg_x, msg_y),
-                    msg_font_sz,
-                    Text.spacing,
-                    pr.GREEN
+                    -2,
+                    msg_y,
+                    self.h // 25,
+                    self.w - self.w // 3
                 )
-                msg_y += msg_font_sz + msg_font_sz // 2
+
+                text.display_widget()
+                msg_y += text.font_size + text.font_size // 2
 
             self.msg_frame_counter += 1
 

@@ -2,9 +2,11 @@ import pyray as pr
 from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from typing import Callable, Any
+from ..game.Game import Game
 from .View import View
 from .Scores_view import Scores_view
 from .Save_score_view import Save_score_view
+from .Options_view import Options_view
 from .widget import Text, ButtonPanel, TextPanel, ClickableIcon, Input_box
 
 
@@ -19,9 +21,9 @@ LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
 
 class Pause_menu(View):
 
-    def __init__(self, app, game, global_view: View) -> None:
+    def __init__(self, app, game: Game, global_view: View) -> None:
 
-        self.game = game
+        self.game: Game = game
         self.global_view: View = global_view
         self.show_cheat_panel: bool = False
 
@@ -44,25 +46,45 @@ class Pause_menu(View):
 
         button_actions: dict[str, tuple[Callable, Any]] = {
             "Resume": (self.global_view.pause_or_resume, None),
-            "Options": (lambda: print(
-                "Action for button 'options' not yet coded\n"
-            ), None),
+            "Options": (self.app.change_view, Options_view(self.app)),
             "Scores": (
                 self.app.change_view,
                 Scores_view(self.app)
             ),
-            "Save and exit": (self.app.change_view, Save_score_view(self.app, self.game)),
+            "Save and exit": (
+                self.app.change_view,
+                Save_score_view(self.app, self.game)
+            ),
             "Exit": (self.global_view.exit_game, "main_menu")
         }
-        # button_font_sz: int = panel_height // (len(button_actions.keys()) * 2 - 1)
 
         self.left_panel: ButtonPanel = ButtonPanel(
-            self.x + BORDER_THICK + self.w // 20 + (self.w // 2 - panel_width) // 2,
+            (
+                self.x + BORDER_THICK + self.w // 20
+                + (self.w // 2 - panel_width) // 2
+            ),
             -2,
             panel_width,
             panel_height,
             button_actions,
             (10, 2, 0.1)
+        )
+        self.widgets.append(self.left_panel)
+
+    @property
+    def invincible_state(self) -> str:
+
+        return (
+            "on" if self.game.cheats.is_invincible
+            else "off"
+        )
+
+    @property
+    def clipping_state(self) -> str:
+
+        return (
+            "on" if self.game.cheats.is_clipping
+            else "off"
         )
 
     def _update_cheat_panel(self) -> None:
@@ -70,16 +92,11 @@ class Pause_menu(View):
         if not self.show_cheat_panel:
             return
 
-        invincible_state: str = ("on" if self.game.cheats.is_invincible else "off")
-        clipping_state: str = ("on" if self.game.cheats.is_clipping else "off")
         labels: dict[str, str] = {
             "nb_lives": f"number of lives ({self.game.player.nb_lives})",
             "score": f"score ({self.game.player.score})",
-            # "pts_per_pacgum": f"points per pacgum ({self.pts_per_pacgum})",
-            # "pts_per_spacgum": f"points per super pacgum ({self.pts_per_spacgum})",
-            # "pts_per_ghost": f"points per ghost ({self.pts_per_ghost})",
-            "invincible_mode": f"invincible mode ({invincible_state})",
-            "nowalls_mode": f"pass through walls ({clipping_state})"
+            "invincible_mode": f"invincible mode ({self.invincible_state})",
+            "nowalls_mode": f"pass through walls ({self.clipping_state})"
         }
 
         panel_width: int = self.w - self.left_panel.w - BORDER_THICK
@@ -111,28 +128,35 @@ class Pause_menu(View):
                 self.cheat_panel.labels[labels[parameter]].posy,
                 panel_width // 12,
                 self.cheat_panel.font_size,
-                {("off" if cur_value else "on"): (self.change_onoff_button, parameter)},
+                {cur_value: (self.change_onoff, parameter)},
                 (0, 2, 0.1),
                 -2
             ) for parameter, cur_value in {
-                "invincible_mode": self.game.cheats.is_invincible,
-                "nowalls_mode": self.game.cheats.is_clipping
+                "invincible_mode": self.invincible_state,
+                "nowalls_mode": self.clipping_state
             }.items()
         }
+        self.widgets.append(self.cheat_panel)
+        self.widgets += list(self.input_boxes.values())
+        self.widgets += list(self.onoff_buttons.values())
 
     def change_parameter(self, parameter: str) -> None:
 
+        function: Callable
         if parameter == "nb_lives":
             function = self.game.cheats.change_lives
             self.global_view.life_icon_init = False
         elif parameter == "score":
             function = self.game.cheats.change_points
-        elif parameter not in self.input_boxes.keys() or not self.input_boxes[parameter].input.isdigit():
+        elif (
+            parameter not in self.input_boxes.keys()
+            or not self.input_boxes[parameter].input.isdigit()
+        ):
             return
         function(int(self.input_boxes[parameter].input))
         self._update_cheat_panel()
 
-    def change_onoff_button(self, parameter: str) -> None:
+    def change_onoff(self, parameter: str) -> None:
 
         if parameter == "invincible_mode":
             function = self.game.cheats.toggle_invincible
@@ -173,6 +197,7 @@ class Pause_menu(View):
             20,
             (32, 125)
         )
+        self.widgets += [self.lock_icon, self.input_password]
         self.reset_input()
 
     def show_input_box(self) -> None:
@@ -212,6 +237,7 @@ class Pause_menu(View):
         if not pr.is_window_resized() and not forced:
             return
 
+        super()._update(True)
         self._update_left_panel()
         self._update_cheat_panel()
         self._update_lock_and_password()

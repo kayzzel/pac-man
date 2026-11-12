@@ -1,4 +1,5 @@
 import pyray as pr
+from pyray import TraceLogLevel as tr_log_lvl
 from pyray import KeyboardKey as kek
 from typing import Any
 from .Config import Config
@@ -56,20 +57,14 @@ class App:
         if not self.previous_view:
             return
 
-        # if (
-        #     hasattr(self.current_view, "show_as_modal")
-        # ) and (
-        #     self.current_view.show_as_modal
-        # ):
-
-        #     self.current_view.show_as_modal = False
-        #     return
-
         if isinstance(self.previous_view, type(self.__current_view)):
             self.remove_last_view()
         self.change_view(self.previous_view)
 
     def change_view(self, view: View | str) -> None:
+
+        if self.__current_view:
+            self.__current_view._unload_images()
 
         if isinstance(view, View):
             if not isinstance(self.__current_view, type(self.previous_view)):
@@ -87,11 +82,11 @@ class App:
     def start_app(self) -> None:
 
         # pr.set_config_flags(pr.FLAG_WINDOW_RESIZABLE)
-        pr.set_trace_log_level(pr.LOG_ERROR)
+        pr.set_trace_log_level(tr_log_lvl.LOG_ERROR)
         pr.init_window(1920, 1080, "pac-man menu example")
         pr.toggle_fullscreen()
         pr.set_target_fps(60)
-        pr.set_exit_key(pr.KEY_NULL)
+        pr.set_exit_key(kek.KEY_NULL)
         Text._load_font(PACMAN_FONT)
 
         menu: Main_menu = Main_menu(self)
@@ -107,6 +102,8 @@ class App:
 
     def stop_app(self) -> None:
 
+        if self.__current_view:
+            self.__current_view._unload_images()
         pr.close_window()
 
     def display_app(self) -> None:

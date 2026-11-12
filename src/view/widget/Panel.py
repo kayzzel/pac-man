@@ -268,13 +268,13 @@ class ButtonPanel(Panel):
 
         for i, button in enumerate(self.buttons.values()):
 
-                if button.is_in_area:
+            if button.is_in_area:
 
-                    pr.draw_rectangle_rounded(
-                        button.area,
-                        self.roundness,
-                        4,
-                        self.hover_color
-                    )
+                pr.draw_rectangle_rounded(
+                    button.area,
+                    self.roundness,
+                    4,
+                    self.hover_color
+                )
 
-                button.display_widget()
+            button.display_widget()

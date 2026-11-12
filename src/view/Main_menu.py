@@ -4,7 +4,7 @@ from .View import View
 from .Scores_view import Scores_view
 from .Map_choice_menu import Map_choice_menu
 from .Options_menu import Options_menu
-from .widget import Widget, ButtonPanel, Icon, AnimIcon
+from .widget import ButtonPanel, Icon, AnimIcon
 
 
 BACKGROUND_IMAGE_PATH: str = "src/view/assets/gifs/pac-man_bg.gif"
@@ -80,7 +80,7 @@ class Main_menu(View):
         if not pr.is_window_resized() and not forced:
             return
 
-        self.widgets: list[Widget] = []
+        super()._update(True)
         self._update_icons()
         self._update_panel()
 

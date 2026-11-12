@@ -2,7 +2,7 @@ import pyray as pr
 from .View import View
 from .Save_score_view import Save_score_view
 from ..game.Game import Game
-from .widget import Widget, ButtonPanel, TextPanel, Text
+from .widget import ButtonPanel, TextPanel, Text
 
 
 class Endgame_view(View):
@@ -51,35 +51,35 @@ class Endgame_view(View):
 
     def _update_buttons(self) -> None:
 
-        button_fontsz: int = Text._resize_font("save", self.h // 20, self.w // 5)
-        button_width: int = pr.measure_text("save", button_fontsz) + (button_fontsz - 5)
-        button_height: int = button_fontsz + button_fontsz - 5
-        space_remaining: int = self.w - (button_width * 2)
-        padding: int = space_remaining // 3
-        button_y: int = self.h - self.h // 25 - button_height
-
+        button_w: int = self.w // 15
+        button_h: int = self.h // 10
         self.save_button: ButtonPanel = ButtonPanel(
-            padding,
-            button_y,
-            button_width,
-            button_height,
-            {"save": (self.app.change_view, Save_score_view(self.app, self.game))},
-            ((button_fontsz - 5) // 2, 2, 0.1)
+            (self.w - button_w * 3) // 2,
+            -2,
+            button_w,
+            button_h,
+            {"save": (
+                self.app.change_view,
+                Save_score_view(self.app, self.game)
+            )}
         )
         self.exit_button: ButtonPanel = ButtonPanel(
-            self.w - padding - button_width,
-            button_y,
-            button_width,
-            button_height,
-            {"exit": (self.app.change_view, "main_menu")},
-            ((button_fontsz - 5) // 2, 2, 0.1)
+            self.save_button.posx + button_w * 2,
+            -2,
+            button_w,
+            button_h,
+            {"exit": (self.app.change_view, "main_menu")}
         )
         self.widgets += [self.save_button, self.exit_button]
 
     def _update_scores(self) -> None:
 
         scores_y: int = self.highscore.lowerbound
-        scores_height: int = self.h - scores_y - (self.h - self.save_button.posy)
+        scores_height: int = (
+            self.h
+            - scores_y
+            - (self.h - self.save_button.posy)
+        )
         padding: int = scores_height // 8
 
         self.score_panel: TextPanel = TextPanel(
@@ -91,32 +91,13 @@ class Endgame_view(View):
             (padding, 2, 0.1)
         )
         self.widgets.append(self.score_panel)
-        # space_remaining: int = scores_height - padding * 2
-
-        # scores_y: int = scores_y + padding // 2
-
-        # scores_font_size: int = space_remaining // (
-        #     len(self.scores) * 2 - 1
-        # )
-
-        # max_score: str = max(self.scores, key=lambda score: len(score))
-        # scores_font_size = Text._resize_font(max_score, scores_font_size, self.w)
-
-        # for i, score in enumerate(self.scores):
-
-        #     self.widgets.append(Text(
-        #         score,
-        #         -2,
-        #         scores_y + scores_font_size * i + scores_font_size * (i + 1),
-        #         scores_font_size
-        #     ))
 
     def _update(self, forced: bool = False) -> None:
 
         if not pr.is_window_resized() and not forced:
             return
 
-        self.widgets: list[Widget] = []
+        super()._update(True)
         self._update_title()
         self._update_buttons()
         self._update_scores()

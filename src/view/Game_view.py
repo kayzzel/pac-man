@@ -1,11 +1,11 @@
 import pyray as pr
+from pyray import KeyboardKey as kek
 from typing import Any
 from .View import View
 from .Pause_menu import Pause_menu
 from .Endgame_view import Endgame_view
 from .widget import Icon, Text, Widget, TextPanel
 from ..game.Game import Game
-from ..game.entity.collectible.Consumable import Consumable
 from ..game.map.Cell import Cell
 from .Map_renderer import Map_renderer
 from ..utils.enum_utils import Game_state, Consumable_type
@@ -47,7 +47,10 @@ class Game_view(View):
             self._update(True)
             return
 
-        if not hasattr(self, "frame_counter") or self.frame_counter > COUNTDOWN_TIME:
+        if (
+            not hasattr(self, "frame_counter")
+            or self.frame_counter > COUNTDOWN_TIME
+        ):
 
             self.frame_counter: int = 0
             label: str = str(self.countdown)
@@ -82,19 +85,6 @@ class Game_view(View):
             self.labels,
             (self.w // 12 // 2, 2, 0.1)
         )
-        # max_label: str = max(self.labels, key=lambda label: len(label))
-
-        # label_font_sz: int = Text._resize_font(max_label, self.h // 8, self.left_w - self.left_w // 3)
-
-        # self.widgets += [Text(
-        #     label,
-        #     -2,
-        #     self.h // 16 + (label_font_sz + self.h // 10) * i,
-        #     label_font_sz,
-        #     self.left_w - self.left_w // 3,
-        #     pr.RAYWHITE,
-        #     self.left_w
-        # ) for i, label in enumerate(self.labels)]
 
         self.life_label: Text = Text(
             "Lives : ",
@@ -110,19 +100,23 @@ class Game_view(View):
             ) // self.game.player.nb_lives - self.info_panel.w // 30
             self.life_icon_init = True
 
-        if hasattr(self, "lives"):
-            for life in self.lives:
-                life._unload_image()
-
         self.lives: list[Icon] = [Icon(
-            self.info_panel.w // 30 + self.life_label.x + self.life_label.width + self.life_icon_sz * life,
-            self.life_label.y + (self.life_label.font_size - self.life_icon_sz) // 2,
+            (
+                self.info_panel.w // 30
+                + self.life_label.x
+                + self.life_label.width
+                + self.life_icon_sz * life
+            ),
+            self.life_label.y + (
+                self.life_label.font_size - self.life_icon_sz
+            ) // 2,
             LIFE_ICON_PATH,
             (self.life_icon_sz, self.life_icon_sz),
             True
         ) for life in range(self.game.player.nb_lives)]
 
-        self.info_widgets += [self.info_panel, self.life_label] + self.lives
+        self.info_widgets += [self.info_panel, self.life_label]
+        self.info_widgets += [i for i in self.lives]
         self._update_collectibles()
 
     def _update_collectibles(self) -> None:
@@ -135,32 +129,37 @@ class Game_view(View):
                 ] else "_nc"
             )
             collect_info[collectible_name.value] = (
-                self.map_renderer.texture_pack.get_texture(collectible_name.value + state)
+                self.map_renderer.texture_pack.get_texture(
+                    collectible_name.value + state
+                )
             )
         nb_cons: int = len(list(collect_info.keys()))
-
-        if hasattr(self, "collectibles"):
-            for collectible in self.collectibles:
-                collectible._unload_image()
 
         self.collectibles: list[Icon] = []
 
         collectible_label: Text = Text(
             "Collectibles :",
-            (self.info_panel.w - Text.measure_text("Collectibles :", self.info_panel.font_size)) // 2,
+            -2,
             self.life_label.lowerbound + self.h // 15,
-            self.info_panel.font_size
+            self.info_panel.font_size,
+            self.info_panel.w,
+            pr.RAYWHITE,
+            self.info_panel.w
         )
         self.info_widgets.append(collectible_label)
 
-        height_remaining: int = self.h - collectible_label.lowerbound - self.h // 10
+        height_remaining: int = (
+            self.h - collectible_label.lowerbound - self.h // 10
+        )
         collect_h: int = height_remaining // 2
         coll_padding: int = self.info_panel.w // 60
         collect_w: int = (
             self.info_panel.w // (nb_cons // 2)
         ) - coll_padding * 2
+
         if collect_w < collect_h:
             collect_sz: int = collect_w
+
         else:
             collect_sz = collect_h
             coll_padding = ((
@@ -170,7 +169,7 @@ class Game_view(View):
         first_y: int = collectible_label.lowerbound + self.h // 30
         second_y: int = first_y + collect_sz + self.h // 30
 
-        for i, (collect_name, collect_texture) in enumerate(collect_info.items()):
+        for i, (coll_name, coll_texture) in enumerate(collect_info.items()):
 
             if i == 0:
                 coll_y: int = first_y
@@ -183,7 +182,7 @@ class Game_view(View):
             new_coll: Icon = Icon(
                 coll_x,
                 coll_y,
-                collect_texture,
+                coll_texture,
                 (collect_sz, collect_sz),
                 True
             )
@@ -222,7 +221,9 @@ class Game_view(View):
     def _update_map_panel(self) -> None:
 
         self.grid: list[list[Cell]] = self.game.map[self.game.map_index].cells
-        self.map_panel_width: int = self.w - self.info_panel.w - MIDDLE_LINE_THICKNESS - 10
+        self.map_panel_width: int = (
+            self.w - self.info_panel.w - MIDDLE_LINE_THICKNESS - 10
+        )
         self.map_width: int = min(
             self.map_panel_width - self.map_panel_width // 10,
             self.h - self.h // 10
@@ -269,18 +270,36 @@ class Game_view(View):
         self.game.stop()
         self.app.change_view(next_view)
 
+    def _unload_images(self) -> None:
+
+        if self.show_as_modal:
+            self.modal_view._unload_images()
+
+        if hasattr(self, "widgets"):
+            for widget in self.widgets:
+                if isinstance(widget, Icon):
+                    widget._unload_image()
+
+        if hasattr(self, "info_widgets"):
+            for widget in self.info_widgets:
+                if isinstance(widget, Icon):
+                    widget._unload_image()
+
+        if hasattr(self, "map_renderer"):
+            self.map_renderer._unload_images()
+
     def _update(self, forced: bool = False) -> None:
 
         if pr.get_key_pressed() in self.app.display_config.keybinds.values():
             self.catch_player_input()
 
-        if pr.is_key_pressed(pr.KEY_ESCAPE):
+        if pr.is_key_pressed(kek.KEY_ESCAPE):
             self.pause_or_resume()
 
         if not forced:
             self._update_info_panel()
 
-        if self.game.state == Game_state.WON or self.game.state == Game_state.LOST:
+        if self.game.state in [Game_state.WON, Game_state.LOST]:
             state: bool = self.game.state == Game_state.WON
             if self.map_renderer.check_death():
                 self.exit_game(Endgame_view(self.app, self.game, state))
@@ -295,6 +314,7 @@ class Game_view(View):
 
         self.modal_view._update(True)
 
+        self._unload_images()
         self.widgets: list[Widget] = []
         self._update_info_panel()
         self._update_map_panel()

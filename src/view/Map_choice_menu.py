@@ -3,7 +3,7 @@ from typing import Callable, Any
 from .View import View
 from .Game_view import Game_view
 from .Custom_view import Custom_view
-from .widget import Widget, Text, ButtonPanel, Icon
+from .widget import Text, ButtonPanel, Icon
 from ..game.Game import mandatory_game
 
 
@@ -50,15 +50,23 @@ class Map_choice_menu(View):
     def _update_panels(self) -> None:
 
         self.button_actions: dict[str, tuple[Callable, Any]] = {
-            "MANDATORY": (self.app.change_view, Game_view(self.app, mandatory_game(self.app.config))),
-            "ARCADE": (self.app.change_view, Game_view(self.app, mandatory_game(self.app.config))),
+            "MANDATORY": (
+                self.app.change_view,
+                Game_view(self.app, mandatory_game(self.app.config))
+            ),
+            "ARCADE": (
+                self.app.change_view,
+                Game_view(self.app, mandatory_game(self.app.config))
+            ),
             "CUSTOM": (self.app.change_view, Custom_view(self.app))
         }
 
         self.calculate_panel_spacing()
 
         self.widgets += [ButtonPanel(
-            self.icons[label].posx + (self.icons[label].w - self.panel_width) // 2,
+            self.icons[label].posx + (
+                self.icons[label].w - self.panel_width
+            ) // 2,
             self.icon_y + (self.icon_height - self.panel_height) // 2,
             self.panel_width,
             self.panel_height,
@@ -91,20 +99,25 @@ class Map_choice_menu(View):
             self.button_actions.keys(),
             key=lambda label: len(label)
         )
-        self.button_font_sz: int = Text._resize_font(max_label, self.h // 15, self.w // 5)
+        self.button_fontsz: int = Text._resize_font(
+            max_label,
+            self.h // 15,
+            self.w // 5
+        )
 
-        self.panel_padding: int = self.button_font_sz + 10
+        self.panel_padding: int = self.button_fontsz + self.button_fontsz // 5
         self.panel_width: int = pr.measure_text(
             max_label,
-            self.button_font_sz
+            self.button_fontsz
         ) + self.panel_padding
+
         nb_buttons: int = len(self.button_actions.keys())
         width_remaining: int = (
             self.w -
             nb_buttons * self.panel_width
         )
 
-        self.panel_height: int = self.button_font_sz + self.panel_padding
+        self.panel_height: int = self.button_fontsz + self.panel_padding
 
         self.spacing: int = width_remaining // (nb_buttons + 1)
 
@@ -113,7 +126,7 @@ class Map_choice_menu(View):
         if not pr.is_window_resized() and not forced:
             return
 
-        self.widgets: list[Widget] = []
+        super()._update(True)
         self._update_title()
         self._update_icons()
         self._update_panels()
