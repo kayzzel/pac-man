@@ -38,7 +38,8 @@ def generate_maze(width: int, height: int, seed: int = 0) -> list[list[int]]:
         generator: MazeGenerator = MazeGenerator(
                 (width, height), False, seed=seed
             )
-        return generator.maze
+        maze: list[list[int]] = generator.maze
+        return maze
     except Exception as err:
         raise ValueError(
                 "the A-Maze-ing generator failed (is the installed "

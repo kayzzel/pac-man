@@ -159,7 +159,7 @@ class ButtonPanel(Panel):
         y: int,
         width: int,
         height: int,
-        buttons: dict[str, tuple[Callable, Any]],
+        buttons: dict[str, tuple[Callable[..., Any], Any]],
         shape_params: tuple[int, int, float] = (10, 2, 0.1),
         center: int = -2,
         panel_colors: tuple[pr.Color, pr.Color] = (
@@ -184,7 +184,7 @@ class ButtonPanel(Panel):
 
     def init_buttons(
         self,
-        button_actions: dict[str, tuple[Callable, Any]]
+        button_actions: dict[str, tuple[Callable[..., Any], Any]]
     ) -> None:
 
         if not button_actions:

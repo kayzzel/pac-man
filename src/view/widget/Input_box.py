@@ -29,7 +29,7 @@ class Input_box(Widget):
         y: int,
         width: int,
         height: int,
-        action: tuple[Callable, Any] = (lambda: 0, None),
+        action: tuple[Callable[..., Any], Any] = (lambda: 0, None),
         max_chars: int = MAX_INPUT_CHARS,
         char_range: tuple[int, int] | list[int] = (32, 125),
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
@@ -70,7 +70,7 @@ class Input_box(Widget):
         self.enter_input: bool = False
         self.frame_counter: int = 0
 
-        self.action: tuple[Callable, Any] = action
+        self.action: tuple[Callable[..., Any], Any] = action
 
     def _update_widget(self) -> None:
 
@@ -174,7 +174,7 @@ class Keybind_input_box(Input_box):
         y: int,
         width: int,
         height: int,
-        action: tuple[Callable, Any] = (lambda: 0, None),
+        action: tuple[Callable[..., Any], Any] = (lambda: 0, None),
         max_chars: int = 1,
         char_range: tuple[int, int] | list[int] = (32, 125),
         colors: tuple[pr.Color, pr.Color, pr.Color] = (
