@@ -134,16 +134,6 @@ class App:
 
         return self.__previous_views[-1]
 
-    def remove_last_view(self) -> None:
-
-        if not self.__previous_views:
-            return
-
-        if self.previous_view == self.views["main_menu"]:
-            return
-
-        self.__previous_views.pop()
-
     @property
     def config(self) -> Config:
 

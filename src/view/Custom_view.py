@@ -1241,7 +1241,6 @@ class Custom_view(View):
 
         if self.cur_step_index == 0:
             self.app.return_to_prev_view()
-            # self.app.remove_last_view()
             return
 
         self.cur_step_index -= 1
