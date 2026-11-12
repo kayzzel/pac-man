@@ -21,6 +21,12 @@ class Icon(Widget):
         to_resize: bool = False
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self.image_path: str = image_path
         self.max_size: tuple[int, int] = max_size
         self.to_resize: bool = to_resize
@@ -36,6 +42,12 @@ class Icon(Widget):
         resize_needed: bool = False
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         new_width: int = self.image.width
         if new_width > max_w or resize_needed:
             new_width = max_w
@@ -48,6 +60,12 @@ class Icon(Widget):
 
     def _load_image(self, image_path: str) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self._unload_image()
         self.image: pr.Image = pr.load_image(image_path)
         self._resize_image(*self.max_size, self.to_resize)
@@ -55,14 +73,34 @@ class Icon(Widget):
 
     def _unload_image(self) -> None:
 
-        if hasattr(self, "texture"):
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
+        if hasattr(self, "texture") and self.texture is not None:
             pr.unload_texture(self.texture)
-        if hasattr(self, "image"):
+            self.texture = None
+        if hasattr(self, "image") and self.image is not None:
             pr.unload_image(self.image)
+            self.image = None
+
+    def _ensure_loaded(self) -> None:
+
+        if self.texture is None or self.image is None:
+            self._load_image(self.image_path)
 
     @property
     def i_w(self) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
+        self._ensure_loaded()
         return (
             self.texture.width
             if not self.to_resize
@@ -72,6 +110,13 @@ class Icon(Widget):
     @property
     def i_h(self) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
+        self._ensure_loaded()
         return (
             self.texture.height
             if not self.to_resize
@@ -81,6 +126,12 @@ class Icon(Widget):
     @property
     def posx(self) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         return (
             self.x
             if self.x >= 0
@@ -90,6 +141,12 @@ class Icon(Widget):
     @property
     def posy(self) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         return (
             self.y
             if self.y >= 0
@@ -99,11 +156,24 @@ class Icon(Widget):
     @property
     def lower_bounds(self) -> tuple[int, int]:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         return (self.posx + self.i_w, self.posy + self.i_h)
 
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self._update_widget()
+        self._ensure_loaded()
         pr.draw_texture(self.texture, self.posx, self.posy, pr.RAYWHITE)
 
 
@@ -121,6 +191,12 @@ class AnimIcon(Icon):
         frame_delay: int = BASE_FRAME_DELAY
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         super().__init__(x, y, image_path, max_size)
         self.to_resize = to_resize
 
@@ -128,6 +204,12 @@ class AnimIcon(Icon):
 
     def _load_image(self, image_path: str) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self._unload_image()
         self.frames: Any = pr.ffi.new('int *', 0)
         self.image: pr.Image = pr.load_image_anim(image_path, self.frames)
@@ -141,14 +223,27 @@ class AnimIcon(Icon):
 
     def reset_loop(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self.frame_counter = 0
         self.cur_frame = 0
         self.loop_finished = False
 
     def _update_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # updating frames for the animated image
 
+        self._ensure_loaded()
         self.frame_counter += 1
 
         if self.frame_counter >= self.frame_delay:
@@ -176,6 +271,12 @@ class AnimIcon(Icon):
 
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if not self.to_resize:
             super().display_widget()
             return
@@ -183,6 +284,7 @@ class AnimIcon(Icon):
         # different resizing for animated images, using vectors
 
         self._update_widget()
+        super()._ensure_loaded()
 
         src_rect: pr.Rectangle = pr.Rectangle(
             0, 0, self.image.width, self.image.height
@@ -211,6 +313,12 @@ class ClickableIcon(Icon):
         magnify: bool = True
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         super().__init__(x, y, image_path, max_size, to_resize)
 
         self.action: tuple[Callable, Any] = action
@@ -220,6 +328,12 @@ class ClickableIcon(Icon):
 
     def _update_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if self.was_in and not self.is_in:
 
             self.was_in = False

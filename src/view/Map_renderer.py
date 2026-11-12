@@ -68,7 +68,7 @@ class Map_renderer:
 
     def set_correct_dir(self, entity: Entity) -> None:
 
-        if self.game.state != Game_state.RUNNING:
+        if self.game.state not in [Game_state.RUNNING, *self.end_states]:
             return
 
         alignment: str = self.saved_dirs[entity.name][1]

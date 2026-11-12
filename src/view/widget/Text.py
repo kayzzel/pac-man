@@ -33,6 +33,12 @@ class Text(Widget):
         width: int = 0
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # these are default values, weirdly did not work when defined above
         if not max_w:
             max_w = sw()
@@ -51,6 +57,12 @@ class Text(Widget):
     @classmethod
     def _load_font(cls, new_font: str = "default") -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if new_font not in cls.fonts.keys():
             return
 
@@ -62,6 +74,12 @@ class Text(Widget):
     @classmethod
     def _resize_font(cls, string: str, fontsize: int, width: int = 0) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # easier way of resizing text of fontsize based on max available space
 
         if not width:
@@ -80,11 +98,23 @@ class Text(Widget):
     @property
     def width(self) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         return type(self).measure_text(self.label, self.font_size)
 
     @classmethod
     def measure_text(cls, text: str, font_size: int) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if not cls.init:
             cls._load_font()
             cls.init = True
@@ -98,10 +128,22 @@ class Text(Widget):
     @property
     def lowerbound(self) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         return self.y + self.font_size
 
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if not type(self).default:
             pr.draw_text_ex(
                 type(self).font,

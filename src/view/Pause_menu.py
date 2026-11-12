@@ -6,7 +6,7 @@ from ..game.Game import Game
 from .View import View
 from .Scores_view import Scores_view
 from .Save_score_view import Save_score_view
-from .Options_view import Options_view
+from .Options_menu import Options_menu
 from .widget import Text, ButtonPanel, TextPanel, ClickableIcon, Input_box
 
 
@@ -46,7 +46,7 @@ class Pause_menu(View):
 
         button_actions: dict[str, tuple[Callable, Any]] = {
             "Resume": (self.global_view.pause_or_resume, None),
-            "Options": (self.app.change_view, Options_view(self.app)),
+            "Options": (self.app.change_view, Options_menu(self.app)),
             "Scores": (
                 self.app.change_view,
                 Scores_view(self.app)

@@ -59,8 +59,7 @@ class Scores_view(View):
             self.h - button_h - self.h // 40,
             back_w,
             button_h,
-            {back_label: (self.app.return_to_prev_view, None)},
-            (button_pad // 2, 2, 0.1)
+            {back_label: (self.app.return_to_prev_view, None)}
         )
         self.widgets.append(self.back_button)
 

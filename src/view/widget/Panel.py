@@ -27,6 +27,12 @@ class Panel(Widget):
         )
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         super().__init__(x, y, width, height)
 
         self.padding: int
@@ -41,6 +47,12 @@ class Panel(Widget):
 
     def calculate_label_spacing(self, labels: list[str]) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # calculating font size and space between elements
 
         if self.padding == 0:
@@ -83,6 +95,12 @@ class Panel(Widget):
 
     def center_label_x(self, label: str) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         return self.posx + (
             self.w - Text.measure_text(label, self.font_size)
         ) // 2
@@ -108,6 +126,12 @@ class TextPanel(Panel):
         label_color: pr.Color = TEXT_COLOR
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         super().__init__(
             x, y, width, height, shape_params, center, panel_colors
         )
@@ -117,6 +141,12 @@ class TextPanel(Panel):
 
     def init_labels(self, labels: list[str]) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if not labels:
             return
 
@@ -142,6 +172,12 @@ class TextPanel(Panel):
 
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if not hasattr(self, "labels"):
             return
 
@@ -173,6 +209,12 @@ class ButtonPanel(Panel):
         hover_color: pr.Color = pr.BLANK
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         super().__init__(
             x, y, width, height, shape_params, center, panel_colors
         )
@@ -187,6 +229,12 @@ class ButtonPanel(Panel):
         button_actions: dict[str, tuple[Callable, Any]]
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if not button_actions:
             return
 
@@ -217,6 +265,12 @@ class ButtonPanel(Panel):
 
     def determine_button_area(self, button: Button, nb: int) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # this is used to be able to change background color when hovering
 
         sx: int = self.posx
@@ -241,6 +295,12 @@ class ButtonPanel(Panel):
 
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if self.outline_color != pr.BLANK:
 
             pr.draw_rectangle_rounded_lines_ex(

@@ -50,6 +50,7 @@ class App:
         return (0)
 
     def add_view(self, new_view: dict[str, View]) -> None:
+
         self.views.update(new_view)
 
     def return_to_prev_view(self) -> None:
@@ -57,23 +58,27 @@ class App:
         if not self.previous_view:
             return
 
-        if isinstance(self.previous_view, type(self.__current_view)):
-            self.remove_last_view()
-        self.change_view(self.previous_view)
+        prev: View = self.__previous_views.pop()
+
+        if self.__current_view and not self.__current_view.is_freed:
+            self.__current_view._unload_images()
+
+        self.__current_view = prev
+        if prev:
+            prev._update(True)
 
     def change_view(self, view: View | str) -> None:
 
-        if self.__current_view:
+        if self.__current_view and not self.__current_view.is_freed:
             self.__current_view._unload_images()
 
+        if not self.__current_view == self.previous_view:
+            self.__previous_views.append(self.__current_view)
+
         if isinstance(view, View):
-            if not isinstance(self.__current_view, type(self.previous_view)):
-                self.__previous_views.append(self.__current_view)
             self.__current_view = view
 
         elif isinstance(view, str) and view in self.views.keys():
-            if not self.previous_view == self.__current_view:
-                self.__previous_views.append(self.__current_view)
             self.__current_view = self.views[view]
 
         if self.__current_view:
@@ -102,8 +107,13 @@ class App:
 
     def stop_app(self) -> None:
 
-        if self.__current_view:
-            self.__current_view._unload_images()
+        already_checked: set = set()
+        for view in [*self.__previous_views, self.__current_view]:
+            if view and id(view) not in already_checked:
+                already_checked.add(id(view))
+                if not view.is_freed:
+                    view._unload_images()
+
         pr.close_window()
 
     def display_app(self) -> None:

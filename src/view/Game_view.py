@@ -70,6 +70,11 @@ class Game_view(View):
 
     def _update_info_panel(self) -> None:
 
+        if not self.is_freed and hasattr(self, "info_widgets"):
+            for widget in self.info_widgets:
+                if isinstance(widget, Icon):
+                    widget._unload_image()
+
         self.info_widgets: list[Widget] = []
 
         self.labels: list[str] = [
@@ -275,6 +280,9 @@ class Game_view(View):
         if self.show_as_modal:
             self.modal_view._unload_images()
 
+        if self.is_freed:
+            return
+
         if hasattr(self, "widgets"):
             for widget in self.widgets:
                 if isinstance(widget, Icon):
@@ -287,6 +295,8 @@ class Game_view(View):
 
         if hasattr(self, "map_renderer"):
             self.map_renderer._unload_images()
+
+        self.is_freed = True
 
     def _update(self, forced: bool = False) -> None:
 
@@ -318,6 +328,7 @@ class Game_view(View):
         self.widgets: list[Widget] = []
         self._update_info_panel()
         self._update_map_panel()
+        self.is_freed = False
 
     def display_view(self) -> None:
 

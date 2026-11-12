@@ -8,6 +8,10 @@ from typing import Any
 
 class Widget(ABC):
 
+    """
+    A generic abstract class used as a template for all widgets.
+    """
+
     def __init__(
         self,
         x: int,
@@ -15,6 +19,13 @@ class Widget(ABC):
         width: int = 0,
         height: int = 0
     ) -> None:
+
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
 
         self.x: int = x
         self.y: int = y
@@ -25,6 +36,12 @@ class Widget(ABC):
     @property
     def is_in(self) -> bool:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # generic property for all widgets to know if mouse in radius
 
         if (
@@ -38,6 +55,12 @@ class Widget(ABC):
     @property
     def is_pressed(self) -> bool:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # generic property for all widgets to know if widget is pressed
         # mostly used only for clickable widgets
 
@@ -48,6 +71,12 @@ class Widget(ABC):
 
     def _update_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # used only for clickable widgets
 
         if self.is_pressed:
@@ -56,6 +85,12 @@ class Widget(ABC):
 
     def call_action(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # used only for clickable widgets
 
         if not hasattr(self, "action"):
@@ -76,11 +111,23 @@ class Widget(ABC):
     @abstractmethod
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         ...
 
     @property
     def posx(self) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # calculates relative position or fixed position for x coordinate
         # if x < 0 then the position is calculated by dividing the width by -x
         # example: for x = -2, the widget is centered horizontally
@@ -95,6 +142,12 @@ class Widget(ABC):
     @property
     def posy(self) -> int:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # calculates relative position or fixed position for y coordinate
         # if y < 0 then the position is calculated by dividing the height by -y
         # example: for y = -2, the widget is centered vertically
@@ -105,3 +158,14 @@ class Widget(ABC):
             if self.y >= 0
             else (sh() - self.h) // -(self.y)
         )
+
+    @property
+    def lowerbound(self) -> int:
+
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
+        return self.posy + self.h

@@ -39,6 +39,12 @@ class Input_box(Widget):
         )
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         super().__init__(x, y, width, height)
 
         self.textbox: tuple[int, int, int, int] = (
@@ -74,6 +80,12 @@ class Input_box(Widget):
 
     def _update_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # if click inside text box for first time, input activated
         if self.is_pressed and not self.enter_input:
             self.enter_input = True
@@ -118,6 +130,12 @@ class Input_box(Widget):
 
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self._update_widget()
 
         pr.draw_rectangle(*self.textbox, pr.DARKGRAY)
@@ -196,6 +214,12 @@ class Keybind_input_box(Input_box):
         )
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         super().__init__(
             x, y, width, height, action, max_chars, char_range, colors
         )
@@ -205,6 +229,12 @@ class Keybind_input_box(Input_box):
 
         # initializes the icons for the arrow keys (cannot chr)
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         icon_size: int = self.h - self.h // 3
         icon_x: int = self.posx + (self.w - icon_size) // 2
         icon_y: int = self.posy + (self.h - icon_size) // 2
@@ -226,6 +256,12 @@ class Keybind_input_box(Input_box):
 
     def _update_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # if click inside text box for first time, input activated
         if self.is_pressed and not self.enter_input:
             self.enter_input = True
@@ -272,6 +308,12 @@ class Keybind_input_box(Input_box):
 
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self._update_widget()
 
         pr.draw_rectangle(*self.textbox, pr.DARKGRAY)

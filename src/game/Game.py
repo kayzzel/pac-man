@@ -246,6 +246,7 @@ def custom_game(
         config = Config()
 
     if map_name != Path(map_name).name:
+        print("### no path for the map")
         return None
 
     map_file = map_directory / map_name / "map.json"
@@ -253,6 +254,7 @@ def custom_game(
     try:
         new_map = load_map_from_file(str(map_file))
     except ValueError:
+        print("### failed to load map from file")
         return None
 
     game = Game(config, map_name, map_file)

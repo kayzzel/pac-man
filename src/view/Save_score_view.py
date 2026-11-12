@@ -9,9 +9,6 @@ MAX_INPUT_LENGTH: int = 20
 
 MSG_DISPLAY_TIME: int = 120
 
-NAME_CHAR_RANGE: tuple[int, int] = (32, 125)
-SCORE_CHAR_RANGE: tuple[int, int] = (48, 57)
-
 
 class Save_score_view(View):
 
@@ -34,11 +31,6 @@ class Save_score_view(View):
     def _update_back_button(self) -> None:
 
         back_label: str = "back <-|"
-        self.button_actions[back_label] = (
-            self.app.return_to_prev_view,
-            None
-        )
-
         back_width: int = self.w // 8
         back_height: int = self.h // 15
 
@@ -47,11 +39,15 @@ class Save_score_view(View):
             self.h - back_height - self.h // 40,
             back_width,
             back_height,
-            {back_label: self.button_actions[back_label]}
+            {back_label: (self.app.return_to_prev_view, None)}
         )
         self.widgets.append(self.back_button)
 
     def _update_input_box(self) -> None:
+
+        all_characters: list[int] = []
+        for crange in [(48, 58), (65, 91), (97, 123)]:
+            all_characters += [i for i in range(*crange)]
 
         self.input_box: Input_box = Input_box(
             -2,
@@ -60,7 +56,7 @@ class Save_score_view(View):
             self.h // 8,
             (self.save_name, None),
             MAX_INPUT_LENGTH,
-            NAME_CHAR_RANGE
+            all_characters
         )
         self.input_box.enter_input = True
         self.widgets.append(self.input_box)

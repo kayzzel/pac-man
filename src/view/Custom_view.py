@@ -59,7 +59,12 @@ class Custom_step(View, ABC):
         self.show_next: bool = show_next
         self.show_message: str = ""
         self.frame_counter: int = 0
+        self.is_freed: bool = True
         self._update(True)
+
+    def _unload_images(self) -> None:
+
+        self.is_freed = True
 
     def go_back(self) -> None:
 
@@ -228,6 +233,7 @@ class Step_zero(Custom_step):
         self.number: int = 0
         self.maps: list[str] = get_stored_map_list(main_view.app.map_folder)
         self.main_view: View = main_view
+        self.is_freed: bool = True
         self._update(True)
 
     def _update_title(self) -> None:
@@ -458,11 +464,13 @@ class Step_two(Custom_step):
 
     def _unload_images(self) -> None:
 
-        if hasattr(self, "walls"):
+        if hasattr(self, "walls") and not self.is_freed:
 
             for icons in self.walls.values():
                 icons[0]._unload_image()
                 icons[1]._unload_image()
+
+        super()._unload_images()
 
     def _update_walls(self) -> None:
 
@@ -542,6 +550,7 @@ class Step_two(Custom_step):
         self.cur_cell: tuple[int, int] = (x, y)
         self._unload_images()
         self._update_walls()
+        self.is_freed = False
 
     def is_in_bigcell(self, x: int, y: int) -> bool:
 
@@ -572,6 +581,7 @@ class Step_two(Custom_step):
             self.cell_size,
             True
         )
+        self.is_freed = False
 
     def _update(self, forced: bool = False) -> None:
 
@@ -581,10 +591,12 @@ class Step_two(Custom_step):
         if not pr.is_window_resized() and not forced:
             return
 
+        self.widgets: list[Widget] = []
         self._update_title()
         self._update_backnext_buttons()
         self._update_randomize_button()
         self._update_grid()
+        self.is_freed = False
 
     def display_view(self) -> None:
 
@@ -755,6 +767,9 @@ class Step_three(Custom_step):
 
     def _unload_images(self) -> None:
 
+        if self.is_freed:
+            return
+
         if hasattr(self, "textures"):
             for icon in self.textures.values():
                 icon._unload_image()
@@ -765,6 +780,8 @@ class Step_three(Custom_step):
 
         if hasattr(self, "map_renderer"):
             self.map_renderer._unload_images()
+
+        super()._unload_images()
 
     def _update_textures(self) -> None:
 
@@ -1105,6 +1122,7 @@ class Step_six(Custom_step):
     def __init__(self, main_view: View) -> None:
 
         self.main_view: View = main_view
+        self.is_freed: bool = True
         self._update(True)
 
     def _update_widgets(self) -> None:
@@ -1151,6 +1169,7 @@ class Step_six(Custom_step):
 
         self.widgets: list[Widget] = []
         self._update_widgets()
+        self.is_freed = False
 
     def display_view(self) -> None:
 
@@ -1163,6 +1182,7 @@ class Custom_view(View):
 
         self.app = app
         self.map: Map_custom = Map_custom(self.app.map_folder)
+        self.is_freed: bool = False
 
         self.steps: list = []
 
@@ -1199,18 +1219,19 @@ class Custom_view(View):
 
     def _unload_images(self) -> None:
 
-        for step in self.steps_completed:
-            step._unload_images()
-        if hasattr(self, "cur_step"):
-            self.cur_step._unload_images()
+        if self.is_freed:
+            return
+
+        for step in [*self.steps_completed, self.cur_step]:
+            if not step.is_freed:
+                step._unload_images()
+        self.is_freed = True
 
     def launch_game(self, map_name: str) -> None:
 
         game = custom_game(map_name, self.app.map_folder)
         if game:
             self.app.change_view(Game_view(self.app, game))
-        else:
-            print("the game creation has not worked")
 
     def go_to_menu(self) -> None:
 
@@ -1220,11 +1241,12 @@ class Custom_view(View):
 
         if self.cur_step_index == 0:
             self.app.return_to_prev_view()
-            self.app.remove_last_view()
+            # self.app.remove_last_view()
             return
 
         self.cur_step_index -= 1
-        self._unload_images()
+        if not self.cur_step.is_freed:
+            self.cur_step._unload_images()
         self.cur_step = self.steps_completed[-1]
         self.steps_completed.pop()
 

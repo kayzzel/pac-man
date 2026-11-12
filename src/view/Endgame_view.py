@@ -51,11 +51,11 @@ class Endgame_view(View):
 
     def _update_buttons(self) -> None:
 
-        button_w: int = self.w // 15
+        button_w: int = self.w // 8
         button_h: int = self.h // 10
         self.save_button: ButtonPanel = ButtonPanel(
             (self.w - button_w * 3) // 2,
-            -2,
+            self.h - button_h - self.h // 40,
             button_w,
             button_h,
             {"save": (
@@ -65,7 +65,7 @@ class Endgame_view(View):
         )
         self.exit_button: ButtonPanel = ButtonPanel(
             self.save_button.posx + button_w * 2,
-            -2,
+            self.h - button_h - self.h // 40,
             button_w,
             button_h,
             {"exit": (self.app.change_view, "main_menu")}

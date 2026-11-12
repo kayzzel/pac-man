@@ -23,6 +23,12 @@ class Button(Widget):
         hover_color: pr.Color = BUTTON_HOVER_COLOR
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         super().__init__(x, y, Text.measure_text(label, font_sz), font_sz)
 
         self.label: str = label
@@ -33,6 +39,12 @@ class Button(Widget):
     @property
     def is_in_area(self) -> bool:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if not hasattr(self, "area"):
             return False
 
@@ -49,10 +61,22 @@ class Button(Widget):
 
     def set_area(self, area: tuple[int, int, int, int]) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self.area: tuple[int, int, int, int] = area
 
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self._update_widget()
 
         color: pr.Color = self.color

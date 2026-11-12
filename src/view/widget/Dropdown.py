@@ -25,6 +25,12 @@ class Dropdown(Widget):
         max_show: int = 5
     ) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         super().__init__(x, y, width, height)
 
         self.show: bool = False
@@ -41,6 +47,12 @@ class Dropdown(Widget):
 
     def _init_main_panel(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # this is to initialize the main label, the 'title' of the dropdown
 
         self.main_button: dict[str, tuple[Callable, Any]] = {
@@ -76,6 +88,12 @@ class Dropdown(Widget):
 
     def invert_show(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         # changes the state of the dropdown (shown or hidden)
 
         self.show = not self.show
@@ -89,6 +107,12 @@ class Dropdown(Widget):
 
     def _init_icons(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         arrow_x: int = self.posx + self.w - self.arrow_size - self.arrow_pad
 
         self.arrow_icons: dict[str, ClickableIcon] = {
@@ -105,6 +129,12 @@ class Dropdown(Widget):
 
     def _update_buttons(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if not self.show:
             return
 
@@ -135,6 +165,12 @@ class Dropdown(Widget):
 
     def _scroll(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         if self.nb_buttons <= self.max_show:
             return
 
@@ -158,6 +194,12 @@ class Dropdown(Widget):
 
     def display_widget(self) -> None:
 
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
         self._scroll()
         self.main_panel.display_widget()
         self.arrow_icons[self.arrow_icon_path].display_widget()
