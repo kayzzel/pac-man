@@ -7,6 +7,7 @@ from typing import Any
 
 
 class Widget(ABC):
+    """Base of every widget: position, hover, click and actions."""
 
     def __init__(
         self,
@@ -15,7 +16,19 @@ class Widget(ABC):
         width: int = 0,
         height: int = 0
     ) -> None:
+        """
+            Description:
+        Create a widget at a fixed position (x and y >= 0) or at a
+        relative position (x or y < 0) computed against the screen
+        size, for example -2 to center it on the axis.
 
+            Parameters:
+        x -> fixed column, or -n for a relative position on x
+        y -> fixed row, or -n for a relative position on y
+        width -> width of the widget, used by the relative positions
+                 and the hover detection
+        height -> height of the widget, same use as the width
+        """
         self.x: int = x
         self.y: int = y
         self.pos: tuple[int, int] = (x, y)
@@ -24,9 +37,13 @@ class Widget(ABC):
 
     @property
     def is_in(self) -> bool:
+        """
+            Description:
+        Tell whether the mouse currently hovers the widget.
 
-        # generic property for all widgets to know if mouse in radius
-
+            Returns value:
+        return True when the mouse is inside the widget's area
+        """
         if (
             self.posx <= pr.get_mouse_x() <= (self.posx + self.w)
             and self.posy <= pr.get_mouse_y() <= (self.posy + self.h)
@@ -37,27 +54,37 @@ class Widget(ABC):
 
     @property
     def is_pressed(self) -> bool:
+        """
+            Description:
+        Tell whether the left mouse button is pressed on the widget,
+        mostly used by the clickable widgets.
 
-        # generic property for all widgets to know if widget is pressed
-        # mostly used only for clickable widgets
-
+            Returns value:
+        return True when the widget is being pressed
+        """
         return (
             pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT)
             and self.is_in
         )
 
     def _update_widget(self) -> None:
-
-        # used only for clickable widgets
-
+        """
+            Description:
+        Trigger the widget's action when it is pressed, called by the
+        display of the clickable widgets.
+        """
         if self.is_pressed:
 
             self.call_action()
 
     def call_action(self) -> None:
-
-        # used only for clickable widgets
-
+        """
+            Description:
+        Call the widget's action with its argument: a tuple argument
+        is unpacked as positional arguments, a single value is given
+        as is, and no argument calls the action without any. A widget
+        without action does nothing.
+        """
         if not hasattr(self, "action"):
 
             return
@@ -75,17 +102,24 @@ class Widget(ABC):
 
     @abstractmethod
     def display_widget(self) -> None:
-
+        """
+            Description:
+        Draw the widget on the screen for one frame, defined by every
+        concrete widget.
+        """
         ...
 
     @property
     def posx(self) -> int:
+        """
+            Description:
+        Give the x position of the widget on the screen: a fixed
+        position for x >= 0, else a position computed by dividing
+        the screen by -x (x = -2 centers the widget horizontally).
 
-        # calculates relative position or fixed position for x coordinate
-        # if x < 0 then the position is calculated by dividing the width by -x
-        # example: for x = -2, the widget is centered horizontally
-        # else the widget keeps the fixed original position of x
-
+            Returns value:
+        return the x column where the widget is drawn
+        """
         return (
             self.x
             if self.x >= 0
@@ -94,12 +128,15 @@ class Widget(ABC):
 
     @property
     def posy(self) -> int:
+        """
+            Description:
+        Give the y position of the widget on the screen: a fixed
+        position for y >= 0, else a position computed by dividing
+        the screen by -y (y = -2 centers the widget vertically).
 
-        # calculates relative position or fixed position for y coordinate
-        # if y < 0 then the position is calculated by dividing the height by -y
-        # example: for y = -2, the widget is centered vertically
-        # else the widget keeps the fixed original position of y
-
+            Returns value:
+        return the y row where the widget is drawn
+        """
         return (
             self.y
             if self.y >= 0

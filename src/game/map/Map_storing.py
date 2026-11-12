@@ -20,6 +20,7 @@ import json
 
 
 class Collectible_info(BaseModel):
+    """The saved form of one collectible, for the map.json files."""
     name: str
     x: int = Field(ge=0)
     y: int = Field(ge=0)
@@ -28,6 +29,21 @@ class Collectible_info(BaseModel):
     @field_validator("name", mode="before")
     @classmethod
     def check_name(cls, value: object) -> str:
+        """
+            Description:
+        Accept a plain name (a pacgum, a super pacgum or a fruit from
+        the Consumable_type values), or a Consumable_type member
+        turned into its plain value, and refuse anything else.
+
+            Parameters:
+        value -> the name read from the file, already a string
+
+            Returns value:
+        return the plain collectible name, stored as is
+
+            Raises:
+        ValueError when the name is unknown or not a string
+        """
         if isinstance(value, Consumable_type):
             return value.value
         if not isinstance(value, str):
@@ -42,6 +58,7 @@ class Collectible_info(BaseModel):
 
 
 class Cell_info(BaseModel):
+    """The saved form of one cell: position, walls and collectible."""
     pos_x: int = Field(ge=0)
     pos_y: int = Field(ge=0)
     walls: dict[str, bool]
@@ -50,6 +67,18 @@ class Cell_info(BaseModel):
 
     @model_validator(mode="after")
     def check(self) -> "Cell_info":
+        """
+            Description:
+        Keep one cell coherent: its walls are exactly the four
+        directions, and its collectible sits on the cell itself.
+
+            Returns value:
+        return the cell once it is validated
+
+            Raises:
+        ValueError when the walls keys or the collectible placement
+        are wrong
+        """
         if set(self.walls.keys()) != {"N", "S", "E", "W"}:
             raise ValueError("walls must have exactly the N, S, E, W keys")
 
@@ -66,6 +95,7 @@ class Cell_info(BaseModel):
 
 
 class Map_info(BaseModel):
+    """The saved form of a whole map, for the map.json files."""
     name: str = Field(min_length=1, max_length=20)
     cells: list[list[Cell_info]]
     real_path_finding: bool = False
@@ -76,6 +106,21 @@ class Map_info(BaseModel):
 
     @model_validator(mode="after")
     def check(self) -> "Map_info":
+        """
+            Description:
+        Keep a saved map coherent: size within the bounds, a
+        rectangular grid, the four ghost names everywhere, every
+        spawn inside the map and on a walkable cell, a collectible
+        count that matches the grid, and walls that agree on both of
+        their sides, so any well formatted map is playable and
+        winnable.
+
+            Returns value:
+        return the map once it is validated
+
+            Raises:
+        ValueError on the first incoherence found, with its reason
+        """
         GHOSTS: set[str] = {"BLINKY", "PINKY", "CLYDE", "INKY"}
 
         if len(self.cells) < 10 or len(self.cells[0]) < 10:
@@ -96,9 +141,11 @@ class Map_info(BaseModel):
             raise ValueError("ghosts_scatter must have the 4 ghost names")
 
         def inside(pos: tuple[float, float]) -> bool:
+            """Tell whether a position lands inside the map."""
             return 0 <= int(pos[0]) < width and 0 <= int(pos[1]) < height
 
         def walkable(what: str, pos: tuple[float, float]) -> None:
+            """Raise when a position falls outside or on a closed cell."""
             if not inside(pos):
                 raise ValueError(f"{what} {pos} is outside of the map")
             if all(self.cells[int(pos[1])][int(pos[0])].walls.values()):
@@ -142,6 +189,18 @@ class Map_info(BaseModel):
 
 
 def map_to_info(m: Map) -> Map_info:
+    """
+        Description:
+    Turn a map into its saved form: one info per cell and per
+    collectible, plus the spawns and the counts. Building the info
+    also validates the map, so it doubles as a coherence check.
+
+        Parameters:
+    m -> the map to save
+
+        Returns value:
+    return the validated map info
+    """
     cells: list[list[Cell_info]] = []
 
     for row in m.cells:
@@ -178,6 +237,18 @@ def map_to_info(m: Map) -> Map_info:
 
 
 def info_to_map(info: Map_info) -> Map:
+    """
+        Description:
+    Rebuild a live map from its saved form: the real game cells,
+    walls, special state and collectibles (a pacgum, a super pacgum
+    or a fruit according to the saved name), spawns and counts.
+
+        Parameters:
+    info -> the validated map info to rebuild
+
+        Returns value:
+    return the map, ready to be played
+    """
     m: Map = Map()
 
     for row in info.cells:
@@ -215,6 +286,16 @@ def info_to_map(info: Map_info) -> Map:
 
 
 def save_map_to_file(m: Map, filename: str) -> None:
+    """
+        Description:
+    Save a map to its json file, validating it first: an invalid
+    map cannot be saved, and an unwritable file becomes a clean
+    ValueError.
+
+        Parameters:
+    m -> the map to save
+    filename -> path of the map.json file to write
+    """
     info = map_to_info(m)
 
     try:
@@ -227,6 +308,18 @@ def save_map_to_file(m: Map, filename: str) -> None:
 
 
 def load_map_from_file(filename: str) -> Map:
+    """
+        Description:
+    Load a map from its json file: every structure of the file is
+    validated, and an invalid or unreadable map becomes a clean
+    ValueError.
+
+        Parameters:
+    filename -> path of the map.json file to read
+
+        Returns value:
+    return the rebuilt map, ready to be played
+    """
     data = get_json_from_file(filename)
 
     try:
@@ -240,11 +333,18 @@ def load_map_from_file(filename: str) -> Map:
 
 
 def get_stored_map_list(map_dir: Path) -> list[str]:
-    """Return the names of every well-formatted map stored in map_dir.
-
-    A map is well-formatted when its folder holds a loadable map.json
-    and a score.json file: incomplete folders, stray files and folders
+    """
+        Description:
+    List the well-formatted maps stored in a folder: a map is
+    well-formatted when its folder holds a loadable map.json and a
+    score.json file, so incomplete folders, stray files and folders
     with an invalid map.json are left out of the list.
+
+        Parameters:
+    map_dir -> the folder holding every custom map
+
+        Returns value:
+    return the sorted names of the playable maps
     """
     maps: list[str] = []
 

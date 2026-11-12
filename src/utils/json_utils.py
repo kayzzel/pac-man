@@ -29,7 +29,17 @@ class JsonFileWriteError(JsonUtilsError):
 
 
 def _strip_comments(text: str) -> str:
-    """Remove #, // and /* */ comments while leaving string content intact."""
+    """
+        Description:
+    Remove #, // and /* */ comments from a text, while leaving the
+    content of the strings intact (a # inside quotes is kept).
+
+        Parameters:
+    text -> raw content of a json file
+
+        Returns value:
+    return the same text without its comments
+    """
     out = []
     i, n = 0, len(text)
     in_string = False
@@ -66,6 +76,18 @@ def _strip_comments(text: str) -> str:
 
 
 def get_json_from_file(filename: str) -> list[Any] | dict[Any, Any]:
+    """
+        Description:
+    Load a json file, ignoring #, // and /* */ comments: an empty file
+    is an empty dict. Every failure raises a JsonUtilsError, which
+    is a ValueError, with a clear message.
+
+        Parameters:
+    filename -> path of the json file to read
+
+        Returns value:
+    return the parsed json (a list or a dict)
+    """
     path = Path(filename)
     if not path.exists():
         raise JsonFileNotFoundError(f"File not found: {filename!r}")
@@ -95,6 +117,16 @@ def write_json_to_file(
             filename: str,
             data: dict[Any, Any] | list[Any]
         ) -> None:
+    """
+        Description:
+    Write data to a json file with a readable indentation. Every
+    failure raises a JsonUtilsError, which is a ValueError, with a
+    clear message.
+
+        Parameters:
+    filename -> path of the json file to write
+    data -> the json value to serialize (a list or a dict)
+    """
     try:
         text = json.dumps(data, indent=4)
     except (TypeError, ValueError) as err:
