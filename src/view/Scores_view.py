@@ -13,13 +13,15 @@ class Scores_view(View):
     def __init__(self, app, map_name: str = "mandatory") -> None:
 
         self.maps: list[str] = get_stored_map_list(app.map_folder)
+        self.init_scores: bool = False
         self.load_new_scores(map_name, app.map_folder)
+        self.init_scores = True
         super().__init__(app)
 
     def _update_title(self) -> None:
 
         self.title: Text = Text(
-            f"BEST SCORES FOR {self.map_scores.map_name}",
+            f"BEST SCORES FOR {self.map_scores.map_name.upper()}",
             -2,
             self.h // 15,
             self.h // 10
@@ -33,12 +35,14 @@ class Scores_view(View):
             map_folder / map_name / "score.json"
         )
         self.scores: list[str] = [
-            pl.name + ": " + str(pl.score)
-            for pl in self.map_scores.scores
+            f"{i}. {pl.name} --- {pl.score}"
+            for i, pl in enumerate(self.map_scores.scores)
         ]
         if not self.scores:
             self.scores.append("No scores yet")
-        if hasattr(self, "map_dropdown"):
+        elif len(self.scores) < 10:
+            self.scores += [" " for _ in range(10 - len(self.scores))]
+        if self.init_scores:
             self.map_dropdown.invert_show()
             self._update(True)
 

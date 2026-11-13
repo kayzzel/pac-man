@@ -7,7 +7,7 @@ from .widget import Text, Input_box, ButtonPanel
 
 MAX_INPUT_LENGTH: int = 20
 
-MSG_DISPLAY_TIME: int = 120
+MSG_DISPLAY_TIME: int = 80
 
 
 class Save_score_view(View):

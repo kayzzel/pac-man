@@ -1,1 +1,10 @@
-[]
+[
+    {
+        "name": "testname",
+        "score": 0
+    },
+    {
+        "name": "testname2",
+        "score": 0
+    }
+]

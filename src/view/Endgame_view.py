@@ -19,6 +19,8 @@ class Endgame_view(View):
             ]
         if not self.scores:
             self.scores.append("No scores yet")
+        elif len(self.scores) < 10:
+            self.scores += [" " for _ in range(10 - len(self.scores))]
         super().__init__(app)
 
     def _update_title(self) -> None:
@@ -34,7 +36,7 @@ class Endgame_view(View):
         )
 
         self.score: Text = Text(
-            "SCORE: " + str(self.game.player.score),
+            "YOUR SCORE: " + str(self.game.player.score),
             -2,
             self.title.lowerbound + self.h // 25,
             self.h // 15
