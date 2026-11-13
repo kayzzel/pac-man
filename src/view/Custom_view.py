@@ -695,10 +695,7 @@ class Step_three(Custom_step):
 
         self.current_sprite = spr_name
 
-        if (
-            spr_name in self.sprites_set.keys()
-            and spr_name not in self.collectible_names
-        ):
+        if spr_name in self.sprites_set.keys():
             self.sprites_set.pop(spr_name)
 
     def set_sprite(self, x: int, y: int, spr_name: str) -> bool:

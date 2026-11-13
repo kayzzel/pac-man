@@ -30,7 +30,7 @@ TEXTS: dict[str, list[str]] = {
         "- Score and remaining lives are kept between levels.",
         " ",
         "- At the end of a game (win or lose),",
-        "your score can be saved with your name,"
+        "your score can be saved with your name,",
         "and the best scores are readable from the main menu."
     ],
     "POINTS": [

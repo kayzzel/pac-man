@@ -162,6 +162,8 @@ class Dropdown(Widget):
             (pr.RAYWHITE, pr.BLACK),
             pr.LIGHTGRAY
         )
+        for button in self.panel.buttons.values():
+            button.whole_area_activated = True
 
     def _scroll(self) -> None:
 

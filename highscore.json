@@ -4,12 +4,20 @@
         "score": 1710
     },
     {
+        "name": "iris",
+        "score": 1600
+    },
+    {
         "name": "prout",
         "score": 680
     },
     {
         "name": "caca",
         "score": 560
+    },
+    {
+        "name": "test",
+        "score": 50
     },
     {
         "name": "helloworld",

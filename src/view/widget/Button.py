@@ -1,4 +1,5 @@
 import pyray as pr
+from pyray import MouseButton as mb
 from typing import Callable, Any
 from .Widget import Widget
 from .Text import Text
@@ -35,6 +36,24 @@ class Button(Widget):
         self.action: tuple[Callable, Any] = action
         self.color: pr.Color = color
         self.hover_color: pr.Color = hover_color
+        self.whole_area_activated: bool = False
+
+    @property
+    def is_pressed(self) -> bool:
+
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
+        # generic property for all widgets to know if widget is pressed
+        # mostly used only for clickable widgets
+
+        return (
+            pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT)
+            and (self.is_in or (self.whole_area_activated and self.is_in_area))
+        )
 
     @property
     def is_in_area(self) -> bool:
@@ -80,7 +99,7 @@ class Button(Widget):
         self._update_widget()
 
         color: pr.Color = self.color
-        if self.is_in or self.is_in_area:
+        if self.is_in or (self.is_in_area and self.whole_area_activated):
             color = self.hover_color
 
         pr.draw_text_ex(
