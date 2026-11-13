@@ -4,6 +4,7 @@ from .View import View
 from .Scores_view import Scores_view
 from .Map_choice_menu import Map_choice_menu
 from .Options_menu import Options_menu
+from .Instructions_view import Instructions_view
 from .widget import ButtonPanel, Icon, AnimIcon
 
 
@@ -59,6 +60,7 @@ class Main_menu(View):
             "start game": (self.app.change_view, Map_choice_menu(self.app)),
             "view highscores": (self.app.change_view, Scores_view(self.app)),
             "options": (self.app.change_view, Options_menu(self.app)),
+            "instructions": (self.app.change_view, Instructions_view(self.app)),
             "exit": (self.app.stop_app, None),
         }
 

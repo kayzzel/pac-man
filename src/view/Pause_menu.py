@@ -119,7 +119,7 @@ class Pause_menu(View):
                 self.cheat_panel.font_size,
                 (self.change_parameter, parameter),
                 10,
-                (48, 57)
+                [i for i in range(48, 58)] + [43, 45]
             ) for parameter in list(labels.keys())[:-2]
         }
         self.onoff_buttons: dict[str, ButtonPanel] = {
