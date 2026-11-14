@@ -10,7 +10,9 @@ BASE_FRAME_DELAY: int = 8
 
 class Icon(Widget):
 
-    # basic icon template widget, can be instanced by itself
+    """
+    Basic icon template widget, can be instanced by itself
+    """
 
     def __init__(
         self,
@@ -22,11 +24,24 @@ class Icon(Widget):
     ) -> None:
 
         """
+        Initializes the main attributes of an Icon,
+        loads the image, and resizes it if needed.
+
         Parameters
         ----------
-        Returns
-        -------
+        x: int
+            The x coordinate of the icon.
+        y: int
+            The y coordinate of the icon.
+        image_path: str
+            The path to the icon's image.
+        max_size: tuple[int, int]
+            The max size the icon can have,
+            or the size it MUST have (if 'to_resize' is True).
+        to_resize: bool (default False)
+            Indicates if the icon must be resized to fit max size.
         """
+
         self.image_path: str = image_path
         self.max_size: tuple[int, int] = max_size
         self.to_resize: bool = to_resize
@@ -43,11 +58,21 @@ class Icon(Widget):
     ) -> None:
 
         """
+        Resizes the icon's image to fit the size given
+        if 'resize_needed' is True or the image's size is too big.
+
         Parameters
         ----------
-        Returns
-        -------
+        max_w: int
+            Either the width the icon MUST have (if 'resize_needed' is True),
+            or the width the icon must not go over.
+        max_h: int
+            Either the height the icon MUST have (if 'resize_needed' is True),
+            or the height the icon must not go over.
+        resize_needed: bool (default False)
+            Indicates whether or not the icon should be resized no matter what.
         """
+
         new_width: int = self.image.width
         if new_width > max_w or resize_needed:
             new_width = max_w
@@ -61,11 +86,14 @@ class Icon(Widget):
     def _load_image(self, image_path: str) -> None:
 
         """
+        Loads the image of the icon with the path given.
+
         Parameters
         ----------
-        Returns
-        -------
+        image_path: str
+            The path to the image the icon has to load.
         """
+
         self._unload_image()
         self.image: pr.Image = pr.load_image(image_path)
         self._resize_image(*self.max_size, self.to_resize)
@@ -74,11 +102,10 @@ class Icon(Widget):
     def _unload_image(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Unloads both the image and the texture of the icon,
+        if they have not already been unloaded.
         """
+
         if hasattr(self, "texture") and self.texture is not None:
             pr.unload_texture(self.texture)
             self.texture = None
@@ -88,6 +115,11 @@ class Icon(Widget):
 
     def _ensure_loaded(self) -> None:
 
+        """
+        Checks whether or not the icon has unloaded image or texture,
+        and reloads them if it's the case.
+        """
+
         if self.texture is None or self.image is None:
             self._load_image(self.image_path)
 
@@ -95,11 +127,15 @@ class Icon(Widget):
     def i_w(self) -> int:
 
         """
-        Parameters
-        ----------
+        Returns the correct width of the icon,
+        based on if it has been resized to fit 'max_size'.
+
         Returns
         -------
+        int
+            The width of the icon.
         """
+
         self._ensure_loaded()
         return (
             self.texture.width
@@ -111,11 +147,15 @@ class Icon(Widget):
     def i_h(self) -> int:
 
         """
-        Parameters
-        ----------
+        Returns the correct height of the icon,
+        based on if it has been resized to fit 'max_size'.
+
         Returns
         -------
+        int
+            The height of the icon.
         """
+
         self._ensure_loaded()
         return (
             self.texture.height
@@ -127,11 +167,16 @@ class Icon(Widget):
     def posx(self) -> int:
 
         """
-        Parameters
-        ----------
+        An override of the Widget's parent method,
+        just using the 'i_w' method instead of 'w'
+        for the width calculation.
+
         Returns
         -------
+        int
+            The calculated x coordinate of the icon.
         """
+
         return (
             self.x
             if self.x >= 0
@@ -142,11 +187,16 @@ class Icon(Widget):
     def posy(self) -> int:
 
         """
-        Parameters
-        ----------
+        An override of the Widget's parent method,
+        just using the 'i_h' method instead of 'h'
+        for the height calculation.
+
         Returns
         -------
+        int
+            The calculated y coordinate of the icon.
         """
+
         return (
             self.y
             if self.y >= 0
@@ -157,21 +207,25 @@ class Icon(Widget):
     def lower_bounds(self) -> tuple[int, int]:
 
         """
-        Parameters
-        ----------
+        Same as the Widget's parent method 'lowerbound',
+        but also giving the end x of the icon, not just hte end y,
+        and using the 'i_w' and 'i_h' methods instead of 'w' and 'h'
+        for the calculation.
+
         Returns
         -------
+        tuple[int, int]
+            The calculated end x and y coordinates of the icon.
         """
+
         return (self.posx + self.i_w, self.posy + self.i_h)
 
     def display_widget(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Updates and displays the icon on the screen.
         """
+
         self._update_widget()
         self._ensure_loaded()
         pr.draw_texture(self.texture, self.posx, self.posy, pr.RAYWHITE)
@@ -179,7 +233,9 @@ class Icon(Widget):
 
 class AnimIcon(Icon):
 
-    # animated icon such as gifs
+    """
+    Animated icon for images such as gifs.
+    """
 
     def __init__(
         self,
@@ -192,11 +248,27 @@ class AnimIcon(Icon):
     ) -> None:
 
         """
+        Initializes the main attributes of an AnimIcon,
+        loads the image, and resizes it if needed.
+
         Parameters
         ----------
-        Returns
-        -------
+        x: int
+            The x coordinate of the icon.
+        y: int
+            The y coordinate of the icon.
+        image_path: str
+            The path to the icon's image.
+        max_size: tuple[int, int]
+            The max size the icon can have,
+            or the size it MUST have (if 'to_resize' is True).
+        to_resize: bool (default False)
+            Indicates if the icon must be resized to fit max size.
+        frame_delay: int (default BASE_FRAME_DELAY)
+            The rate at which the icon cycles through frames
+            (basically the speed of the animation).
         """
+
         super().__init__(x, y, image_path, max_size)
         self.to_resize = to_resize
 
@@ -205,11 +277,16 @@ class AnimIcon(Icon):
     def _load_image(self, image_path: str) -> None:
 
         """
+        Loads the image of the icon with the path given,
+        first initializing frames by C casting,
+        then (re)setting all the animation variables.
+
         Parameters
         ----------
-        Returns
-        -------
+        image_path: str
+            The path to the image the icon has to load.
         """
+
         self._unload_image()
         self.frames: Any = pr.ffi.new('int *', 0)
         self.image: pr.Image = pr.load_image_anim(image_path, self.frames)
@@ -224,11 +301,9 @@ class AnimIcon(Icon):
     def reset_loop(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Resets the animation loop for the AnimIcon (return to first frame).
         """
+
         self.frame_counter = 0
         self.cur_frame = 0
         self.loop_finished = False
@@ -236,12 +311,9 @@ class AnimIcon(Icon):
     def _update_widget(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Updates the icon's frame and its texture
+        by using C casting and a frame offset.
         """
-        # updating frames for the animated image
 
         self._ensure_loaded()
         self.frame_counter += 1
@@ -272,16 +344,15 @@ class AnimIcon(Icon):
     def display_widget(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Updates and displays the AnimIcon,
+        but also (if needed) resizes the current frame texture
+        by moving it from a source rectangle with old size
+        to a new rectangle with new size (vectors).
         """
+
         if not self.to_resize:
             super().display_widget()
             return
-
-        # different resizing for animated images, using vectors
 
         self._update_widget()
         super()._ensure_loaded()
@@ -300,7 +371,9 @@ class AnimIcon(Icon):
 
 class ClickableIcon(Icon):
 
-    # icon that can be pressed and calls a function
+    """
+    Icon that can be pressed and calls a function.
+    """
 
     def __init__(
         self,
@@ -314,26 +387,44 @@ class ClickableIcon(Icon):
     ) -> None:
 
         """
+        Initializes the main attributes of a ClickableIcon,
+        loads the image, and resizes it if needed.
+
         Parameters
         ----------
-        Returns
-        -------
+        x: int
+            The x coordinate of the icon.
+        y: int
+            The y coordinate of the icon.
+        image_path: str
+            The path to the icon's image.
+        action: tuple[Callable, Any]
+            Contains the function and its arguments
+            that the Icon needs to call when pressed.
+        max_size: tuple[int, int]
+            The max size the icon can have,
+            or the size it MUST have (if 'to_resize' is True).
+        to_resize: bool (default False)
+            Indicates if the icon must be resized to fit max size.
+        magnify: bool (default True)
+            Indicates whether or not the icon is a bit enlarged
+            when the mouse hovers over it.
         """
+
         super().__init__(x, y, image_path, max_size, to_resize)
 
         self.action: tuple[Callable, Any] = action
-        # magnifying means the icon becomes bigger when mouse hovers
         self.magnify: bool = magnify
         self.was_in: bool = False
 
     def _update_widget(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Updates the widget by checking whether or not
+        the icon should be enlarged (mouse hovers)
+        and if the icon's function should be called.
         """
+
         if self.was_in and not self.is_in:
 
             self.was_in = False

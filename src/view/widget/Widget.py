@@ -21,10 +21,14 @@ class Widget(ABC):
     ) -> None:
 
         """
+        Initializes the main attributes of a widget.
+
         Parameters
         ----------
-        Returns
-        -------
+        x : int
+            The x coordinate of the widget in the window.
+        y : int
+            The y coordinate of the widget in the window.
         """
 
         self.x: int = x
@@ -37,12 +41,15 @@ class Widget(ABC):
     def is_in(self) -> bool:
 
         """
-        Parameters
-        ----------
+        Determines whether or not the mouse is in the widget.
+        (used to know if the widget has been pressed)
+
         Returns
         -------
+        bool:
+            True if the mouse's coordinates are in the widget area,
+            False otherwise.
         """
-        # generic property for all widgets to know if mouse in radius
 
         if (
             self.posx <= pr.get_mouse_x() <= (self.posx + self.w)
@@ -56,13 +63,14 @@ class Widget(ABC):
     def is_pressed(self) -> bool:
 
         """
-        Parameters
-        ----------
+        Determines whether or not the widget has been pressed by the user.
+
         Returns
         -------
+        bool:
+            True if the mouse's coordinates are in the widget area
+            and the mouse button is clicked, False otherwise.
         """
-        # generic property for all widgets to know if widget is pressed
-        # mostly used only for clickable widgets
 
         return (
             pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT)
@@ -72,12 +80,9 @@ class Widget(ABC):
     def _update_widget(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Updates the widget by checking if the widget's action,
+        if it has one (clickable widget), needs to be called.
         """
-        # used only for clickable widgets
 
         if self.is_pressed:
 
@@ -86,12 +91,9 @@ class Widget(ABC):
     def call_action(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Calls the function associated with the widget
+        if it's a clickable widget.
         """
-        # used only for clickable widgets
 
         if not hasattr(self, "action"):
 
@@ -112,10 +114,8 @@ class Widget(ABC):
     def display_widget(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        A method to display the widget,
+        must be implemented by all different widgets.
         """
         ...
 
@@ -123,15 +123,16 @@ class Widget(ABC):
     def posx(self) -> int:
 
         """
-        Parameters
-        ----------
+        Calculates relative position or fixed position for x coordinate.
+        If x < 0 then the position is calculated by dividing the width by -x
+        Example: for x = -2, the widget is centered horizontally
+        else the widget keeps the fixed original position of x
+
         Returns
         -------
+        int:
+            The calculated x coordinate of the widget.
         """
-        # calculates relative position or fixed position for x coordinate
-        # if x < 0 then the position is calculated by dividing the width by -x
-        # example: for x = -2, the widget is centered horizontally
-        # else the widget keeps the fixed original position of x
 
         return (
             self.x
@@ -143,15 +144,16 @@ class Widget(ABC):
     def posy(self) -> int:
 
         """
-        Parameters
-        ----------
+        Calculates relative position or fixed position for y coordinate
+        If y < 0 then the position is calculated by dividing the height by -y
+        Example: for y = -2, the widget is centered vertically
+        else the widget keeps the fixed original position of y
+
         Returns
         -------
+        int:
+            The calculated y coordinate of the widget.
         """
-        # calculates relative position or fixed position for y coordinate
-        # if y < 0 then the position is calculated by dividing the height by -y
-        # example: for y = -2, the widget is centered vertically
-        # else the widget keeps the fixed original position of y
 
         return (
             self.y
@@ -163,9 +165,13 @@ class Widget(ABC):
     def lowerbound(self) -> int:
 
         """
-        Parameters
-        ----------
+        Calculates the bottom y coordinate of the widget
+        by adding its y start position and its height.
+
         Returns
         -------
+        int:
+            The calculated bottom lowerline y of the widget.
         """
+
         return self.posy + self.h

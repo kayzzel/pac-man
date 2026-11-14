@@ -13,7 +13,9 @@ ARROW_DOWN_PATH: str = "src/view/assets/icons/arrow_down.png"
 
 class Dropdown(Widget):
 
-    # simple dropdown with an arrow Icon and Buttons
+    """
+    Simple dropdown with an arrow Icon and Buttons.
+    """
 
     def __init__(
         self,
@@ -26,11 +28,26 @@ class Dropdown(Widget):
     ) -> None:
 
         """
+        Initializes the main attributes of a dropdown.
+
         Parameters
         ----------
-        Returns
-        -------
+        x: int
+            The x coordinate of the dropdown.
+        y: int
+            The y coordinate of the dropdown.
+        width: int
+            The width of the dropdown.
+        height: int
+            The height of the dropdown.
+        buttons: dict[str, tuple[Callable, Any]]
+            A dictionary containing the buttons' labels
+            and the actions (function + arguments) associated with them.
+        max_show: int (default 5)
+            The number of buttons to show in the slide
+            when the dropdown is activated.
         """
+
         super().__init__(x, y, width, height)
 
         self.show: bool = False
@@ -48,12 +65,9 @@ class Dropdown(Widget):
     def _init_main_panel(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Initializes the main label of the dropdown,
+        the one shown at the top that indicates what it's for.
         """
-        # this is to initialize the main label, the 'title' of the dropdown
 
         self.main_button: dict[str, tuple[Callable, Any]] = {
             label: action
@@ -89,12 +103,9 @@ class Dropdown(Widget):
     def invert_show(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Updates the dropdown's state (shown or hidden)
+        and sets which arrow icon to show.
         """
-        # changes the state of the dropdown (shown or hidden)
 
         self.show = not self.show
 
@@ -108,11 +119,11 @@ class Dropdown(Widget):
     def _init_icons(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Initializes the two clickable arrow icons that will be used
+        for the different states of the dropdown (shown or hidden),
+        and that the user can click on to deploy or hide the dropdown.
         """
+
         arrow_x: int = self.posx + self.w - self.arrow_size - self.arrow_pad
 
         self.arrow_icons: dict[str, ClickableIcon] = {
@@ -130,11 +141,10 @@ class Dropdown(Widget):
     def _update_buttons(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Updates the dropdown's buttons, the ones that you can select
+        when the dropdown is deployed.
         """
+
         if not self.show:
             return
 
@@ -168,11 +178,10 @@ class Dropdown(Widget):
     def _scroll(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Checks whether or not the mouse scrolled inside the dropdown,
+        and updates the buttons that should be shown if it's the case.
         """
+
         if self.nb_buttons <= self.max_show:
             return
 
@@ -197,11 +206,9 @@ class Dropdown(Widget):
     def display_widget(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Updates and displays the dropdown, showing the buttons if deployed.
         """
+
         self._scroll()
         self.main_panel.display_widget()
         self.arrow_icons[self.arrow_icon_path].display_widget()

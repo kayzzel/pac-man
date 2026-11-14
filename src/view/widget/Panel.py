@@ -11,7 +11,9 @@ PANEL_FILL_COLOR: pr.Color = pr.BLANK
 
 class Panel(Widget):
 
-    # basic template for panel, but only inheriting classes should be used
+    """
+    Basic template for a panel, but only inheriting classes should be used
+    """
 
     def __init__(
         self,
@@ -28,11 +30,27 @@ class Panel(Widget):
     ) -> None:
 
         """
+        Initializes the main attributes for a panel.
+
         Parameters
         ----------
-        Returns
-        -------
+        x: int
+            The x coordinate of the panel.
+        y: int
+            The y coordinate of the panel.
+        width: int
+            The width of the panel.
+        height: int
+            The height of the panel.
+        shape_params: tuple[int, int, float] (default 10, 2, 0.1)
+            Respectively the padding, line thickness and roundness of the panel
+        center: int (default -2)
+            The label centering, relative to the panel width.
+        panel_colors: tuple[pr.Color, pr.Color]
+            (default PANEL_OUTLINE_COLOR, PANEL_FILL_COLOR)
+            Respectively the panel's outline color and inside color.
         """
+
         super().__init__(x, y, width, height)
 
         self.padding: int
@@ -48,12 +66,14 @@ class Panel(Widget):
     def calculate_label_spacing(self, labels: list[str]) -> None:
 
         """
+        Calculates both the font size for the labels
+        and the space (padding) between each label.
+
         Parameters
         ----------
-        Returns
-        -------
+        labels: list[str]
+            All the labels of the panel.
         """
-        # calculating font size and space between elements
 
         if self.padding == 0:
             self.padding = (self.h // (len(labels) * 2 + 1)) // 2
@@ -96,11 +116,20 @@ class Panel(Widget):
     def center_label_x(self, label: str) -> int:
 
         """
+        Centers the x position of a certain label
+        by measuring its width (using the Text class' method).
+
         Parameters
         ----------
+        label: str
+            The text for which to calculate the x.
+
         Returns
         -------
+        int
+            The calculated x start position of the label.
         """
+
         return self.posx + (
             self.w - Text.measure_text(label, self.font_size)
         ) // 2
@@ -108,7 +137,9 @@ class Panel(Widget):
 
 class TextPanel(Panel):
 
-    # panel which displays basic labels, not clickable buttons
+    """
+    Panel which displays basic labels, not clickable buttons
+    """
 
     def __init__(
         self,
@@ -127,11 +158,31 @@ class TextPanel(Panel):
     ) -> None:
 
         """
+        Initializes the main attributes for a text panel.
+
         Parameters
         ----------
-        Returns
-        -------
+        x: int
+            The x coordinate of the panel.
+        y: int
+            The y coordinate of the panel.
+        width: int
+            The width of the panel.
+        height: int
+            The height of the panel.
+        labels: list[str]
+            All of the labels that should be displayed on the panel.
+        shape_params: tuple[int, int, float] (default 10, 2, 0.1)
+            Respectively the padding, line thickness and roundness of the panel
+        center: int (default -2)
+            The label centering, relative to the panel width.
+        panel_colors: tuple[pr.Color, pr.Color]
+            (default PANEL_OUTLINE_COLOR, PANEL_FILL_COLOR)
+            Respectively the panel's outline color and inside color.
+        label_color: pr.Color (default TEXT_COLOR)
+            The color to use for the labels.
         """
+
         super().__init__(
             x, y, width, height, shape_params, center, panel_colors
         )
@@ -142,11 +193,15 @@ class TextPanel(Panel):
     def init_labels(self, labels: list[str]) -> None:
 
         """
+        Initializes all the labels using Text widgets
+        and calculating font size and spacing using the parent method.
+
         Parameters
         ----------
-        Returns
-        -------
+        labels: list[str]
+            All of the labels to initialize.
         """
+
         if not labels:
             return
 
@@ -173,11 +228,9 @@ class TextPanel(Panel):
     def display_widget(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Displays all the text widgets on the panel.
         """
+
         if not hasattr(self, "labels"):
             return
 
@@ -187,7 +240,9 @@ class TextPanel(Panel):
 
 class ButtonPanel(Panel):
 
-    # panel which displays clickable labels
+    """
+    Panel which displays clickable labels.
+    """
 
     def __init__(
         self,
@@ -210,11 +265,38 @@ class ButtonPanel(Panel):
     ) -> None:
 
         """
+        Initializes the main attributes for a text panel.
+
         Parameters
         ----------
-        Returns
-        -------
+        x: int
+            The x coordinate of the panel.
+        y: int
+            The y coordinate of the panel.
+        width: int
+            The width of the panel.
+        height: int
+            The height of the panel.
+        buttons: dict[str, tuple[Callable, Any]]
+            A dictionary containing the buttons,
+            the keys being the buttons' labels,
+            and the values being the function and args to associate with them.
+        shape_params: tuple[int, int, float] (default 10, 2, 0.1)
+            Respectively the padding, line thickness and roundness of the panel
+        center: int (default -2)
+            The label centering, relative to the panel width.
+        panel_colors: tuple[pr.Color, pr.Color]
+            (default PANEL_OUTLINE_COLOR, PANEL_FILL_COLOR)
+            Respectively the panel's outline color and inside color.
+        button_colors: tuple[pr.Color, pr.Color]
+            (default BUTTON_BASE_COLOR, BUTTON_HOVER_COLOR)
+            Respectively the color of the button label
+            when normal and when the mouse hovers over it.
+        hover_color: pr.Color (default BLANK)
+            The color to use for the button background,
+            usually BLANK for button transparency.
         """
+
         super().__init__(
             x, y, width, height, shape_params, center, panel_colors
         )
@@ -230,11 +312,18 @@ class ButtonPanel(Panel):
     ) -> None:
 
         """
+        Initializes all the buttons using Button widgets
+        and calculating font size and spacing using the parent method.
+        Also sets the buttons' areas if needed for display
+        (for example calling the button's action
+        even if not directly on the label).
+
         Parameters
         ----------
-        Returns
-        -------
+        button_actions: dict[str, tuple[Callable, Any]]
+            A dictionary containing the buttons' labels and their actions.
         """
+
         if not button_actions:
             return
 
@@ -266,12 +355,16 @@ class ButtonPanel(Panel):
     def determine_button_area(self, button: Button, nb: int) -> None:
 
         """
+        Calculates the total area of a button,
+        so not just the label size, but the whole 'rectangle' background size.
+
         Parameters
         ----------
-        Returns
-        -------
+        button: Button
+            The button for which to set the area.
+        nb: int
+            The index of the button on the panel.
         """
-        # this is used to be able to change background color when hovering
 
         sx: int = self.posx
         sy: int = self.posy
@@ -296,11 +389,10 @@ class ButtonPanel(Panel):
     def display_widget(self) -> None:
 
         """
-        Parameters
-        ----------
-        Returns
-        -------
+        Draws the panel's outline and inside
+        and displays all the buttons (and their areas if needed).
         """
+
         if self.outline_color != pr.BLANK:
 
             pr.draw_rectangle_rounded_lines_ex(
