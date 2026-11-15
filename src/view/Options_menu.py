@@ -16,7 +16,17 @@ from typing import Callable, Any
 
 class Options_menu(View):
 
+    """
+    A view that presents the different configuration options
+    for the user to select and choose from
+    (keybinds, graphics, font, texture pack, etc).
+    """
+
     def _update_title(self) -> None:
+
+        """
+        Builds the view's title widget.
+        """
 
         self.title: Text = Text(
             "OPTIONS",
@@ -28,6 +38,16 @@ class Options_menu(View):
 
     def change_keybind(self, keybind: str) -> None:
 
+        """
+        Changes the keybind that the user entered (if valid)
+        in the app's display configuration.
+
+        Parameters
+        ----------
+        keybind: str
+            The name of the keybind to change.
+        """
+
         if keybind not in self.app.display_config.keybinds.keys():
             return
         self.app.display_config.keybinds[keybind] = (
@@ -35,7 +55,88 @@ class Options_menu(View):
         )
         self._update(True)
 
+    def change_font(self, font: str) -> None:
+
+        """
+        Loads a new font for the display text.
+
+        Parameters
+        ----------
+        font: str
+            The new font to load.
+        """
+
+        Text._load_font(font)
+        self._update(True)
+
+    def change_resolution(self, res: str) -> None:
+
+        """
+        Changes the game window's resolution
+        based on the user's choice.
+
+        Parameters
+        ----------
+        res: str
+            The new resolution of the game's window.
+        """
+
+        if res == "fullscreen":
+            pr.toggle_fullscreen()
+
+        elif res == "1080p" or res == "720p":
+
+            if pr.is_window_fullscreen():
+                pr.toggle_fullscreen()
+
+            if res == "1080p":
+                width: int = 1920
+                height: int = 1080
+
+            elif res == "720p":
+                width = 1240
+                height = 720
+
+            pr.set_window_size(width, height)
+
+        self._update(True)
+
+    def change_fps(self) -> None:
+
+        """
+        Changes the frame rate of the game.
+        """
+
+        if not self.fps_input.input.isdigit():
+            return
+
+        self.app.display_config.fps_max = int(self.fps_input.input)
+        self._update(True)
+
+    def change_texture_pack(self, new_pack: str) -> None:
+
+        """
+        Changes the texture pack used in the game.
+
+        Parameters
+        ----------
+        new_pack: str
+            The path to the texture pack to use.
+        """
+
+        if new_pack not in TEXTURES_PACK.keys():
+            return
+
+        self.app.display_config.texture_pack = TEXTURES_PACK[new_pack]
+        self._update(True)
+
     def _update_keybinds(self) -> None:
+
+        """
+        Builds the keybind option panel,
+        with the four keybind input boxes for the user
+        to change the keybinds associated with each move.
+        """
 
         self.p_w: int = self.w // 2
         self.title_fontsz: int = self.h // 20
@@ -75,37 +176,12 @@ class Options_menu(View):
         self.widgets += [self.keybind_title, self.keybind_panel]
         self.widgets += list(self.keybind_input.values())
 
-    def change_resolution(self, res: str) -> None:
-
-        if res == "fullscreen":
-            pr.toggle_fullscreen()
-
-        elif res == "1080p" or res == "720p":
-
-            if pr.is_window_fullscreen():
-                pr.toggle_fullscreen()
-
-            if res == "1080p":
-                width: int = 1920
-                height: int = 1080
-
-            elif res == "720p":
-                width = 1240
-                height = 720
-
-            pr.set_window_size(width, height)
-
-        self._update(True)
-
-    def change_fps(self) -> None:
-
-        if not self.fps_input.input.isdigit():
-            return
-
-        self.app.display_config.fps_max = int(self.fps_input.input)
-        self._update(True)
-
     def _update_graphics(self) -> None:
+
+        """
+        Builds the graphics option panel, where the user
+        can choose the game window's resolution aswell as the framerate.
+        """
 
         self.graphics_title: Text = Text(
             "GRAPHICS",
@@ -173,6 +249,10 @@ class Options_menu(View):
 
     def _update_back_button(self) -> None:
 
+        """
+        Builds the back button for the view.
+        """
+
         back_label: str = "back <-|"
         back_width: int = self.w // 8
         back_height: int = self.h // 15
@@ -186,12 +266,12 @@ class Options_menu(View):
         )
         self.widgets.append(self.back_button)
 
-    def change_font(self, font: str) -> None:
-
-        Text._load_font(font)
-        self._update(True)
-
     def _update_font_choice(self) -> None:
+
+        """
+        Builds the font option panel, where the user
+        can select which font they want to use for the whole display text.
+        """
 
         self.font_title: Text = Text(
             "FONT",
@@ -219,15 +299,14 @@ class Options_menu(View):
             font_buttons
         )
 
-    def change_texture_pack(self, new_pack: str) -> None:
-
-        if new_pack not in TEXTURES_PACK.keys():
-            return
-
-        self.app.display_config.texture_pack = TEXTURES_PACK[new_pack]
-        self._update(True)
-
     def _update_texture_pack(self) -> None:
+
+        """
+        Builds the texture pack option panel,
+        with the dropdown showing the available texture packs,
+        and a small preview of two sprites of the current texture pack
+        (PacMan and Blinky Ghost).
+        """
 
         self.texture_title: Text = Text(
             "TEXTURES",
@@ -301,6 +380,16 @@ class Options_menu(View):
         self.widgets += [self.font_title, self.font_dropdown]
 
     def _update(self, forced: bool = False) -> None:
+
+        """
+        Updates the menu, checking if the window has been resized,
+        and re-building the widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            Whether or not the view MUST be updated.
+        """
 
         if not pr.is_window_resized() and not forced:
             return

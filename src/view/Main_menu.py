@@ -17,7 +17,15 @@ BORDER_PADDING: int = 3
 
 class Main_menu(View):
 
+    """
+    A main menu view with the principal options of the game
+    """
+
     def _update_icons(self) -> None:
+
+        """
+        Updates the menu's title icon and background icon.
+        """
 
         self.menu_icon: Icon = Icon(
             -2,
@@ -47,6 +55,10 @@ class Main_menu(View):
 
     def _update_panel(self) -> None:
 
+        """
+        Updates the menu's button panel with the different options.
+        """
+
         icon_bottom: int = self.background.lower_bounds[1]
 
         height_remaining: int = self.h - BORDER_PADDING * 2 - icon_bottom
@@ -60,7 +72,10 @@ class Main_menu(View):
             "start game": (self.app.change_view, Map_choice_menu(self.app)),
             "view highscores": (self.app.change_view, Scores_view(self.app)),
             "options": (self.app.change_view, Options_menu(self.app)),
-            "instructions": (self.app.change_view, Instructions_view(self.app)),
+            "instructions": (
+                self.app.change_view,
+                Instructions_view(self.app)
+            ),
             "exit": (self.app.stop_app, None),
         }
 
@@ -79,6 +94,16 @@ class Main_menu(View):
 
     def _update(self, forced: bool = False) -> None:
 
+        """
+        Updates the menu, checking if the window has been resized,
+        and re-building the widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            Whether or not the menu MUST be updated.
+        """
+
         if not pr.is_window_resized() and not forced:
             return
 
@@ -87,6 +112,11 @@ class Main_menu(View):
         self._update_panel()
 
     def display_view(self) -> None:
+
+        """
+        Updates and displays the menu,
+        drawing the outline and displaying the widgets.
+        """
 
         self._update()
 

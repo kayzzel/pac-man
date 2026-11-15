@@ -16,7 +16,16 @@ ICON_PATHS: dict[str, str] = {
 
 class Map_choice_menu(View):
 
+    """
+    A view used for the user to select the game mode
+    they want to play (mandatory, arcade or custom).
+    """
+
     def _update_title(self) -> None:
+
+        """
+        Builds the view's title widget.
+        """
 
         self.title: Text = Text(
             "CHOOSE THE MODE",
@@ -27,6 +36,11 @@ class Map_choice_menu(View):
         self.widgets.append(self.title)
 
     def _update_icons(self) -> None:
+
+        """
+        Builds the three icons that show a preview
+        of each game mode for the user to select.
+        """
 
         self.icon_width: int = self.w // 5
 
@@ -48,6 +62,11 @@ class Map_choice_menu(View):
         self.widgets += list(self.icons.values())
 
     def _update_panels(self) -> None:
+
+        """
+        Builds the three button panels, one for each game mode
+        that the user can select, and builds the back button aswell.
+        """
 
         self.button_actions: dict[str, tuple[Callable, Any]] = {
             "MANDATORY": (
@@ -95,6 +114,11 @@ class Map_choice_menu(View):
 
     def calculate_panel_spacing(self) -> None:
 
+        """
+        Calculates the panel's font size and spacing
+        for the three oval buttons.
+        """
+
         max_label: str = max(
             self.button_actions.keys(),
             key=lambda label: len(label)
@@ -122,6 +146,16 @@ class Map_choice_menu(View):
         self.spacing: int = width_remaining // (nb_buttons + 1)
 
     def _update(self, forced: bool = False) -> Any:
+
+        """
+        Updates the view, checking if the window has been resized,
+        and re-building the widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            Whether or not the view MUST be updated.
+        """
 
         if not pr.is_window_resized() and not forced:
             return

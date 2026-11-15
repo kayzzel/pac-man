@@ -1,5 +1,4 @@
 import pyray as pr
-from pyray import KeyboardKey as kek
 from typing import Callable, Any
 from pathlib import Path
 from .View import View
@@ -10,7 +9,29 @@ from .widget import Text, ButtonPanel, TextPanel, Dropdown
 
 class Scores_view(View):
 
+    """
+    A simple view to display the scores for a map.
+    If entered via the main menu, the default map is the mandatory map,
+    and if entered via the pause menu after a game was started,
+    the default map is the current game map.
+    Other maps' scores can be loaded via a dropdown.
+    """
+
     def __init__(self, app, map_name: str = "mandatory") -> None:
+
+        """
+        Initializes the main attributes of the view
+        and updates it a first time, loading the scores
+        of the map given.
+
+        Parameters
+        ----------
+        app: App
+            The app that manages everything.
+        map_name: str (default 'mandatory')
+            The name of the first map
+            for which to display the scores.
+        """
 
         self.maps: list[str] = get_stored_map_list(app.map_folder)
         self.init_scores: bool = False
@@ -19,6 +40,10 @@ class Scores_view(View):
         super().__init__(app)
 
     def _update_title(self) -> None:
+
+        """
+        Builds the view's title widget.
+        """
 
         self.title: Text = Text(
             f"BEST SCORES FOR {self.map_scores.map_name.upper()}",
@@ -29,6 +54,18 @@ class Scores_view(View):
         self.widgets.append(self.title)
 
     def load_new_scores(self, map_name: str, map_folder: Path) -> None:
+
+        """
+        Loads the scores of a map, searching for them
+        in the folder where the scores are stored.
+
+        Parameters
+        ----------
+        map_name: str
+            The name of the map for which to load the scores.
+        map_folder: Path
+            The path to the folder where the score files are stored.
+        """
 
         self.map_scores: Map_scores = Map_scores(
             map_name,
@@ -47,6 +84,11 @@ class Scores_view(View):
             self._update(True)
 
     def _update_buttons(self) -> None:
+
+        """
+        Builds the back button and the dropdown
+        that lists all the available maps for the user to select.
+        """
 
         back_label: str = "back <-|"
         load_label: str = "Select a map"
@@ -83,6 +125,11 @@ class Scores_view(View):
 
     def _update_scores(self) -> None:
 
+        """
+        Builds the text panel that displays all the scores,
+        with their place, username and value.
+        """
+
         scores_start: int = self.map_dropdown.posy + self.map_dropdown.h
         scores_height: int = (
             self.h - scores_start
@@ -102,8 +149,15 @@ class Scores_view(View):
 
     def _update(self, forced: bool = False) -> None:
 
-        if pr.is_key_pressed(kek.KEY_ESCAPE):
-            self.app.return_to_prev_view()
+        """
+        Updates the view, checking if the window has been resized,
+        and re-building the widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            Whether or not the view MUST be updated.
+        """
 
         if not pr.is_window_resized() and not forced:
             return

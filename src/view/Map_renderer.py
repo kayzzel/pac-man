@@ -23,11 +23,27 @@ DIRECTIONS: dict[str, str] = {
 
 class Map_renderer:
 
+    """
+    A class that handles the rendering and display of the game map.
+    """
+
     def __init__(
         self,
         game: Game,
         texture_pack: str
     ) -> None:
+
+        """
+        Initializes the main attributes of the map renderer,
+        creating the sprites dictionaries.
+
+        Parameters
+        ----------
+        game: Game
+            The game the player has started.
+        texture_pack: str
+            The texture pack to use for loading the sprites.
+        """
 
         self.game: Game = game
         self.texture_pack: Texture_pack = Texture_pack(texture_pack)
@@ -43,6 +59,28 @@ class Map_renderer:
         cell_size: int,
         entities: list[Entity]
     ) -> None:
+
+        """
+        Updates the map renderer's grid and map values (x, y, w, h, etc)
+        aswell as resetting the entities'
+        saved directions, alignment and coordinates.
+        Also calculates the size of
+        cells, wall lines, and entities/collectibles.
+        Redraws the grid's texture (walls) to avoid drawing them every loop.
+
+        Parameters
+        ----------
+        grid: list[list[Cell]]
+            The cells of the map to render.
+        map_size: tuple[int, int]
+            Respectively the width and height of the map.
+        map_coor: tuple[int, int]
+            Respectively the x and y coordinates of the map.
+        cell_size: int
+            The size the cell takes on the screen.
+        entities: list[Entity]
+            All the entities that are part of the game.
+        """
 
         self.grid: list[list[Cell]] = grid
         self.entities: list[Entity] = entities
@@ -67,6 +105,17 @@ class Map_renderer:
         self.update_texture()
 
     def set_correct_dir(self, entity: Entity) -> None:
+
+        """
+        Stores the given entity's direction, alignment and coordinates
+        inside a dictionary, the entity's name being the key.
+
+        Parameters
+        ----------
+        entity: Entity
+            The entity for which to store
+            the direction, alignment and coordinates.
+        """
 
         if self.game.state not in [Game_state.RUNNING, *self.end_states]:
             return
@@ -97,12 +146,42 @@ class Map_renderer:
 
     def get_pacman_texture(self, pac_man: Pac_man) -> str:
 
+        """
+        Determines which texture to use for PacMan
+        based on his state (dead or alive).
+
+        Parameters
+        ----------
+        pac_man: Pac_man
+            The PacMan entity for which to return the texture path.
+
+        Returns
+        -------
+        str
+            The path of the texture to use for PacMan.
+        """
+
         self.set_correct_dir(pac_man)
         if self.game.state in self.end_states:
             return "pacman_death"
         return self.get_entity_texture(pac_man)
 
     def get_ghost_texture(self, ghost: Ghost) -> str:
+
+        """
+        Determines which texture to use for a ghost
+        based on its state (eaten, frightened or normal).
+
+        Parameters
+        ----------
+        ghost: Ghost
+            The Ghost entity for which to return the texture path.
+
+        Returns
+        -------
+        str
+            The path of the texture to use for the ghost.
+        """
 
         self.set_correct_dir(ghost)
         if ghost.state == Ghost_state.EATEN:
@@ -116,6 +195,21 @@ class Map_renderer:
         return self.get_entity_texture(ghost)
 
     def get_entity_texture(self, entity: Entity) -> str:
+
+        """
+        Determines which texture to use for an entity
+        based on its stored direction and alignment.
+
+        Parameters
+        ----------
+        entity: Entity
+            The entity for which to return the texture path.
+
+        Returns
+        -------
+        str
+            The path of the texture to use for the entity.
+        """
 
         direction = self.saved_dirs[entity.name][0]
         alignment = self.saved_dirs[entity.name][1]
@@ -133,6 +227,21 @@ class Map_renderer:
         return texture_to_get
 
     def draw_walls(self, cell: Cell, x: int, y: int) -> None:
+
+        """
+        Draws all of the given cell's walls,
+        calculating the lines to draw based on its neighbors
+        and whether or not the walls form an angle etc.
+
+        Parameters
+        ----------
+        cell: Cell
+            The cell for which to draw the walls.
+        x: int
+            The cell's x coordinate (inside the grid, not on the screen).
+        y: int
+            The cell's y coordinate (inside the grid, not on the screen).
+        """
 
         self.get_neighbors(cell)
 
@@ -372,6 +481,16 @@ class Map_renderer:
 
     def add_collectibles(self, cell: Cell) -> None:
 
+        """
+        Adds the cell's collectibles icons to the collectible dictionary
+        if the icon for this texture is not already built and stored.
+
+        Parameters
+        ----------
+        cell: Cell
+            The cell for which to add collectibles' icons.
+        """
+
         if (
             cell.collectible
             and cell.collectible.name not in self.collectible_icons.keys()
@@ -401,6 +520,29 @@ class Map_renderer:
         en_posy: float
     ) -> tuple[int, int]:
 
+        """
+        Calculates the entity position (on the screen)
+        based on the cell it is currently in to place it in the center.
+
+        Parameters
+        ----------
+        cell: Cell
+            The cell in which the entity is in.
+        x: int
+            The cell's x coordinate (inside the grid).
+        y: int
+            The cell's y coordinate (inside the grid).
+        en_posx: float
+            The entity's x coordinate (on the screen).
+        en_posy: float
+            The entity's y coordinate (on the screen).
+
+        Returns
+        -------
+        tuple[int, int]
+            The calculated entity's coordinates on the screen.
+        """
+
         entity_base_x: int = x + self.cell_padding
         entity_base_y: int = y + self.cell_padding
 
@@ -416,6 +558,11 @@ class Map_renderer:
 
     def _unload_images(self) -> None:
 
+        """
+        Unloads all the sprites' images and textures,
+        aswell as the grid texture if it has been created.
+        """
+
         for icon in self.collectible_icons.values():
             icon._unload_image()
 
@@ -427,11 +574,30 @@ class Map_renderer:
 
     def update_sprites(self) -> None:
 
+        """
+        Resets the collectibles/sprites/current sprites dictionaries to empty.
+        """
+
         self.collectible_icons = {}
         self.sprites = {}
         self.current_sprites: dict[str, AnimIcon] = {}
 
     def draw_sprites(self, cell: Cell, x: int, y: int) -> None:
+
+        """
+        Displays all the sprites needed by searching for their icons
+        inside the collectibles/sprites dictionaries, and simply changing
+        their coordinates based on the cell given before displaying them.
+
+        Parameters
+        ----------
+        cell: Cell
+            The current cell for which to display the sprites.
+        x: int
+            The cell's x coordinate (inside the grid).
+        y: int
+            The cell's y coordinate (inside the grid).
+        """
 
         if (
             cell.collectible
@@ -491,6 +657,17 @@ class Map_renderer:
 
     def check_death(self) -> bool:
 
+        """
+        Checks if PacMan has died, and whether or not the death animation
+        displayed on the screen has finished its loop.
+
+        Returns
+        -------
+        bool
+            True if PacMan has died
+            and the animation has ended, False otherwise.
+        """
+
         if (
             "pacman" not in self.current_sprites.keys()
             or self.game.state not in self.end_states
@@ -513,6 +690,15 @@ class Map_renderer:
 
     def get_neighbors(self, cell: Cell) -> None:
 
+        """
+        Determines the given cell's neighboring cells.
+
+        Parameters
+        ----------
+        cell: Cell
+            The cell for which to determine its neighbors.
+        """
+
         if cell.pos_x > 0:
             cell.neighbors["W"] = self.grid[cell.pos_y][cell.pos_x - 1]
 
@@ -527,12 +713,33 @@ class Map_renderer:
 
     def entity_is_in(self, entity: Entity, cell: Cell) -> bool:
 
+        """
+        Checks whether or not the given entity is inside the given cell.
+
+        Parameters
+        ----------
+        entity: Entity
+            The entity to check if it's inside a specific cell.
+        cell: Cell
+            The cell to check if the entity is inside of.
+
+        Returns
+        -------
+        bool
+            True if the entity is inside the cell, False otherwise.
+        """
+
         return (
             cell.pos_x <= entity.pos_x < cell.pos_x + 1
             and cell.pos_y <= entity.pos_y < cell.pos_y + 1
         )
 
     def update_texture(self) -> None:
+
+        """
+        Creates and draws the whole grid on a render texture to avoid
+        re-drawing the walls each frame.
+        """
 
         self.grid_texture = pr.load_render_texture(self.map_w, self.map_h)
         pr.begin_texture_mode(self.grid_texture)
@@ -556,6 +763,11 @@ class Map_renderer:
         pr.end_texture_mode()
 
     def display_grid(self) -> None:
+
+        """
+        Displays the render texture of the grid (walls),
+        and all the sprites needed on the screen.
+        """
 
         pr.draw_texture_rec(
             self.grid_texture.texture,
@@ -581,7 +793,17 @@ class Map_renderer:
 
 class Custom_map_renderer(Map_renderer):
 
+    """
+    A custom map renderer used to display a custom map
+    for the Custom_view.
+    """
+
     def __init__(self) -> None:
+
+        """
+        Empty init because this map renderer does not need
+        any of the init parameters of its parent.
+        """
         ...
 
     def update_grid(
@@ -592,6 +814,27 @@ class Custom_map_renderer(Map_renderer):
         cell_size: int,
         show_lines: bool = False
     ) -> None:
+
+        """
+        Updates the map renderer's grid and map values (x, y, w, h, etc)
+        aswell as calculates the size of
+        cells, wall lines, and entities/collectibles.
+        Redraws the grid's texture (walls) to avoid drawing them every loop.
+
+        Parameters
+        ----------
+        grid: list[list[Cell]]
+            The cells of the map to render.
+        map_size: tuple[int, int]
+            Respectively the width and height of the map.
+        map_coor: tuple[int, int]
+            Respectively the x and y coordinates of the map.
+        cell_size: int
+            The size the cell takes on the screen.
+        show_lines: bool (default False)
+            True if the grid mapping lines (square cut lines)
+            should be displayed behind the walls on the grid texture.
+        """
 
         self.grid: list[list[Cell]] = grid
 
@@ -611,10 +854,21 @@ class Custom_map_renderer(Map_renderer):
 
     def _unload_images(self) -> None:
 
+        """
+        Unloads the render texture for the grid if it has been created.
+        """
+
         if hasattr(self, "grid_texture"):
             pr.unload_render_texture(self.grid_texture)
 
     def update_texture(self, show_lines: bool = False) -> None:
+
+        """
+        Creates and draws the whole grid on a render texture to avoid
+        re-drawing the walls each frame,
+        also drawing mapping lines of the grid behind the walls
+        if needed.
+        """
 
         self.grid_texture = pr.load_render_texture(
             self.map_w + self.cell_padding,
@@ -684,6 +938,20 @@ class Custom_map_renderer(Map_renderer):
 
     def get_cell_coor(self, cell_to_find: Cell) -> tuple[int, int]:
 
+        """
+        Calculates the given cell's coordinates on the screen.
+
+        Parameters
+        ----------
+        cell_to_find: Cell
+            The cell for which to calculate its coordinates.
+
+        Returns
+        -------
+        tuple[int, int]
+            Respectively the x and y coordinate of the cell on the screen.
+        """
+
         cell_y = self.map_y + self.cell_padding * 2 - self.line_thickness
 
         for row_i, row in enumerate(self.grid):
@@ -703,6 +971,10 @@ class Custom_map_renderer(Map_renderer):
 
     def display_grid(self) -> None:
 
+        """
+        Displays the grid render texture on the screen.
+        """
+
         pr.draw_texture_rec(
             self.grid_texture.texture,
             (
@@ -719,6 +991,19 @@ class Custom_map_renderer(Map_renderer):
         self,
         textures_set: list[tuple[Icon, list[Cell], int]]
     ) -> None:
+
+        """
+        Displays the sprites icons set by the user
+        when creating their custom map
+        (these are the sprites that the user has already placed on the map).
+
+        Parameters
+        ----------
+        textures_set: list[tuple[Icon, list[Cell], int]]
+            A list containing tuples, with respectively
+            the sprite icon, all the cells in which it was placed,
+            and the size of the icon (entity/collectible/consumable).
+        """
 
         for icon, cells, size in textures_set:
 
@@ -737,6 +1022,20 @@ class Custom_map_renderer(Map_renderer):
                 icon.display_widget()
 
     def display_cur_sprite(self, cur_t: Icon, cell: Cell, size: int) -> None:
+
+        """
+        Displays the current sprite, which means the one the user
+        has selected and is currently choosing a placement for it on the map.
+
+        Parameters
+        ----------
+        cur_t: Icon
+            The current sprite icon the user has selected.
+        cell: Cell
+            The current cell the sprite is located in.
+        size: int
+            The size of the icon texture (entity/collectible/consumable).
+        """
 
         rect_pad: int = size // 20
 

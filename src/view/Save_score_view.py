@@ -1,5 +1,4 @@
 import pyray as pr
-from pyray import KeyboardKey as kek
 from ..game.Game import Game
 from .View import View
 from .widget import Text, Input_box, ButtonPanel
@@ -12,13 +11,34 @@ MSG_DISPLAY_TIME: int = 80
 
 class Save_score_view(View):
 
+    """
+    A view where the user can enter a username of their choice
+    to save their current score.
+    """
+
     def __init__(self, app, game: Game) -> None:
+
+        """
+        Initializes the main attributes of the view
+        and updates it a first time.
+
+        Parameters
+        ----------
+        app: App
+            The app that manages everything.
+        game: Game
+            The current game the user has started.
+        """
 
         self.game: Game = game
         self.show_message: list[str] = []
         super().__init__(app)
 
     def _update_title(self) -> None:
+
+        """
+        Builds the view's title widget.
+        """
 
         self.title: Text = Text(
             "SAVE SCORE",
@@ -29,6 +49,10 @@ class Save_score_view(View):
         self.widgets.append(self.title)
 
     def _update_back_button(self) -> None:
+
+        """
+        Builds the back button for the view.
+        """
 
         back_label: str = "back <-|"
         back_width: int = self.w // 8
@@ -44,6 +68,11 @@ class Save_score_view(View):
         self.widgets.append(self.back_button)
 
     def _update_input_box(self) -> None:
+
+        """
+        Builds the input box that is handling the user's input
+        of their username to save their score.
+        """
 
         all_characters: list[int] = []
         for crange in [(48, 58), (65, 91), (97, 123)]:
@@ -76,8 +105,15 @@ class Save_score_view(View):
 
     def _update(self, forced: bool = False) -> None:
 
-        if pr.is_key_pressed(kek.KEY_ESCAPE) and not self.show_message:
-            self.app.return_to_prev_view()
+        """
+        Updates the view, checking if the window has been resized,
+        and re-building the widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            Whether or not the view MUST be updated.
+        """
 
         if not pr.is_window_resized() and not forced:
             return
@@ -88,6 +124,12 @@ class Save_score_view(View):
         self._update_input_box()
 
     def save_name(self) -> None:
+
+        """
+        Stores the name the player has entered in the input box,
+        setting the 'show_message' attribute a value
+        to display a confirmation message for a few seconds before exiting.
+        """
 
         self.player_name: str = self.input_box.input
         self.game.scores.add_score(self.player_name, self.game.player.score)
@@ -101,6 +143,13 @@ class Save_score_view(View):
 
     def display_view(self) -> None:
 
+        """
+        Updates and displays the view's widgets,
+        showing an 'enter name' text above the input box
+        if the player has not yet entered anything,
+        and also showing the confirmation message.
+        """
+
         self._update()
 
         if self.input_text.label:
@@ -113,6 +162,12 @@ class Save_score_view(View):
             self.display_message()
 
     def display_message(self) -> None:
+
+        """
+        Displays the confirmation message of the view
+        if the frame counter has not yet reached the end time,
+        and if it did, exiting the view and returning to the main menu.
+        """
 
         if self.msg_frame_counter < MSG_DISPLAY_TIME:
 

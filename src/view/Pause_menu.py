@@ -21,7 +21,28 @@ LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
 
 class Pause_menu(View):
 
+    """
+    A view that's used as a modal view by another view
+    (mainly Game_view) and presents the user with different options
+    aswell as cheat options if the user enters the correct password.
+    """
+
     def __init__(self, app, game: Game, global_view: View) -> None:
+
+        """
+        Initializes the pause menu's main attributes,
+        such as the current game playing and the Game_view
+        serving as the global view (the pause menu being the modal view).
+
+        Parameters
+        ----------
+        app: app
+            The main app handling everything.
+        game: Game
+            The game currently playing.
+        global_view: View
+            The view that oversees this pause menu.
+        """
 
         self.game: Game = game
         self.global_view: View = global_view
@@ -32,14 +53,40 @@ class Pause_menu(View):
     @property
     def w(self) -> int:
 
+        """
+        An override of the parent View's property,
+        because the pause menu's width is not the whole screen.
+
+        Returns
+        -------
+        int
+            The width of the pause menu.
+        """
+
         return sw() - sw() // 8
 
     @property
     def h(self) -> int:
 
+        """
+        An override of the parent View's property,
+        because the pause menu's height is not the whole screen.
+
+        Returns
+        -------
+        int
+            The height of the pause menu.
+        """
+
         return sh() - sh() // 8
 
     def _update_left_panel(self) -> None:
+
+        """
+        Builds the left panel of the pause menu,
+        with buttons for all the different options for the user to select
+        (resume, exit, save, etc).
+        """
 
         panel_width: int = self.w // 2 - self.w // 8
         panel_height: int = self.h - self.h // 3
@@ -74,6 +121,16 @@ class Pause_menu(View):
     @property
     def invincible_state(self) -> str:
 
+        """
+        Returns the current invincible state for the cheats
+        as a string to be used for the corresponding button's label.
+
+        Returns
+        -------
+        str
+            'on' if the invincible mode is activated else 'off'.
+        """
+
         return (
             "on" if self.game.cheats.is_invincible
             else "off"
@@ -82,12 +139,27 @@ class Pause_menu(View):
     @property
     def clipping_state(self) -> str:
 
+        """
+        Returns the current clipping state for the cheats
+        as a string to be used for the corresponding button's label.
+
+        Returns
+        -------
+        str
+            'on' if the clipping mode is activated else 'off'.
+        """
+
         return (
             "on" if self.game.cheats.is_clipping
             else "off"
         )
 
     def _update_cheat_panel(self) -> None:
+
+        """
+        Builds the cheat panel widgets after the user has unlocked it,
+        with labels describing the cheats and their associated buttons.
+        """
 
         if not self.show_cheat_panel:
             return
@@ -142,6 +214,16 @@ class Pause_menu(View):
 
     def change_parameter(self, parameter: str) -> None:
 
+        """
+        Changes the number of lives/points
+        for the game cheats.
+
+        Parameters
+        ----------
+        parameter: str
+            The parameter to add/remove (lives or score).
+        """
+
         function: Callable
         if parameter == "nb_lives":
             function = self.game.cheats.change_lives
@@ -158,6 +240,17 @@ class Pause_menu(View):
 
     def change_onoff(self, parameter: str) -> None:
 
+        """
+        Changes the state of the invincible and clipping modes
+        for the game cheats.
+
+        Parameters
+        ----------
+        parameter: str
+            The parameter to toggle ('invincible_mode' or 'nowalls_mode').
+        """
+
+        function: Callable
         if parameter == "invincible_mode":
             function = self.game.cheats.toggle_invincible
         elif parameter == "nowalls_mode":
@@ -169,11 +262,20 @@ class Pause_menu(View):
 
     def reset_input(self) -> None:
 
+        """
+        Resets the password input box to default (no input).
+        """
+
         self.show_input: bool = False
         self.show_message: str = ""
         self.lock_icon.y = -2
 
     def _update_lock_and_password(self) -> None:
+
+        """
+        Builds the lock icon and the password input box widgets
+        for the right panel of the pause menu (cheat panel).
+        """
 
         lock_width: int = self.w // 2 // 3
 
@@ -202,6 +304,13 @@ class Pause_menu(View):
 
     def show_input_box(self) -> None:
 
+        """
+        Changes the state of 'show_input' (showing the input box)
+        aswell as the lock icon's y position on the screen
+        after the user has clicked on the lock icon
+        located on the right of the pause menu.
+        """
+
         self.show_input = not self.show_input
 
         if not self.show_input:
@@ -214,6 +323,13 @@ class Pause_menu(View):
         )
 
     def validate_password(self) -> None:
+
+        """
+        Checks whether or not the password entered by the user
+        is the correct one, and setting the 'show_message' value
+        accordingly, aswell as changing the lock icon's image
+        and input box's text color.
+        """
 
         self.frame_counter: int = 0
 
@@ -234,6 +350,16 @@ class Pause_menu(View):
 
     def _update(self, forced: bool = False) -> None:
 
+        """
+        Updates the menu, checking if the window has been resized,
+        and re-building the widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            Whether or not the view MUST be updated.
+        """
+
         if not pr.is_window_resized() and not forced:
             return
 
@@ -243,6 +369,13 @@ class Pause_menu(View):
         self._update_lock_and_password()
 
     def display_view(self) -> None:
+
+        """
+        Updates and displays the menu,
+        drawing the outline and middle separation line,
+        aswell as displaying the lock icon/cheat panel
+        on the right based on if the user has unlocked it or not.
+        """
 
         self._update()
 
@@ -276,6 +409,13 @@ class Pause_menu(View):
                 self.input_password.display_widget()
 
     def display_message(self) -> None:
+
+        """
+        Displays a message if the frame counter has not yet
+        reached the amount of time of display.
+        Also changes the input box's text color back to normal
+        and resets the lock icon after the message display is over.
+        """
 
         if self.frame_counter < PASSWORD_MSG_TIME:
 

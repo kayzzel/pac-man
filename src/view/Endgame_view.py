@@ -7,7 +7,28 @@ from .widget import ButtonPanel, TextPanel, Text
 
 class Endgame_view(View):
 
+    """
+    A view displayed at the end of a game (win or lose).
+    The user can see the highscores for this map,
+    save their own score, or exit.
+    """
+
     def __init__(self, app, game: Game, state: bool = False) -> None:
+
+        """
+        Initializes the main attributes of the view
+        and updates it a first time, loading the scores
+        of the game's map.
+
+        Parameters
+        ----------
+        app: App
+            The app that manages everything.
+        game: Game
+            The current game the user has started.
+        state: bool (default False)
+            True if the user has won the game, False otherwise.
+        """
 
         self.game: Game = game
         self.state: bool = state
@@ -24,6 +45,10 @@ class Endgame_view(View):
         super().__init__(app)
 
     def _update_title(self) -> None:
+
+        """
+        Builds the view's title widgets.
+        """
 
         self.title: Text = Text(
             (
@@ -53,6 +78,10 @@ class Endgame_view(View):
 
     def _update_buttons(self) -> None:
 
+        """
+        Builds the save and back buttons of the view.
+        """
+
         button_w: int = self.w // 8
         button_h: int = self.h // 10
         self.save_button: ButtonPanel = ButtonPanel(
@@ -76,6 +105,11 @@ class Endgame_view(View):
 
     def _update_scores(self) -> None:
 
+        """
+        Builds the text panel containing the game's map scores,
+        displaying their place, username and value.
+        """
+
         scores_y: int = self.highscore.lowerbound
         scores_height: int = (
             self.h
@@ -95,6 +129,16 @@ class Endgame_view(View):
         self.widgets.append(self.score_panel)
 
     def _update(self, forced: bool = False) -> None:
+
+        """
+        Updates the view, checking if the window has been resized,
+        and re-building the widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            Whether or not the view MUST be updated.
+        """
 
         if not pr.is_window_resized() and not forced:
             return

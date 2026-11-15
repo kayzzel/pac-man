@@ -9,7 +9,23 @@ TEXTURES_PACK: dict[str, str] = {
 
 class Texture_pack:
 
+    """
+    A class that allows to store and load
+    the names of all the textures needed for the game.
+    """
+
     def __init__(self, pack_path: str = TEXTURES_PACK["DEFAULT"]) -> None:
+
+        """
+        Initializes all the names of the textures needed,
+        aswell as storing the paths to the textures
+        based on the path to the pack given.
+
+        Parameters
+        ----------
+        pack_path: str (default TEXTURES_PACK['DEFAULT'])
+            The path to the pack from which to load the textures' paths.
+        """
 
         self.folders_needed: list[str] = [
             "pac-man_sprites",
@@ -95,6 +111,17 @@ class Texture_pack:
 
     def _load_pack(self, pack_path: str) -> None:
 
+        """
+        Counts and stores the paths for each texture,
+        searching inside the pack given, and if not found,
+        searching inside the default pack.
+
+        Parameters
+        ----------
+        pack_path: str
+            The path to the pack in which to search for the textures needed.
+        """
+
         self.all_textures: dict = {}
         self.fill_textures(self.textures_needed, pack_path)
         self.fill_textures(self.special_movements, pack_path)
@@ -111,6 +138,19 @@ class Texture_pack:
 
     def fill_textures(self, textures: list[str], pack_path: str) -> None:
 
+        """
+        Searches in the pack given all the textures given
+        and stores the path to the textures in a dictionary,
+        the key being the name of the texture.
+
+        Parameters
+        ----------
+        textures: list[str]
+            The textures to search for and store.
+        pack_path: str
+            The path to the pack in which to search the textures.
+        """
+
         self.folders = {
             f.name: f.path for f in os.scandir(pack_path)
             if f.is_dir() and f.name in self.folders_needed
@@ -125,6 +165,20 @@ class Texture_pack:
             })
 
     def get_texture(self, texture_name: str) -> str:
+
+        """
+        Returns the path that corresponds to the texture name if it exists.
+
+        Parameters
+        ----------
+        texture_name: str
+            The name of the texture to search the path for.
+
+        Returns
+        -------
+        str
+            The path to the texture.
+        """
 
         if texture_name not in self.all_textures:
             raise ValueError(f"Missing texture {texture_name} in texture pack")

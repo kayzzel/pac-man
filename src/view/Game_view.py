@@ -19,7 +19,24 @@ MIDDLE_LINE_THICKNESS: int = 10
 
 class Game_view(View):
 
+    """
+    A view used to display the current game playing.
+    """
+
     def __init__(self, app: Any, game: Game) -> None:
+
+        """
+        Initializes the main attributes of the view,
+        such as the game currently playing, the pause menu
+        that serves as a modal view, and the map renderer.
+
+        Parameters
+        ----------
+        app: App
+            The main app handling everything.
+        game: Game
+            The game started by the user.
+        """
 
         self.game: Game = game
         self.modal_view: Pause_menu = Pause_menu(app, game, self)
@@ -35,6 +52,13 @@ class Game_view(View):
         super().__init__(app)
 
     def _update_countdown(self) -> None:
+
+        """
+        Increments the start countdown,
+        resuming the game loop (starting the game)
+        if it reaches 0, otherwise creating a Text widget
+        to display the current countdown.
+        """
 
         if self.countdown == -1:
 
@@ -69,6 +93,12 @@ class Game_view(View):
             self.frame_counter += 1
 
     def _update_info_panel(self) -> None:
+
+        """
+        Builds the information panel, located on the left of the screen,
+        with widgets displaying the current score, highscore,
+        number of lives, timer, and collectibles collected.
+        """
 
         if not self.is_freed and hasattr(self, "info_widgets"):
             for widget in self.info_widgets:
@@ -125,6 +155,11 @@ class Game_view(View):
         self._update_collectibles()
 
     def _update_collectibles(self) -> None:
+
+        """
+        Builds the required collectible icons
+        based on if they were already collected or not.
+        """
 
         collect_info: dict[str, str] = {}
         for collectible_name in Consumable_type:
@@ -199,6 +234,15 @@ class Game_view(View):
     @property
     def map_startx(self) -> int:
 
+        """
+        Calculates the start x coordinate of the grid on the screen.
+
+        Returns
+        -------
+        int
+            The start x coordinate of the grid.
+        """
+
         return (
             self.info_panel.w + MIDDLE_LINE_THICKNESS
             + (self.map_panel_width - self.map_width) // 2
@@ -207,9 +251,23 @@ class Game_view(View):
     @property
     def map_starty(self) -> int:
 
+        """
+        Calculates the start y coordinate of the grid on the screen.
+
+        Returns
+        -------
+        int
+            The start y coordinate of the grid.
+        """
+
         return (self.h - self.map_height) // 2
 
     def catch_player_input(self) -> None:
+
+        """
+        Handles player input and changes PacMan's direction
+        based on the keybind pressed.
+        """
 
         if self.game.state != Game_state.RUNNING:
             return
@@ -224,6 +282,11 @@ class Game_view(View):
             self.game.player.set_next_direction("E")
 
     def _update_map_panel(self) -> None:
+
+        """
+        Calculates the grid's position and size aswell as cell size,
+        and updates the map renderer's grid to create a new render texture.
+        """
 
         self.grid: list[list[Cell]] = self.game.map[self.game.map_index].cells
         self.map_panel_width: int = (
@@ -261,6 +324,12 @@ class Game_view(View):
 
     def pause_or_resume(self) -> None:
 
+        """
+        Changes the 'show_as_modal' state.
+        If activated, the modal view (pause menu) will be shown
+        instead of the game view.
+        """
+
         self.show_as_modal = not self.show_as_modal
 
         if self.show_as_modal:
@@ -272,13 +341,29 @@ class Game_view(View):
 
     def exit_game(self, next_view: View) -> None:
 
+        """
+        Exits the game view and changes to the given view,
+        stopping the current game.
+
+        Parameters
+        ----------
+        next_view: View
+            The next view to display.
+        """
+
         self.game.stop()
         self.app.change_view(next_view)
 
     def _unload_images(self) -> None:
 
-        if self.show_as_modal:
-            self.modal_view._unload_images()
+        """
+        Unloads all icons' images and textures if not already done,
+        from the information panel,
+        the map renderer sprites and grid render texture,
+        and the modal view's icons aswell.
+        """
+
+        self.modal_view._unload_images()
 
         if self.is_freed:
             return
@@ -299,6 +384,20 @@ class Game_view(View):
         self.is_freed = True
 
     def _update(self, forced: bool = False) -> None:
+
+        """
+        Updates the game view aswell as the modal view (pause menu).
+        Checking for user input (movement keys and escape key),
+        if the game is over (win or lose),
+        if the start countdown has finished being displayed,
+        if the window has been resized
+        and re-building the widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            Whether or not the view MUST be updated.
+        """
 
         if pr.get_key_pressed() in self.app.display_config.keybinds.values():
             self.catch_player_input()
@@ -331,6 +430,15 @@ class Game_view(View):
         self.is_freed = False
 
     def display_view(self) -> None:
+
+        """
+        Updates and displays the game view,
+        or the modal view (pause menu) if 'show_as_modal' is True.
+        Draws the separating line between the information panel
+        and the game grid, and draws the grid's outline aswell.
+        Draws the grid and sprites via the map renderer
+        and displays the information panel widgets.
+        """
 
         self._update()
 

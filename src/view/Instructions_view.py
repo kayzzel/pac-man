@@ -76,12 +76,40 @@ TEXTS: dict[str, list[str]] = {
 
 class Instructions_view(View):
 
+    """
+    A simple view used to display the game instructions to the user.
+    """
+
     def __init__(self, app) -> None:
+
+        """
+        Initializes the main attributes of the view
+        and updates it a first time.
+
+        Parameters
+        ----------
+        app: App
+            The app that manages everything.
+        """
 
         self.show_instruction_panel: bool = False
         super().__init__(app)
 
     def show_instruction(self, category: str) -> None:
+
+        """
+        Changes the 'show_instruction' state to True
+        and sets the current instruction text to show
+        on the screen by searching for it in the instructions dictionary
+        with the button label given that corresponds.
+
+        Parameters
+        ----------
+        category: str
+            The label of the button that was clicked,
+            and the key to find the correct instruction text
+            in the dictionary.
+        """
 
         if category not in self.all_instr.keys():
             return
@@ -95,10 +123,32 @@ class Instructions_view(View):
     @property
     def font_sz(self) -> int:
 
+        """
+        Returns the base font size the instruction text
+        should have, but can be reduced if the text is too long.
+
+        Returns
+        -------
+        int
+            The base font size for the instruction text.
+        """
+
         return self.h // 40
 
     @property
     def outline(self) -> tuple[int, int, int, int]:
+
+        """
+        Calculates the rectangle position and size
+        for the current instruction text
+        that should be shown on the screen.
+
+        Returns
+        -------
+        tuple[int, int, int, int]
+            Respectively the x, y, width and height
+            of the instruction text area to be shown.
+        """
 
         if not self.show_instruction_panel:
             return (0, 0, 0, 0)
@@ -114,6 +164,21 @@ class Instructions_view(View):
     @property
     def is_in_instruction(self) -> bool:
 
+        """
+        Checks whether or not the user's mouse
+        coordinates are inside the rectangle area
+        when an instruction text is shown on the screen.
+
+        Returns
+        -------
+        bool
+            True if the mouse coordinates are inside
+            the instrution text area, False otherwise.
+        """
+
+        if not self.show_instruction_panel:
+            return False
+
         x, y, w, h = self.outline
         return ((
             x <= pr.get_mouse_x() <= x + w
@@ -121,6 +186,12 @@ class Instructions_view(View):
         ))
 
     def _update_instructions(self) -> None:
+
+        """
+        Stores all the different instructions by their title name
+        inside a dictionary, to be used when the user wants to see
+        a specific instruction and clicks on a button.
+        """
 
         self.all_instr: dict[str, tuple[list[Text], tuple[int, int]]] = {}
 
@@ -155,6 +226,11 @@ class Instructions_view(View):
 
     def _update_menu_panel(self) -> None:
 
+        """
+        Builds the title and button panel
+        that contains all the instruction options.
+        """
+
         self.title: Text = Text(
             "PAC-MAN - INSTRUCTIONS",
             -2,
@@ -179,6 +255,10 @@ class Instructions_view(View):
 
     def _update_back_button(self) -> None:
 
+        """
+        Builds the back button for the instructions view.
+        """
+
         back_label: str = "back <-|"
         back_width: int = self.w // 8
         back_height: int = self.h // 15
@@ -193,6 +273,18 @@ class Instructions_view(View):
         self.widgets.append(self.back_button)
 
     def _update(self, forced: bool = False) -> None:
+
+        """
+        Updates the menu, changing the 'show_instruction' state
+        based on if the user has pressed the escape key or clicked the mouse,
+        and checking if the window has been resized,
+        re-building the widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            Whether or not the view MUST be updated.
+        """
 
         if pr.is_key_pressed(kek.KEY_ESCAPE) and self.show_instruction_panel:
             self.show_instruction = False
@@ -212,6 +304,12 @@ class Instructions_view(View):
         self._update_instructions()
 
     def display_view(self) -> None:
+
+        """
+        Updates and displays the instructions view,
+        showing or not an instruction in a outlined rectangle
+        if the user has clicked on a button.
+        """
 
         super().display_view()
 
