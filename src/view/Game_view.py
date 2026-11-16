@@ -410,7 +410,7 @@ class Game_view(View):
 
         if self.game.state in [Game_state.WON, Game_state.LOST]:
             state: bool = self.game.state == Game_state.WON
-            if self.map_renderer.check_death():
+            if self.map_renderer.check_over():
                 self.exit_game(Endgame_view(self.app, self.game, state))
             return
 

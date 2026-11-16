@@ -49,7 +49,9 @@ class Map_renderer:
         self.texture_pack: Texture_pack = Texture_pack(texture_pack)
         self.collectible_icons: dict[str, Icon] = {}
         self.sprites: dict[str, AnimIcon] = {}
-        self.end_states: list[Game_state] = [Game_state.LOST, Game_state.DIED]
+        self.end_states: list[Game_state] = [
+            Game_state.WON, Game_state.LOST, Game_state.DIED
+        ]
 
     def update_grid(
         self,
@@ -162,7 +164,10 @@ class Map_renderer:
         """
 
         self.set_correct_dir(pac_man)
-        if self.game.state in self.end_states:
+        if (
+            self.game.state in self.end_states
+            and self.game.state != Game_state.WON
+        ):
             return "pacman_death"
         return self.get_entity_texture(pac_man)
 
@@ -641,19 +646,18 @@ class Map_renderer:
             self.sprites[texture_path].display_widget()
             self.current_sprites[entity.name] = self.sprites[texture_path]
 
-            self.check_death()
+            self.check_over()
 
-    def check_death(self) -> bool:
+    def check_over(self) -> bool:
 
         """
-        Checks if PacMan has died, and whether or not the death animation
+        Checks if the game is finished, and whether or not the PacMan animation
         displayed on the screen has finished its loop.
 
         Returns
         -------
         bool
-            True if PacMan has died
-            and the animation has ended, False otherwise.
+            True if PacMan has finished animating, False otherwise.
         """
 
         if (
@@ -667,11 +671,24 @@ class Map_renderer:
         if (
             self.game.state in self.end_states
             and self.current_sprites["pacman"].loop_finished
-            and pacman_death_path == self.current_sprites["pacman"].image_path
         ):
-            if self.game.state == Game_state.DIED:
+            if (
+                pacman_death_path == self.current_sprites["pacman"].image_path
+                and self.game.state == Game_state.DIED
+            ):
                 self.current_sprites["pacman"].reset_loop()
                 self.game.resume()
+
+            elif self.game.state == Game_state.WON:
+
+                if not hasattr(self, "end_loop_counter"):
+                    self.end_loop_counter: int = 0
+
+                if self.end_loop_counter < 3:
+                    self.current_sprites["pacman"].reset_loop()
+                    self.end_loop_counter += 1
+                    return False
+
             return True
 
         return False
