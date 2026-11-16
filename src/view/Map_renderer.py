@@ -513,46 +513,34 @@ class Map_renderer:
 
     def calculate_entity_pos(
         self,
-        cell: Cell,
-        x: int,
-        y: int,
         en_posx: float,
         en_posy: float
     ) -> tuple[int, int]:
 
         """
-        Calculates the entity position (on the screen)
-        based on the cell it is currently in to place it in the center.
+        Calculates the entity position (on the screen) directly from
+        its float position in the grid: multiplying by the full cell
+        size keeps the sprite continuous when it crosses a cell
+        boundary, where the old per-cell mapping used to jump.
 
         Parameters
         ----------
-        cell: Cell
-            The cell in which the entity is in.
-        x: int
-            The cell's x coordinate (inside the grid).
-        y: int
-            The cell's y coordinate (inside the grid).
         en_posx: float
-            The entity's x coordinate (on the screen).
+            The entity's x coordinate in the grid (cell units).
         en_posy: float
-            The entity's y coordinate (on the screen).
+            The entity's y coordinate in the grid (cell units).
 
         Returns
         -------
         tuple[int, int]
-            The calculated entity's coordinates on the screen.
+            The entity's pixel coordinates on the screen.
         """
 
-        entity_base_x: int = x + self.cell_padding
-        entity_base_y: int = y + self.cell_padding
-
-        posx = (
-            entity_base_x - self.entity_size // 2
-            + int(self.entity_space * (en_posx - cell.pos_x))
+        posx = int(
+            self.map_x + en_posx * self.cell_size - self.entity_size // 2
         )
-        posy = (
-            entity_base_y - self.entity_size // 2
-            + int(self.entity_space * (en_posy - cell.pos_y))
+        posy = int(
+            self.map_y + en_posy * self.cell_size - self.entity_size // 2
         )
         return (posx, posy)
 
@@ -621,7 +609,7 @@ class Map_renderer:
             en_posx: int
             en_posy: int
             en_posx, en_posy = self.calculate_entity_pos(
-                cell, x, y, *self.saved_dirs[entity.name][2]
+                *self.saved_dirs[entity.name][2]
             )
 
             texture_path = self.texture_pack.get_texture((
