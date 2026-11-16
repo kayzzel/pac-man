@@ -75,7 +75,7 @@ class Custom_step(View, ABC):
 
         self.number: int = number
         self.main_view: View = view
-        self.map: Map_custom = view.map
+        self.map: Map_custom = self.get_attr("map")
         self.map_renderer: Custom_map_renderer = Custom_map_renderer()
         self.description_label: str = description
         self.show_next: bool = show_next
@@ -83,6 +83,29 @@ class Custom_step(View, ABC):
         self.frame_counter: int = 0
         self.is_freed: bool = True
         self._update(True)
+
+    def get_attr(self, attribute: str) -> Any:
+
+        """
+        For lint errors, checks that the main view
+        is a Custom view and returns the attribute needed.
+
+        Parameters
+        ----------
+        attribute: str
+            The attribute/method to return.
+
+        Returns
+        -------
+        Any
+            The main view's attribute or method.
+        """
+
+        if (
+            isinstance(self.main_view, Custom_view)
+            and hasattr(self.main_view, attribute)
+        ):
+            return getattr(self.main_view, attribute)
 
     def _unload_images(self) -> None:
 
@@ -99,7 +122,7 @@ class Custom_step(View, ABC):
         Exits this step and goes back to the previous step.
         """
 
-        self.main_view.step_back()
+        self.get_attr("step_back")()
 
     def go_next(self) -> None:
 
@@ -107,7 +130,7 @@ class Custom_step(View, ABC):
         Exits this step and goes to the next step.
         """
 
-        self.main_view.step_forward()
+        self.get_attr("step_forward")()
 
     def _update_title(self) -> None:
 
@@ -431,7 +454,23 @@ class Custom_step(View, ABC):
 
 class Step_zero(Custom_step):
 
+    """
+    A step used for the user to either select an already
+    existing custom map to launch, or create a new one from scratch.
+    """
+
     def __init__(self, main_view: View) -> None:
+
+        """
+        Initializes the main attributes of the step,
+        such as its number, all of the custom maps already created,
+        and the main view.
+
+        Parameters
+        ----------
+        main_view: View
+            The view overseeing all the steps.
+        """
 
         self.number: int = 0
         self.maps: list[str] = get_stored_map_list(main_view.app.map_folder)
@@ -440,6 +479,10 @@ class Step_zero(Custom_step):
         self._update(True)
 
     def _update_title(self) -> None:
+
+        """
+        Builds the title widget for this step.
+        """
 
         self.title: Text = Text(
             "LOAD EXISTING MAP",
@@ -450,6 +493,10 @@ class Step_zero(Custom_step):
         self.widgets.append(self.title)
 
     def _update_buttons(self) -> None:
+
+        """
+        Builds the back and next buttons for this step.
+        """
 
         button_w: int = self.w // 7
         button_h: int = self.h // 12
@@ -473,11 +520,17 @@ class Step_zero(Custom_step):
 
     def _update_dropdown(self) -> None:
 
+        """
+        Builds the map dropdown widget that allows
+        the user to select an already existing custom map
+        to launch directly.
+        """
+
         load_label: str = "Select a map"
         dropdown_buttons: dict[str, tuple[Callable, Any]] = {
             load_label: (lambda: 0, None)
         } | {
-            map_name: (self.main_view.launch_game, map_name)
+            map_name: (self.get_attr("launch_game"), map_name)
             for map_name in self.maps
         }
         self.map_dropdown: Dropdown = Dropdown(
@@ -491,6 +544,16 @@ class Step_zero(Custom_step):
 
     def _update(self, forced: bool = False) -> None:
 
+        """
+        Checks if the window has been resized or an update is required,
+        and updates the widgets if so.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            True if the step MUST be updated, False otherwise.
+        """
+
         if not pr.is_window_resized() and not forced:
             return
 
@@ -501,12 +564,32 @@ class Step_zero(Custom_step):
 
     def display_view(self) -> None:
 
+        """
+        Calls the grandparent View's method
+        to simply update and display the step's widgets.
+        """
+
         super(Custom_step, self).display_view()
 
 
 class Step_one(Custom_step):
 
+    """
+    A step for the user to define the width/height of their custom map.
+    """
+
     def __init__(self, main_view: View) -> None:
+
+        """
+        Initializes the main attributes of the step,
+        setting the width/height values to default,
+        and calling the Custom_step's parent method for the other attributes.
+
+        Parameters
+        ----------
+        main_view: View
+            The main view that handles the whole process.
+        """
 
         self.is_init: bool = False
         self.width_set: bool = True
@@ -520,6 +603,12 @@ class Step_one(Custom_step):
         self.h_input.text_color = pr.GREEN
 
     def validate_width(self) -> None:
+
+        """
+        Checks and validates the height entered by the user,
+        setting the 'show_message' value to a refusal message
+        if invalid, otherwise setting the map's rows via the Map_custom.
+        """
 
         input_w = self.w_input.input
         if not input_w.isdigit() or not (10 <= int(input_w) <= 30):
@@ -535,6 +624,12 @@ class Step_one(Custom_step):
 
     def validate_height(self) -> None:
 
+        """
+        Checks and validates the height entered by the user,
+        setting the 'show_message' value to a refusal message
+        if invalid, otherwise setting the map's rows via the Map_custom.
+        """
+
         input_h = self.h_input.input
         if not input_h.isdigit() or not (10 <= int(input_h) <= 30):
 
@@ -548,6 +643,11 @@ class Step_one(Custom_step):
         self.height_set = True
 
     def _update_inputboxes(self) -> None:
+
+        """
+        Builds the two input boxes in which the user
+        enters the width and height of the map they want to create.
+        """
 
         self.x_sign: Text = Text(
             "  X  ",
@@ -588,6 +688,11 @@ class Step_one(Custom_step):
 
     def display_message(self) -> None:
 
+        """
+        Builds and displays a text widget showing the refusal message
+        if an input entered by the user was invalid.
+        """
+
         if self.frame_counter < MSG_TIME:
 
             message: Text = Text(
@@ -608,6 +713,19 @@ class Step_one(Custom_step):
 
     def _update(self, forced: bool = False) -> None:
 
+        """
+        Checks if the width/height have finished being set,
+        and if so toggling the 'next' button so that the user
+        can go to the next step.
+        Also checks if the window has been resized or an update is required,
+        and updating widgets if needed.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            True if the step MUST be updated, False otherwise.
+        """
+
         if self.is_init:
             self.width_set = not self.w_input.enter_input
             self.height_set = not self.h_input.enter_input
@@ -622,7 +740,24 @@ class Step_one(Custom_step):
 
 class Step_two(Custom_step):
 
+    """
+    A step for the user to customize the map's walls.
+    """
+
     def __init__(self, main_view: View) -> None:
+
+        """
+        Initializes the main attributes of the step,
+        setting the 'show_cell' value to False
+        (until the user clicks on a specific cell,
+        the big square individual cell is not shown),
+        and calling the Custom_step's parent method for the other attributes.
+
+        Parameters
+        ----------
+        main_view: View
+            The main view that handles the whole process.
+        """
 
         self.show_cell: bool = False
         self.is_init: bool = False
@@ -636,23 +771,43 @@ class Step_two(Custom_step):
 
     def go_back(self) -> None:
 
+        """
+        Exits this step and goes back to the previous step,
+        resetting the map to default (empty walls).
+        """
+
         self.map.reset()
         super().go_back()
 
     def go_next(self) -> None:
 
+        """
+        Exits this step and goes to the next step,
+        setting the main view's map properties, so that they
+        can be preserved to be used by later views.
+        """
+
         self.map.walls_set = True
-        self.main_view.set_map_properties(
+        self.get_attr("set_map_properties")(
             self.map_x, self.map_y, self.map_w, self.map_h, self.cell_size
         )
         super().go_next()
 
     def randomize_walls(self) -> None:
 
+        """
+        Randomizes the map's walls.
+        """
+
         self.map.randomize_wall()
         self._update(True)
 
     def _update_randomize_button(self) -> None:
+
+        """
+        Builds the randomize button that allows the user
+        to randomize all walls in the map.
+        """
 
         h_rem: int = self.h - (self.map_y + self.map_h)
         button_h: int = h_rem // 2
@@ -667,6 +822,11 @@ class Step_two(Custom_step):
 
     def _unload_images(self) -> None:
 
+        """
+        Unloads the images and textures of all icons,
+        including the walls' textures, and sets 'is_freed' to True.
+        """
+
         if hasattr(self, "walls") and not self.is_freed:
 
             for icons in self.walls.values():
@@ -676,6 +836,12 @@ class Step_two(Custom_step):
         super()._unload_images()
 
     def _update_walls(self) -> None:
+
+        """
+        Builds the two wall icons (vertical/horizontal)
+        and calculates what their position would be inside
+        the big square cell if it's being displayed.
+        """
 
         wall_pad: int = self.cell_space // 12
         wall_w: int = self.cell_space // 8
@@ -725,12 +891,27 @@ class Step_two(Custom_step):
 
     def change_wall(self, wall: str) -> None:
 
+        """
+        Toggles the wall for the cell
+        currently being customized.
+
+        Parameters
+        ----------
+        wall: str
+            The wall (N, S, W, or E) to toggle on/off.
+        """
+
         if not self.show_cell:
             return
 
         self.map.change_wall(*self.cur_cell, wall)
 
     def display_cell(self) -> None:
+
+        """
+        Displays the big square cell in the middle of the map,
+        so that the user can customize the walls for each individual cell.
+        """
 
         if not self.show_cell:
             return
@@ -749,6 +930,18 @@ class Step_two(Custom_step):
 
     def set_cur_cell(self, x: int, y: int) -> None:
 
+        """
+        Sets the value of the current cell being displayed,
+        storing its coordinates and updating the walls.
+
+        Parameters
+        ----------
+        x: int
+            The x coordinate of the cell inside the grid.
+        y: int
+            The y coordinate of the cell inside the grid.
+        """
+
         self.show_cell = True
         self.cur_cell: tuple[int, int] = (x, y)
         self._unload_images()
@@ -757,12 +950,41 @@ class Step_two(Custom_step):
 
     def is_in_bigcell(self, x: int, y: int) -> bool:
 
+        """
+        Determines whether or not the coordinates given
+        are inside of the big square cell displayed.
+
+        Parameters
+        ----------
+        x: int
+            The x coordinate to check for.
+        y: int
+            The y coordinate to check for.
+
+        Returns
+        -------
+        bool
+            True if the coordinates are inside, False otherwise.
+        """
+
         return (
             self.cell_x <= x <= self.cell_x + self.cell_space
             and self.cell_y <= y <= self.cell_y + self.cell_space
         )
 
     def handle_input(self, x: int, y: int) -> None:
+
+        """
+        Checks if the user's mouse clicking is on a cell,
+        or inside the big cell square displayed.
+
+        Parameters
+        ----------
+        x: int
+            The x coordinate of the user's mouse.
+        y: int
+            The y coordinate of the user's mouse.
+        """
 
         if self.show_cell and not self.is_in_bigcell(x, y):
             self.show_cell = False
@@ -777,6 +999,11 @@ class Step_two(Custom_step):
 
     def _update_grid(self) -> None:
 
+        """
+        Builds the map renderer's grid texture
+        by passing it the current grid and its parameters.
+        """
+
         self.map_renderer.update_grid(
             self.map.map.cells,
             (self.map_w, self.map_h),
@@ -787,6 +1014,17 @@ class Step_two(Custom_step):
         self.is_freed = False
 
     def _update(self, forced: bool = False) -> None:
+
+        """
+        Checks if the user mouse's left button has been clicked,
+        if the window has been resized or an update is required,
+        and updates the widgets/textures if so.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            True if the step MUST be updated, False otherwise.
+        """
 
         if self.is_init and pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT):
             self.handle_input(pr.get_mouse_x(), pr.get_mouse_y())
@@ -803,6 +1041,13 @@ class Step_two(Custom_step):
 
     def display_view(self) -> None:
 
+        """
+        Updates and displays the step's widgets,
+        aswell as the grid texture for the map
+        and the big square cell if the user has clicked
+        on a specific cell to customize.
+        """
+
         super().display_view()
 
         self.map_renderer.display_grid()
@@ -813,7 +1058,23 @@ class Step_two(Custom_step):
 
 class Step_three(Custom_step):
 
+    """
+    A step used for the user to place PacMan's spawn point
+    and the different collectibles of the game.
+    """
+
     def __init__(self, main_view: View) -> None:
+
+        """
+        Initializes the main attributes of the step,
+        setting all of the sprites/textures' names,
+        and calling the Custom_step's parent method for the other attributes.
+
+        Parameters
+        ----------
+        main_view: View
+            The main view that handles the whole process.
+        """
 
         self._init_names(main_view)
         self.sprites: list[str] = (
@@ -828,6 +1089,19 @@ class Step_three(Custom_step):
         )
 
     def _init_names(self, main_view: View) -> None:
+
+        """
+        Initializes all of the textures' names
+        that the step is going to use in the display,
+        aswell as creating the dictionary containing
+        the sprites the user has already placed.
+
+        Parameters
+        ----------
+        main_view: View
+            The main view overseeing every step
+            (needed to get the correct texture pack before super().__init__).
+        """
 
         self.texture_pack: Texture_pack = Texture_pack(
             main_view.app.display_config.texture_pack
@@ -848,25 +1122,96 @@ class Step_three(Custom_step):
 
     @property
     def map_x(self) -> int:
-        return int(self.main_view.map_x)
+
+        """
+        Gets the correct map start x coordinate
+        from the main Custom view.
+
+        Returns
+        -------
+        int
+            The map's already defined start x coordinate.
+        """
+
+        return int(self.get_attr("map_x"))
 
     @property
     def map_y(self) -> int:
-        return int(self.main_view.map_y)
+
+        """
+        Gets the correct map start y coordinate
+        from the main Custom view.
+
+        Returns
+        -------
+        int
+            The map's already defined start y coordinate.
+        """
+
+        return int(self.get_attr("map_y"))
 
     @property
     def map_w(self) -> int:
-        return int(self.main_view.map_w)
+
+        """
+        Gets the correct map width from the main Custom view.
+
+        Returns
+        -------
+        int
+            The map's already defined width.
+        """
+
+        return int(self.get_attr("map_w"))
 
     @property
     def map_h(self) -> int:
-        return int(self.main_view.map_h)
+
+        """
+        Gets the correct map height from the main Custom view.
+
+        Returns
+        -------
+        int
+            The map's already defined height.
+        """
+
+        return int(self.get_attr("map_h"))
 
     @property
     def cell_size(self) -> int:
-        return int(self.main_view.cell_size)
+
+        """
+        Gets the correct cell size from the main Custom view.
+
+        Returns
+        -------
+        int
+            The map's already defined cell size.
+        """
+
+        return int(self.get_attr("cell_size"))
 
     def calculate_cell_pos(self, x: int, y: int) -> tuple[int, int] | None:
+
+        """
+        Calculates the position on the screen of the given
+        cell coordinates (the x and y given being the place of the cell
+        inside the grid, not on the screen).
+
+        Parameters
+        ----------
+        x: int
+            The cell's x position inside the grid (col index).
+        y: int
+            The cell's y position inside the grid (row index).
+
+        Returns
+        -------
+        tuple[int, int] | None
+            If found, the x and y coordinates of the cell (but on the screen),
+            None otherwise.
+        """
 
         if x < 0 or x >= self.map.cols:
             return None
@@ -880,6 +1225,20 @@ class Step_three(Custom_step):
         )
 
     def activate_sprite(self, spr_name: str) -> None:
+
+        """
+        Activates the placement mode for the given sprite,
+        which means that an icon
+        of the current activated sprite will now appear
+        under the user's mouse cursor when it hovers over the map,
+        allowing the user to simply click where they wish to place it
+        for it to become set in the corresponding cell.
+
+        Parameters
+        ----------
+        spr_name: str
+            The name of the sprite to activate.
+        """
 
         if (
             spr_name in self.collectible_names
@@ -903,6 +1262,27 @@ class Step_three(Custom_step):
 
     def set_sprite(self, x: int, y: int, spr_name: str) -> bool:
 
+        """
+        Determines the correct setting function to call
+        based on the sprite's name and type, and returns
+        the result of the call (validated or refused).
+
+        Parameters
+        ----------
+        x: int
+            The cell x coordinate in which the sprite has to be set.
+        y: int
+            The cell y coordinate in which the sprite has to be set.
+        spr_name: str
+            The name of the sprite to place.
+
+        Returns
+        -------
+        bool
+            True if the placement of this entity/collectible
+            inside this cell was possible, False otherwise.
+        """
+
         if spr_name == "pacman_idle":
             return self.map.set_pacman_spawn(x, y)
         elif spr_name in self.consumable_names:
@@ -916,6 +1296,14 @@ class Step_three(Custom_step):
         return False
 
     def try_place_sprite(self) -> None:
+
+        """
+        Attempts to place the current sprite inside the cell
+        in which the user has clicked, and storing the sprite
+        along with the cell and the proper texture size
+        as a tuple inside the 'sprites_set' dictionary,
+        to be displayed by the map renderer.
+        """
 
         if not self.current_sprite:
             return
@@ -957,6 +1345,21 @@ class Step_three(Custom_step):
 
     def texture_size(self, sprite_name: str) -> int:
 
+        """
+        Determines the correct texture size for the given sprite
+        based on its type (entity/collecible/consumable).
+
+        Parameters
+        ----------
+        sprite_name: str
+            The name of the sprite for which to get the texture size.
+
+        Returns
+        -------
+        int
+            The correct size for the sprite's texture.
+        """
+
         if any(sprite_name.startswith(e_name) for e_name in self.entity_names):
             return self.map_renderer.entity_size
         elif sprite_name in self.consumable_names:
@@ -966,6 +1369,12 @@ class Step_three(Custom_step):
         return 0
 
     def _unload_images(self) -> None:
+
+        """
+        Unloads the images and textures of all icons,
+        including the grid texture of the map renderer,
+        and sets 'is_freed' to True.
+        """
 
         if self.is_freed:
             return
@@ -985,6 +1394,11 @@ class Step_three(Custom_step):
 
     def _update_textures(self) -> None:
 
+        """
+        Builds all the needed icons that will be used
+        in the display.
+        """
+
         self.textures: dict[str, Icon] = {
             t_name: Icon(
                 0,
@@ -997,6 +1411,11 @@ class Step_three(Custom_step):
         self._update_sidetextures()
 
     def _update_sidetextures(self) -> None:
+
+        """
+        Builds the side icons that the user can click on
+        to activate the placement mode for a specific sprite.
+        """
 
         side_text_sz: int = (
             self.map_h // (len(self.collectible_names) // 2 + 1)
@@ -1044,6 +1463,10 @@ class Step_three(Custom_step):
 
     def display_textures(self) -> None:
 
+        """
+        Displays all the icons (set sprites, side icons, grid texture, etc).
+        """
+
         self.map_renderer.display_set_sprites([
             (self.textures[spr_name], cells, size)
             for spr_name, (cells, size) in self.sprites_set.items()
@@ -1069,6 +1492,12 @@ class Step_three(Custom_step):
 
     def display_message(self) -> None:
 
+        """
+        Displays a message under the map if needed,
+        for example if the user doesn't place the sprites
+        in order.
+        """
+
         if self.frame_counter < MSG_TIME:
 
             msg_h: int = self.h - (
@@ -1092,12 +1521,30 @@ class Step_three(Custom_step):
 
     def check_next(self) -> None:
 
+        """
+        Checks whether or not PacMan's spawn point
+        has been set, aswell as at least one collectible,
+        which allows the 'next' button to be shown to the user.
+        """
+
         self.show_next = (
             self.map.pacman_spawn_set
             and self.map.map.collectible_count > 0
         )
 
     def _update(self, forced: bool = False) -> None:
+
+        """
+        Checks if the user can go to the next step,
+        if the user has clicked somewhere (trying to place a sprite),
+        if the window has been resized or an update is required,
+        and updates the textures/icons if so.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            True if the step MUST be updated, False otherwise.
+        """
 
         self.check_next()
 
@@ -1118,6 +1565,11 @@ class Step_three(Custom_step):
 
     def display_view(self) -> None:
 
+        """
+        Updates and displays the step, mainly the grid
+        and sprites via the map renderer.
+        """
+
         super().display_view()
 
         self.map_renderer.display_grid()
@@ -1126,7 +1578,23 @@ class Step_three(Custom_step):
 
 class Step_four(Step_three):
 
+    """
+    A step used for the user to place the Ghosts' spawn and scatter points.
+    """
+
     def __init__(self, main_view: View) -> None:
+
+        """
+        Initializes the main attributes of the step,
+        setting all of the sprites/textures' names,
+        getting the previous view's already placed sprites via the main view,
+        and calling the Custom_step's parent method for the other attributes.
+
+        Parameters
+        ----------
+        main_view: View
+            The main view that handles the whole process.
+        """
 
         self._init_names(main_view)
         self.spawn_sprites: list[str] = [
@@ -1140,11 +1608,13 @@ class Step_four(Step_three):
             if en_name != "pacman"
         ]
         self.sprites: list[str] = self.spawn_sprites + self.scatter_sprites
-        for step in main_view.steps_completed:
-            if step.number == 3:
-                self.sprites_set = {
-                    k: val for k, val in step.sprites_set.items()
-                }
+        if isinstance(main_view, Custom_view):
+            for step in main_view.steps_completed:
+                if step.number == 3 and isinstance(step, Step_three):
+                    self.sprites_set = {
+                        k: val for k, val in step.sprites_set.items()
+                    }
+
         super(Step_three, self).__init__(
             4,
             main_view,
@@ -1152,6 +1622,22 @@ class Step_four(Step_three):
         )
 
     def activate_sprite(self, spr_name: str) -> None:
+
+        """
+        Activates the placement mode for the given sprite,
+        which means that an icon
+        of the current activated sprite will now appear
+        under the user's mouse cursor when it hovers over the map,
+        allowing the user to simply click where they wish to place it
+        for it to become set in the corresponding cell.
+        Also sets the 'show_message' value to display a refusal message
+        in case the user tries to place the scatter before the spawn points.
+
+        Parameters
+        ----------
+        spr_name: str
+            The name of the sprite to activate.
+        """
 
         if (
             spr_name in self.scatter_sprites
@@ -1169,6 +1655,27 @@ class Step_four(Step_three):
 
     def set_sprite(self, x: int, y: int, spr_name: str) -> bool:
 
+        """
+        Determines the correct setting function to call
+        based on the sprite's name (spawn/scatter), and returns
+        the result of the call (validated or refused).
+
+        Parameters
+        ----------
+        x: int
+            The cell x coordinate in which the sprite has to be set.
+        y: int
+            The cell y coordinate in which the sprite has to be set.
+        spr_name: str
+            The name of the sprite to place.
+
+        Returns
+        -------
+        bool
+            True if the placement of this ghost spawn/scatter
+            inside this cell was possible, False otherwise.
+        """
+
         if spr_name in self.spawn_sprites:
             return self.map.set_ghost_spawn(
                 x, y, spr_name.removesuffix("_idle").upper()
@@ -1180,6 +1687,11 @@ class Step_four(Step_three):
         return False
 
     def _update_sidetextures(self) -> None:
+
+        """
+        Builds the side icons that the user can click on
+        to activate the placement mode for a specific sprite.
+        """
 
         side_text_sz: int = self.map_h // (len(self.sprites) // 2)
         t_pad: int = self.map_h // 50
@@ -1211,6 +1723,11 @@ class Step_four(Step_three):
 
     def check_next(self) -> None:
 
+        """
+        Checks whether or not all of the Ghosts' spawn/scatter points
+        has been set, which allows the 'next' button to be shown to the user.
+        """
+
         self.show_next = (
             all(self.map.ghost_spawn_set.values())
             and all(self.map.ghost_scatter_set.values())
@@ -1219,7 +1736,20 @@ class Step_four(Step_three):
 
 class Step_five(Custom_step):
 
+    """
+    A step for the user to enter the name of their custom map.
+    """
+
     def __init__(self, main_view: View) -> None:
+
+        """
+        Calls the Custom_step's parent method for the main attributes.
+
+        Parameters
+        ----------
+        main_view: View
+            The main view that handles the whole process.
+        """
 
         super().__init__(
             5,
@@ -1228,6 +1758,12 @@ class Step_five(Custom_step):
         )
 
     def validate_name(self) -> None:
+
+        """
+        Checks and validates the name for the custom map
+        entered by the user, setting the 'show_message' value
+        to a confirmation/refusal message depending on if it's valid.
+        """
 
         if self.map.set_name(self.input_box.input):
             self.show_message = (
@@ -1241,6 +1777,12 @@ class Step_five(Custom_step):
             self.input_box.cursor_color = pr.MAROON
 
     def _update_inputbox(self) -> None:
+
+        """
+        Builds the input box in which the user enters the name
+        of their custom map, only allowing for non-existing name
+        and alphabetical characters + '-' and '_'.
+        """
 
         all_characters: list[int] = [45, 95]
         for crange in [(48, 58), (65, 91), (97, 123)]:
@@ -1271,6 +1813,12 @@ class Step_five(Custom_step):
 
     def display_message(self) -> None:
 
+        """
+        Builds and displays a text message
+        for the confirmation/refusal of the map's name entered,
+        if the frame counter has not yet reached the end of the display time.
+        """
+
         if self.frame_counter < MSG_TIME:
 
             message: Text = Text(
@@ -1297,15 +1845,40 @@ class Step_five(Custom_step):
 
     def go_next(self) -> None:
 
+        """
+        Exits this step and goes to the next step,
+        saving the custom map's layout and information.
+        """
+
         self.map.save_map()
         super().go_next()
 
     def go_back(self) -> None:
 
+        """
+        Exits this step and goes back to the previous step,
+        resetting the name of the map to undefined.
+        """
+
         self.map.name_set = False
         super().go_back()
 
     def _update(self, forced: bool = False) -> None:
+
+        """
+        Checks if the user has entered their custom map's name
+        and can go to the next step,
+        if the window has been resized or an update is required,
+        and updates the widgets if so.
+        Also changes the label of the 'next' button
+        already built by the parent Custom_step's 'update_backnext_buttons'
+        to indicate 'save' instead.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            True if the step MUST be updated, False otherwise.
+        """
 
         self.show_next = self.map.name_set
 
@@ -1319,14 +1892,34 @@ class Step_five(Custom_step):
 
 class Step_six(Custom_step):
 
+    """
+    A last step used for the user to launch their finished custom map
+    or instead return to the main menu.
+    """
+
     def __init__(self, main_view: View) -> None:
 
+        """
+        Initializes the main view and map of the step and updates a first time.
+
+        Parameters
+        ----------
+        main_view: View
+            The main view that handles the whole process.
+        """
+
         self.main_view: View = main_view
+        self.map: Map_custom = main_view.map
         self.is_freed: bool = True
         self._update(True)
 
     def _update_widgets(self) -> None:
 
+        """
+        Builds the yes, no buttons that the user can click on
+        to either launch their custom map or return to the main menu.
+        Also builds the indicative text widgets 'question' and 'description'.
+        """
         button_w: int = self.w // 15
         button_h: int = self.h // 10
         self.yes_button: ButtonPanel = ButtonPanel(
@@ -1334,14 +1927,14 @@ class Step_six(Custom_step):
             -2,
             button_w,
             button_h,
-            {"yes": (self.main_view.launch_game, self.main_view.map.map.name)}
+            {"yes": (self.get_attr("launch_game"), self.map.map.name)}
         )
         self.no_button: ButtonPanel = ButtonPanel(
             self.yes_button.posx + button_w * 2,
             -2,
             button_w,
             button_h,
-            {"no": (self.main_view.go_to_menu, None)}
+            {"no": (self.get_attr("go_to_menu"), None)}
         )
         self.question: Text = Text(
             "Start the game?",
@@ -1364,6 +1957,16 @@ class Step_six(Custom_step):
 
     def _update(self, forced: bool = False) -> None:
 
+        """
+        Checks if the window has been resized or an update is required,
+        and updates the widgets if so.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            True if the step MUST be updated, False otherwise.
+        """
+
         if not pr.is_window_resized() and not forced:
             return
 
@@ -1373,12 +1976,33 @@ class Step_six(Custom_step):
 
     def display_view(self) -> None:
 
+        """
+        Calls the grandparent View's display method
+        to simply update and display all of the step's widgets.
+        """
+
         super(Custom_step, self).display_view()
 
 
 class Custom_view(View):
 
+    """
+    A view used to allow the user to load/create their own custom maps,
+    by going through a step-by-step process.
+    """
+
     def __init__(self, app) -> None:
+
+        """
+        Initializes the main attributes of the view,
+        mainly the app, instanciates the Map_custom map,
+        and defines the list of steps for the creation process.
+
+        Parameters
+        ----------
+        app: App
+            The main app that handles everything.
+        """
 
         self.app = app
         self.map: Map_custom = Map_custom(self.app.map_folder)
@@ -1404,6 +2028,8 @@ class Custom_view(View):
         self.cur_step_index: int = 0
         self.cur_step: Custom_step = self.steps[0](self)
 
+        self.set_map_properties(0, 0, 0, 0, 0)
+
     def set_map_properties(
         self,
         x: int,
@@ -1413,11 +2039,35 @@ class Custom_view(View):
         cell_sz: int
     ) -> None:
 
+        """
+        Sets the map properties (x, y, width, height and cell size)
+        to be accessed by the current step
+        and keep display consistency from one step to another.
+
+        Parameters
+        ----------
+        x: int
+            The start x coordinate of the map on the screen.
+        y: int
+            The start y coordinate of the map on the screen.
+        w: int
+            The width of the map on the screen.
+        h: int
+            The height of the map on the screen.
+        cell_size: int
+            The size of a single map cell on the screen.
+        """
+
         self.map_x, self.map_y, self.map_w, self.map_h, self.cell_size = (
             x, y, w, h, cell_sz
         )
 
     def _unload_images(self) -> None:
+
+        """
+        Unloads the images and textures of all icons in all steps
+        and sets 'is_freed' to True.
+        """
 
         if self.is_freed:
             return
@@ -1429,15 +2079,35 @@ class Custom_view(View):
 
     def launch_game(self, map_name: str) -> None:
 
+        """
+        Launches a custom game using the name of the map to load.
+
+        Parameters
+        ----------
+        map_name: str
+            The name of the map to load and start a game with.
+        """
+
         game = custom_game(map_name, self.app.map_folder)
         if game:
             self.app.change_view(Game_view(self.app, game))
 
     def go_to_menu(self) -> None:
 
+        """
+        Goes back to the main menu.
+        """
+
         self.app.change_view("main_menu")
 
     def step_back(self) -> None:
+
+        """
+        Steps back in the loading/creation process,
+        changing the step index and unloading images/textures.
+        Also goes back to the view before the Custom_view
+        if the user goes back before the first step.
+        """
 
         if self.cur_step_index == 0:
             self.app.return_to_prev_view()
@@ -1451,6 +2121,12 @@ class Custom_view(View):
 
     def step_forward(self) -> None:
 
+        """
+        Steps forward in the loading/creation process,
+        saving the completed step in a list,
+        and instanciating the next step as the current step.
+        """
+
         if self.cur_step_index + 1 == len(self.steps):
             return
 
@@ -1459,5 +2135,9 @@ class Custom_view(View):
         self.cur_step = self.steps[self.cur_step_index](self)
 
     def display_view(self) -> None:
+
+        """
+        Displays the current step of the loading/creation process.
+        """
 
         self.cur_step.display_view()
