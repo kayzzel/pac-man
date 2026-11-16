@@ -1,14 +1,20 @@
 import pyray as pr
+
 from pyray import KeyboardKey as kek
-from typing import Any
+
 from .View import View
 from .Pause_menu import Pause_menu
 from .Endgame_view import Endgame_view
+from .Map_renderer import Map_renderer
 from .widget import Icon, Text, Widget, TextPanel
+
 from ..game.Game import Game
 from ..game.map.Cell import Cell
-from .Map_renderer import Map_renderer
 from ..utils.enum_utils import Game_state, Consumable_type
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..App import App
 
 
 LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
@@ -23,7 +29,7 @@ class Game_view(View):
     A view used to display the current game playing.
     """
 
-    def __init__(self, app: Any, game: Game) -> None:
+    def __init__(self, app: "App", game: Game) -> None:
 
         """
         Initializes the main attributes of the view,

@@ -1,10 +1,17 @@
 import pyray as pr
+
 from typing import Callable, Any
 from pathlib import Path
+
 from .View import View
+from .widget import Text, ButtonPanel, TextPanel, Dropdown
+
 from ..game.map.Map_scores import Map_scores
 from ..game.map.Map_storing import get_stored_map_list
-from .widget import Text, ButtonPanel, TextPanel, Dropdown
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..App import App
 
 
 class Scores_view(View):
@@ -17,7 +24,7 @@ class Scores_view(View):
     Other maps' scores can be loaded via a dropdown.
     """
 
-    def __init__(self, app, map_name: str = "mandatory") -> None:
+    def __init__(self, app: "App", map_name: str = "mandatory") -> None:
 
         """
         Initializes the main attributes of the view
@@ -37,6 +44,7 @@ class Scores_view(View):
         self.init_scores: bool = False
         self.load_new_scores(map_name, app.map_folder)
         self.init_scores = True
+
         super().__init__(app)
 
     def _update_title(self) -> None:

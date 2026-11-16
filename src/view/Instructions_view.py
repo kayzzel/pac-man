@@ -1,9 +1,15 @@
 import pyray as pr
+
 from pyray import KeyboardKey as kek
 from pyray import MouseButton as mb
 from typing import Callable, Any
+
 from .View import View
 from .widget import Text, ButtonPanel
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..App import App
 
 
 TEXTS: dict[str, list[str]] = {
@@ -80,7 +86,7 @@ class Instructions_view(View):
     A simple view used to display the game instructions to the user.
     """
 
-    def __init__(self, app) -> None:
+    def __init__(self, app: "App") -> None:
 
         """
         Initializes the main attributes of the view
@@ -116,7 +122,7 @@ class Instructions_view(View):
 
         self.show_instruction_panel = True
         self.cur_instr: tuple[
-            list[str],
+            list[Text],
             tuple[int, int]
         ] = self.all_instr[category]
 
@@ -287,7 +293,7 @@ class Instructions_view(View):
         """
 
         if pr.is_key_pressed(kek.KEY_ESCAPE) and self.show_instruction_panel:
-            self.show_instruction = False
+            self.show_instruction_panel = False
 
         if (
             pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT)

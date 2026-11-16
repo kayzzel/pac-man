@@ -1,7 +1,9 @@
 import pyray as pr
+
 from abc import ABC
 from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
+
 from .widget import Widget, Icon
 
 from typing import TYPE_CHECKING

@@ -1,5 +1,8 @@
 import pyray as pr
+
 from pyray import KeyboardKey as kek
+from typing import Callable, Any
+
 from .View import View
 from .Texture_pack import Texture_pack, TEXTURES_PACK
 from .widget import (
@@ -11,7 +14,6 @@ from .widget import (
     Keybind_input_box,
     AnimIcon
 )
-from typing import Callable, Any
 
 
 class Options_menu(View):

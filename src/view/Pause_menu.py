@@ -1,13 +1,21 @@
 import pyray as pr
+
 from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 from typing import Callable, Any
-from ..game.Game import Game
+
 from .View import View
 from .Scores_view import Scores_view
 from .Save_score_view import Save_score_view
 from .Options_menu import Options_menu
 from .widget import Text, ButtonPanel, TextPanel, ClickableIcon, Input_box
+
+from ..game.Game import Game
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..App import App
+    from .Game_view import Game_view
 
 
 CHEAT_PASSWORD: str = "password"
@@ -27,7 +35,12 @@ class Pause_menu(View):
     aswell as cheat options if the user enters the correct password.
     """
 
-    def __init__(self, app, game: Game, global_view: View) -> None:
+    def __init__(
+        self,
+        app: "App",
+        game: Game,
+        global_view: "Game_view"
+    ) -> None:
 
         """
         Initializes the pause menu's main attributes,
@@ -40,12 +53,12 @@ class Pause_menu(View):
             The main app handling everything.
         game: Game
             The game currently playing.
-        global_view: View
+        global_view: Game_view
             The view that oversees this pause menu.
         """
 
         self.game: Game = game
-        self.global_view: View = global_view
+        self.global_view: "Game_view" = global_view
         self.show_cheat_panel: bool = False
 
         super().__init__(app)

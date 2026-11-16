@@ -46,6 +46,9 @@ class Icon(Widget):
         self.max_size: tuple[int, int] = max_size
         self.to_resize: bool = to_resize
 
+        self.image_free: bool = True
+        self.texture_free: bool = True
+
         self._load_image(image_path)
 
         super().__init__(x, y, self.texture.width, self.texture.height)
@@ -97,7 +100,11 @@ class Icon(Widget):
         self._unload_image()
         self.image: pr.Image = pr.load_image(image_path)
         self._resize_image(*self.max_size, self.to_resize)
-        self.texture: pr.Texture = pr.load_texture_from_image(self.image)
+        self.texture: pr.Texture = pr.load_texture_from_image(
+            self.image
+        )
+        self.image_free = False
+        self.texture_free = False
 
     def _unload_image(self) -> None:
 
@@ -106,12 +113,13 @@ class Icon(Widget):
         if they have not already been unloaded.
         """
 
-        if hasattr(self, "texture") and self.texture is not None:
+        if hasattr(self, "texture") and self.texture_free is not True:
             pr.unload_texture(self.texture)
-            self.texture = None
-        if hasattr(self, "image") and self.image is not None:
+            self.texture_free = True
+
+        if hasattr(self, "image") and self.image_free is not True:
             pr.unload_image(self.image)
-            self.image = None
+            self.image_free = True
 
     def _ensure_loaded(self) -> None:
 
@@ -120,7 +128,7 @@ class Icon(Widget):
         and reloads them if it's the case.
         """
 
-        if self.texture is None or self.image is None:
+        if self.texture_free is True or self.image_free is True:
             self._load_image(self.image_path)
 
     @property
@@ -289,14 +297,20 @@ class AnimIcon(Icon):
 
         self._unload_image()
         self.frames: Any = pr.ffi.new('int *', 0)
-        self.image: pr.Image = pr.load_image_anim(image_path, self.frames)
+        self.image: pr.Image = pr.load_image_anim(
+            image_path, self.frames
+        )
         self.frames_value = self.frames[0]
 
         self.cur_frame: int = 0
         self.frame_counter: int = 0
         self.loop_finished: bool = False
 
-        self.texture: pr.Texture = pr.load_texture_from_image(self.image)
+        self.texture: pr.Texture = pr.load_texture_from_image(
+            self.image
+        )
+        self.image_free = False
+        self.texture_free = False
 
     def reset_loop(self) -> None:
 

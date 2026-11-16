@@ -1,8 +1,14 @@
 import pyray as pr
+
 from .View import View
 from .Save_score_view import Save_score_view
-from ..game.Game import Game
 from .widget import ButtonPanel, TextPanel, Text
+
+from ..game.Game import Game
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..App import App
 
 
 class Endgame_view(View):
@@ -13,7 +19,7 @@ class Endgame_view(View):
     save their own score, or exit.
     """
 
-    def __init__(self, app, game: Game, state: bool = False) -> None:
+    def __init__(self, app: "App", game: Game, state: bool = False) -> None:
 
         """
         Initializes the main attributes of the view
@@ -32,16 +38,21 @@ class Endgame_view(View):
 
         self.game: Game = game
         self.state: bool = state
+
         self.scores: list[str] = []
+
         if self.game.scores.scores:
             self.scores = [
                 pl.name + ": " + str(pl.score)
                 for pl in self.game.scores.scores
             ]
+
         if not self.scores:
             self.scores.append("No scores yet")
+
         elif len(self.scores) < 10:
             self.scores += [" " for _ in range(10 - len(self.scores))]
+
         super().__init__(app)
 
     def _update_title(self) -> None:

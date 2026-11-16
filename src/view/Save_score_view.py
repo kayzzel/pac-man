@@ -1,7 +1,13 @@
 import pyray as pr
-from ..game.Game import Game
+
 from .View import View
 from .widget import Text, Input_box, ButtonPanel
+
+from ..game.Game import Game
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..App import App
 
 
 MAX_INPUT_LENGTH: int = 20
@@ -16,7 +22,7 @@ class Save_score_view(View):
     to save their current score.
     """
 
-    def __init__(self, app, game: Game) -> None:
+    def __init__(self, app: "App", game: Game) -> None:
 
         """
         Initializes the main attributes of the view

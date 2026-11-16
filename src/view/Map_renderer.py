@@ -1,13 +1,16 @@
 import pyray as pr
-from ..game.map.Cell import Cell
-from ..game.Game import Game
-from ..utils.enum_utils import Game_state, Pacman_state
+
 from .Texture_pack import Texture_pack
 from .widget import Icon, AnimIcon
+
+from ..game.Game import Game
+from ..game.map.Cell import Cell
 from ..game.entity.Pac_man import Pac_man
 from ..game.entity.Entity import Entity
 from ..game.entity.collectible.Consumable import Consumable
 from ..game.entity.ghost.Ghost import Ghost_state, Ghost
+from ..utils.enum_utils import Game_state, Pacman_state
+
 
 DIRECTIONS: dict[str, str] = {
     "N": "up",
@@ -607,7 +610,7 @@ class Map_renderer:
             if not self.entity_is_in(entity, cell):
                 continue
 
-            if entity.name == "pacman":
+            if isinstance(entity, Pac_man):
                 self.pacman_state = entity.is_energized
 
             self.set_correct_dir(entity)
@@ -617,11 +620,16 @@ class Map_renderer:
                 *self.saved_dirs[entity.name][2]
             )
 
-            texture_path = self.texture_pack.get_texture((
-                self.get_pacman_texture(entity)
-                if isinstance(entity, Pac_man)
-                else self.get_ghost_texture(entity)
-            ))
+            if isinstance(entity, Pac_man):
+                texture_path = self.texture_pack.get_texture(
+                    self.get_pacman_texture(entity)
+                )
+            elif isinstance(entity, Ghost):
+                texture_path = self.texture_pack.get_texture(
+                    self.get_ghost_texture(entity)
+                )
+            else:
+                continue
 
             if (
                 texture_path not in self.sprites.keys()
@@ -811,7 +819,7 @@ class Custom_map_renderer(Map_renderer):
         """
         ...
 
-    def update_grid(
+    def update_special_grid(
         self,
         grid: list[list[Cell]],
         map_size: tuple[int, int],

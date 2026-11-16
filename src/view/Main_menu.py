@@ -1,5 +1,7 @@
 import pyray as pr
+
 from typing import Callable, Any
+
 from .View import View
 from .Scores_view import Scores_view
 from .Map_choice_menu import Map_choice_menu

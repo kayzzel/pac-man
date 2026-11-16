@@ -1,16 +1,9 @@
 import pyray as pr
-# from pyray import get_screen_width as sw
-# from pyray import get_screen_height as sh
+
 from pyray import MouseButton as mb
 from abc import ABC
 from typing import Callable, Any
-from ..game.Game import custom_game
-from ..game.map.Map_storing import get_stored_map_list
-from ..game.map.Map_custom import Map_custom
-from ..game.map.Cell import Cell
-from ..game.entity.collectible.Consumable import Consumable
-from ..game.entity.collectible.Pacgum import Pacgum
-from ..game.entity.collectible.Super_Pacgum import Super_Pacgum
+
 from .View import View
 from .Texture_pack import Texture_pack
 from .Map_renderer import Custom_map_renderer
@@ -24,6 +17,19 @@ from .widget import (
     Icon,
     Dropdown
 )
+
+from ..game.Game import custom_game
+from ..game.map.Map_storing import get_stored_map_list
+from ..game.map.Map_custom import Map_custom
+from ..game.map.Cell import Cell
+from ..game.entity.collectible.Consumable import Consumable
+from ..game.entity.collectible.Pacgum import Pacgum
+from ..game.entity.collectible.Super_Pacgum import Super_Pacgum
+from ..utils.enum_utils import Consumable_type
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..App import App
 
 
 MSG_TIME: int = 120
@@ -1004,7 +1010,7 @@ class Step_two(Custom_step):
         by passing it the current grid and its parameters.
         """
 
-        self.map_renderer.update_grid(
+        self.map_renderer.update_special_grid(
             self.map.map.cells,
             (self.map_w, self.map_h),
             (self.map_x, self.map_y),
@@ -1260,6 +1266,30 @@ class Step_three(Custom_step):
         if spr_name in self.sprites_set.keys():
             self.sprites_set.pop(spr_name)
 
+    def get_consumable_type(self, consumable_name: str) -> Consumable_type:
+
+        """
+        Gets the correct Consumable_type from the Enum
+        based on the name of the consumable.
+
+        Parameters
+        ----------
+        consumable_name: str
+            The name of the consumable as a string,
+            to convert into a Consumable_type.
+
+        Returns
+        -------
+        Consumable_type
+            The member of the type which corresponds to the string name.
+            If not found, replaces it with the cherry.
+        """
+
+        for cons_type in Consumable_type:
+            if cons_type.value == consumable_name:
+                return cons_type
+        return Consumable_type.CHERRY
+
     def set_sprite(self, x: int, y: int, spr_name: str) -> bool:
 
         """
@@ -1287,7 +1317,11 @@ class Step_three(Custom_step):
             return self.map.set_pacman_spawn(x, y)
         elif spr_name in self.consumable_names:
             return self.map.set_collectible(
-                x, y, Consumable(spr_name.removesuffix("_c"), x, y)
+                x, y, Consumable(
+                    self.get_consumable_type(spr_name.removesuffix("_c")),
+                    x,
+                    y
+                )
             )
         elif spr_name == "super_pacgum":
             return self.map.set_collectible(x, y, Super_Pacgum(x, y))
@@ -1555,7 +1589,7 @@ class Step_three(Custom_step):
             return
 
         super()._update(True)
-        self.map_renderer.update_grid(
+        self.map_renderer.update_special_grid(
             self.map.map.cells,
             (self.map_w, self.map_h),
             (self.map_x, self.map_y),
@@ -1909,7 +1943,7 @@ class Step_six(Custom_step):
         """
 
         self.main_view: View = main_view
-        self.map: Map_custom = main_view.map
+        self.map: Map_custom = self.get_attr("map")
         self.is_freed: bool = True
         self._update(True)
 
@@ -1991,7 +2025,7 @@ class Custom_view(View):
     by going through a step-by-step process.
     """
 
-    def __init__(self, app) -> None:
+    def __init__(self, app: "App") -> None:
 
         """
         Initializes the main attributes of the view,
@@ -2004,7 +2038,7 @@ class Custom_view(View):
             The main app that handles everything.
         """
 
-        self.app = app
+        self.app: "App" = app
         self.map: Map_custom = Map_custom(self.app.map_folder)
         self.is_freed: bool = False
 

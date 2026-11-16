@@ -1,9 +1,12 @@
 import pyray as pr
+
 from typing import Callable, Any
+
 from .View import View
 from .Game_view import Game_view
 from .Custom_view import Custom_view
 from .widget import Text, ButtonPanel, Icon
+
 from ..game.Game import mandatory_game
 
 

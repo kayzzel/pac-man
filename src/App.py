@@ -58,7 +58,7 @@ class App:
         if not self.previous_view:
             return
 
-        prev: View = self.__previous_views.pop()
+        prev: View | None = self.__previous_views.pop()
 
         if self.__current_view and not self.__current_view.is_freed:
             self.__current_view._unload_images()
