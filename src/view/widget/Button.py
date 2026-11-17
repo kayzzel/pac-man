@@ -17,7 +17,7 @@ class Button(Widget):
         x: int,
         y: int,
         label: str,
-        action: tuple[Callable, Any],
+        action: tuple[Callable[..., Any], Any],
         font_sz: int = 20,
         color: pr.Color = BUTTON_BASE_COLOR,
         hover_color: pr.Color = BUTTON_HOVER_COLOR
@@ -26,7 +26,7 @@ class Button(Widget):
         super().__init__(x, y, Text.measure_text(label, font_sz), font_sz)
 
         self.label: str = label
-        self.action: tuple[Callable, Any] = action
+        self.action: tuple[Callable[..., Any], Any] = action
         self.color: pr.Color = color
         self.hover_color: pr.Color = hover_color
 

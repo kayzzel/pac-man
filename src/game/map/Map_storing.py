@@ -214,6 +214,79 @@ def info_to_map(info: Map_info) -> Map:
     return m
 
 
+def map_file_name(index: int) -> str:
+    """
+        Description:
+    Give the file name of the index-th map of a map-set folder:
+    map.json for the first one (the historical single-map format,
+    so old saves stay loadable), then map_1.json, map_2.json and
+    so on.
+
+        Parameters:
+    index -> position of the map in its folder, starting at 0
+
+        Returns value:
+    return the file name of this map inside its folder
+    """
+    if index <= 0:
+        return "map.json"
+    return f"map_{index}.json"
+
+
+def save_maps_to_files(maps: list[Map], folder: Path) -> None:
+    """
+        Description:
+    Save every map of a map-set folder, in game order: the first one
+    as map.json, the next ones as map_1.json, map_2.json and so on.
+    Each map is validated before being written.
+
+        Parameters:
+    maps -> the maps to save, in game order
+    folder -> the folder of the map set, created if missing
+
+        Raises:
+    ValueError when a map is invalid or the folder cannot be written
+    """
+    folder.mkdir(parents=True, exist_ok=True)
+    for index, m in enumerate(maps):
+        save_map_to_file(m, str(folder / map_file_name(index)))
+
+
+def load_maps_from_folder(folder: Path) -> list[Map]:
+    """
+        Description:
+    Load every map saved in a map-set folder, in game order:
+    map.json first, then map_1.json, map_2.json and so on, sorted
+    by their number. A map file that is missing or invalid is
+    skipped, so a folder always yields the maps it can really hold.
+
+        Parameters:
+    folder -> the folder of the map set
+
+        Returns value:
+    return the loaded maps in game order, empty when there is none
+    """
+    def index_of(path: Path) -> int:
+        stem = path.stem
+        if stem == "map":
+            return 0
+        if stem.startswith("map_") and stem[4:].isdigit():
+            return int(stem[4:])
+        return -1
+
+    paths = [p for p in folder.glob("map*.json") if index_of(p) >= 0]
+    paths.sort(key=index_of)
+
+    maps: list[Map] = []
+    for path in paths:
+        try:
+            maps.append(load_map_from_file(str(path)))
+        except ValueError:
+            continue
+
+    return maps
+
+
 def save_map_to_file(m: Map, filename: str) -> None:
     info = map_to_info(m)
 
