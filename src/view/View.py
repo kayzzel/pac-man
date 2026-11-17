@@ -81,7 +81,7 @@ class View(ABC):
             The default width of the view.
         """
 
-        return sw()
+        return int(sw())
 
     @property
     def h(self) -> int:
@@ -96,7 +96,7 @@ class View(ABC):
             The default height of the view.
         """
 
-        return sh()
+        return int(sh())
 
     @property
     def x(self) -> int:
@@ -110,7 +110,7 @@ class View(ABC):
             The centered x position of the view.
         """
 
-        return (sw() - self.w) // 2
+        return int((sw() - self.w) // 2)
 
     @property
     def y(self) -> int:
@@ -124,7 +124,7 @@ class View(ABC):
             The centered y position of the view.
         """
 
-        return (sh() - self.h) // 2
+        return int((sh() - self.h) // 2)
 
     def display_view(self) -> None:
 

@@ -76,7 +76,7 @@ class Pause_menu(View):
             The width of the pause menu.
         """
 
-        return sw() - sw() // 8
+        return int(sw() - sw() // 8)
 
     @property
     def h(self) -> int:
@@ -91,7 +91,7 @@ class Pause_menu(View):
             The height of the pause menu.
         """
 
-        return sh() - sh() // 8
+        return int(sh() - sh() // 8)
 
     def _update_left_panel(self) -> None:
 

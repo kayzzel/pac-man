@@ -186,10 +186,12 @@ class Instructions_view(View):
             return False
 
         x, y, w, h = self.outline
-        return ((
+        if (
             x <= pr.get_mouse_x() <= x + w
             and y <= pr.get_mouse_y() <= y + h
-        ))
+        ):
+            return True
+        return False
 
     def _update_instructions(self) -> None:
 
