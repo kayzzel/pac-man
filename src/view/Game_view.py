@@ -46,16 +46,29 @@ class Game_view(View):
 
         self.game: Game = game
         self.modal_view: Pause_menu = Pause_menu(app, game, self)
-        self.show_as_modal: bool = False
-        self.life_icon_init: bool = False
         self.map_renderer: Map_renderer = Map_renderer(
             self.game,
             app.display_config.texture_pack
         )
-        self.game_start: bool = False
-        self.countdown: int = 3
+        self.show_as_modal: bool = False
+        self.life_icon_init: bool = False
 
+        self.game_start: bool
+        self.countdown: int
+        self.frame_counter: int
+
+        self.reset_game()
         super().__init__(app)
+
+    def reset_game(self) -> None:
+
+        """
+        Resets the game for a new map.
+        """
+
+        self.game_start = False
+        self.countdown = 3
+        self.frame_counter = 0
 
     def _update_countdown(self) -> None:
 
@@ -77,12 +90,11 @@ class Game_view(View):
             self._update(True)
             return
 
-        if (
-            not hasattr(self, "frame_counter")
-            or self.frame_counter > COUNTDOWN_TIME
-        ):
+        if self.frame_counter > COUNTDOWN_TIME:
+            self.frame_counter = 0
 
-            self.frame_counter: int = 0
+        if self.frame_counter == 0:
+
             label: str = str(self.countdown)
             if self.countdown == 0:
                 label = "START !!!"
@@ -94,9 +106,7 @@ class Game_view(View):
             )
             self.countdown -= 1
 
-        else:
-
-            self.frame_counter += 1
+        self.frame_counter += 1
 
     def _update_info_panel(self) -> None:
 
@@ -411,10 +421,13 @@ class Game_view(View):
         if pr.is_key_pressed(kek.KEY_ESCAPE):
             self.pause_or_resume()
 
-        if not forced:
-            self._update_info_panel()
+        if self.game.state == Game_state.FINISHED_MAP and self.game_start:
+            if self.map_renderer.check_over():
+                self.reset_game()
+            else:
+                return
 
-        if self.game.state in [Game_state.WON, Game_state.LOST]:
+        elif self.game.state in [Game_state.WON, Game_state.LOST]:
             state: bool = self.game.state == Game_state.WON
             if self.map_renderer.check_over():
                 self.exit_game(Endgame_view(self.app, self.game, state))
@@ -423,6 +436,9 @@ class Game_view(View):
         if not self.game_start:
             self._update_countdown()
             return
+
+        if not forced:
+            self._update_info_panel()
 
         if not pr.is_window_resized() and not forced:
             return

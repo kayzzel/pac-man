@@ -53,7 +53,10 @@ class Map_renderer:
         self.collectible_icons: dict[str, Icon] = {}
         self.sprites: dict[str, AnimIcon] = {}
         self.end_states: list[Game_state] = [
-            Game_state.WON, Game_state.LOST, Game_state.DIED
+            Game_state.WON,
+            Game_state.LOST,
+            Game_state.DIED,
+            Game_state.FINISHED_MAP
         ]
 
     def update_grid(
@@ -169,7 +172,9 @@ class Map_renderer:
         self.set_correct_dir(pac_man)
         if (
             self.game.state in self.end_states
-            and self.game.state != Game_state.WON
+            and self.game.state not in [
+                Game_state.WON, Game_state.FINISHED_MAP
+            ]
         ):
             return "pacman_death"
         return self.get_entity_texture(pac_man)
@@ -687,7 +692,7 @@ class Map_renderer:
                 self.current_sprites["pacman"].reset_loop()
                 self.game.resume()
 
-            elif self.game.state == Game_state.WON:
+            elif self.game.state in [Game_state.WON, Game_state.FINISHED_MAP]:
 
                 if not hasattr(self, "end_loop_counter"):
                     self.end_loop_counter: int = 0
