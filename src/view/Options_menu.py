@@ -194,16 +194,14 @@ class Options_menu(View):
                     + self.keybind_panel.w // 10
                 ),
                 self.keybind_panel.labels[
-                    f"{keybind} ({self.get_key_equivalent(
-                        self.app.display_config.keybinds[keybind]
-                    )})"
+                    f"{keybind} ({self.get_key_equivalent(value)})"
                 ].posy,
                 self.keybind_title.width // 3,
                 self.keybind_panel.font_size,
                 (self.change_keybind, keybind),
                 1,
                 keybind_range
-            ) for keybind in list(self.app.display_config.keybinds.keys())
+            ) for keybind, value in self.app.display_config.keybinds.items()
         }
         self.widgets += [self.keybind_title, self.keybind_panel]
         self.widgets += list(self.keybind_input.values())
