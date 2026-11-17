@@ -8,7 +8,9 @@ from typing import Any
 
 
 class Widget(ABC):
-    """Base of every widget: position, hover, click and actions."""
+    """
+    A generic abstract class used as a template for all widgets.
+    """
 
     def __init__(
         self,
