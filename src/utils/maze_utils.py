@@ -9,10 +9,22 @@ import contextlib
 
 
 def generate_maze(width: int, height: int, seed: int = 0) -> list[list[int]]:
-    """Call the external A-Maze-ing package and return its maze grid.
+    """
+        Description:
+    Call the external A-Maze-ing package and return its maze grid.
 
-    A missing, broken or incompatible package always becomes a
-    clean ValueError here, never a traceback.
+        Parameters:
+    width -> width of the maze, in cells
+    height -> height of the maze, in cells
+    seed -> seed of the maze, 0 for a random one
+
+        Returns value:
+    return the maze as a grid of bitmasks (N = 1, E = 2, S = 4,
+    W = 8), a tile equal to 15 being a closed cell
+
+        Raises:
+    ValueError when the package is missing, broken or incompatible,
+    with a clear message instead of a traceback
     """
     try:
         from mazegenerator import MazeGenerator
@@ -35,11 +47,22 @@ def generate_maze(width: int, height: int, seed: int = 0) -> list[list[int]]:
 
 
 def generate_empty_map(width: int, height: int) -> list[list[Cell]]:
-    """Generate the cells of an empty room: only the walls on the
-    border of the map are present, everything inside is open.
+    """
+        Description:
+    Generate the cells of an empty room: only the walls on the
+    border of the map are present, everything inside is open, so
+    the map editor starts from a blank slate it can fill wall by
+    wall.
 
-    No collectible, no spawn, so the map editor starts from a blank
-    slate it can fill wall by wall.
+        Parameters:
+    width -> width of the room, in cells
+    height -> height of the room, in cells
+
+        Returns value:
+    return the cells of the empty room, without collectible or spawn
+
+        Raises:
+    ValueError when the size is smaller than 2x2
     """
     if width < 2 or height < 2:
         raise ValueError(f"Invalid maze size: {width}x{height}")
@@ -62,11 +85,24 @@ def generate_empty_map(width: int, height: int) -> list[list[Cell]]:
 
 
 def generate_walls(width: int, height: int, seed: int = 0) -> list[list[Cell]]:
-    """Generate the cells of a random maze, with only their walls set.
+    """
+        Description:
+    Generate the cells of a random maze, with only their walls set:
+    each walls dict comes from the maze bitmask (N = 1, E = 2,
+    S = 4, W = 8) and no collectible, no spawn is filled in, so the
+    map editor starts from a clean slate.
 
-    Each cell walls dict comes from the generated maze bitmask
-    (N = 1, E = 2, S = 4, W = 8): no collectible, no spawn, nothing
-    else is filled in, so the map editor starts from a clean slate.
+        Parameters:
+    width -> width of the maze, in cells
+    height -> height of the maze, in cells
+    seed -> seed of the maze, 0 for a random one
+
+        Returns value:
+    return the cells of the random maze, walls only
+
+        Raises:
+    ValueError when the size is smaller than 2x2 or when the
+    A-Maze-ing package fails
     """
     if width < 2 or height < 2:
         raise ValueError(f"Invalid maze size: {width}x{height}")
@@ -95,6 +131,23 @@ def generate_walls(width: int, height: int, seed: int = 0) -> list[list[Cell]]:
 
 
 def find_spawn_position(maze: list[list[int]]) -> tuple[float, float]:
+    """
+        Description:
+    Find the spawn of Pac-Man on a generated maze: the closest
+    walkable tile to the center, searched tile by tile going
+    outward, so the player starts in the middle of the action.
+
+        Parameters:
+    maze -> the maze as a grid of bitmasks, a tile equal to 15
+            being a closed cell
+
+        Returns value:
+    return the exact spawn position (x.5, y.5) of the closest
+    walkable tile to the center
+
+        Raises:
+    ValueError when every tile of the maze is closed
+    """
     height = len(maze)
     width = len(maze[0])
 
@@ -118,6 +171,20 @@ def find_spawn_position(maze: list[list[int]]) -> tuple[float, float]:
 
 
 def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
+    """
+        Description:
+    Turn a generated maze into a complete playable map: walls from
+    the bitmasks, Pac-Man's spawn at the center tile, a pacgum on
+    every open tile (a super pacgum in the four corners), and the
+    ghosts spawning and scattering at the corners.
+
+        Parameters:
+    maze -> the maze as a grid of bitmasks coming from the package
+    config -> the loaded config, giving the collectibles values
+
+        Returns value:
+    return the complete map, ready to be played
+    """
     new_map: Map = Map()
 
     width = len(maze[0])
@@ -127,6 +194,7 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
     new_map.pacman_spawn = (spawn_x, spawn_y)
 
     def convert_nbr_to_cell(nbr: int) -> dict[str, bool]:
+        """Give the walls dict matching one bitmask of the package."""
         return {
                 "N": bool(nbr & 1),
                 "E": bool(nbr & 2),
@@ -135,6 +203,7 @@ def convert_maze_to_map(maze: list[list[int]], config: Config) -> Map:
         }
 
     def is_corner(x: int, y: int) -> bool:
+        """Tell whether a tile is one of the four map corners."""
         return (x == 0 or x == width - 1) and (y == 0 or y == height - 1)
 
     for y in range(height):

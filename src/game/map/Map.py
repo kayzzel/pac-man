@@ -2,7 +2,14 @@ from .Cell import Cell
 
 
 class Map:
+    """A level: its grid of cells, its spawns and its collectibles."""
+
     def __init__(self) -> None:
+        """
+            Description:
+        Create an empty map: no cells, no collectible and every spawn
+        at the origin, ready to be filled by a builder.
+        """
         self.name: str = ""
         self.cells: list[list[Cell]] = []
         self.real_path_finding = False

@@ -8,6 +8,7 @@ from typing import Any
 
 
 class Widget(ABC):
+    """Base of every widget: position, hover, click and actions."""
 
     """
     A generic abstract class used as a template for all widgets.
@@ -20,6 +21,11 @@ class Widget(ABC):
         width: int = 0,
         height: int = 0
     ) -> None:
+        """
+            Description:
+        Create a widget at a fixed position (x and y >= 0) or at a
+        relative position (x or y < 0) computed against the screen
+        size, for example -2 to center it on the axis.
 
         """
         Initializes the main attributes of a widget.
@@ -40,6 +46,9 @@ class Widget(ABC):
 
     @property
     def is_in(self) -> bool:
+        """
+            Description:
+        Tell whether the mouse currently hovers the widget.
 
         """
         Determines whether or not the mouse is in the widget.
@@ -62,6 +71,10 @@ class Widget(ABC):
 
     @property
     def is_pressed(self) -> bool:
+        """
+            Description:
+        Tell whether the left mouse button is pressed on the widget,
+        mostly used by the clickable widgets.
 
         """
         Determines whether or not the widget has been pressed by the user.
@@ -122,6 +135,11 @@ class Widget(ABC):
 
     @property
     def posx(self) -> int:
+        """
+            Description:
+        Give the x position of the widget on the screen: a fixed
+        position for x >= 0, else a position computed by dividing
+        the screen by -x (x = -2 centers the widget horizontally).
 
         """
         Calculates relative position or fixed position for x coordinate.
@@ -143,6 +161,11 @@ class Widget(ABC):
 
     @property
     def posy(self) -> int:
+        """
+            Description:
+        Give the y position of the widget on the screen: a fixed
+        position for y >= 0, else a position computed by dividing
+        the screen by -y (y = -2 centers the widget vertically).
 
         """
         Calculates relative position or fixed position for y coordinate

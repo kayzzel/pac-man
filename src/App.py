@@ -41,8 +41,14 @@ class Display_config:
 
 
 class App:
-    def __init__(self) -> None:
+    """Composition root of the game: config, views and the map folder."""
 
+    def __init__(self) -> None:
+        """
+            Description:
+        Create the app with a default config, an empty current view and
+        the folder where every custom map is stored, created if missing.
+        """
         self.__config: Config = Config()
         self.views: dict[str, View] = {}
         self.__current_view: View | None = None
@@ -54,6 +60,18 @@ class App:
         self.display_config: Display_config = Display_config()
 
     def load_config(self, filename: str) -> int:
+        """
+            Description:
+        Load the json config file of the game: any invalid value falls
+        back to its default, a missing or unreadable file stops here
+        with a clear message.
+
+            Parameters:
+            filename -> path of the json config file
+
+            Returns value:
+        return 0 on success, 1 if the file could not be loaded
+        """
         try:
             self.__config.load_config(filename)
         except ValueError as err:

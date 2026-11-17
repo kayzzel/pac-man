@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 
 class ConfigValidate(BaseModel):
+    """The pydantic model validating each value of the config file."""
     model_config = {"extra": "ignore"}
 
     highscore_filename: str = Field(default="highscore.json", min_length=1)
@@ -23,7 +24,14 @@ class ConfigValidate(BaseModel):
 
 
 class Config:
+    """The loaded config: every game value, with safe defaults."""
+
     def __init__(self) -> None:
+        """
+            Description:
+        Create a config holding every default value, ready to be
+        loaded from a file (or used as is, for custom games).
+        """
         self.__highscore_filename: str = "highscore.json"
         self.__nb_level: int = 10
         self.__levels_dimensions: tuple[int, int] = (15, 15)
@@ -35,6 +43,16 @@ class Config:
         self.__level_max_time: int = 90
 
     def load_config(self, filename: str) -> None:
+        """
+            Description:
+        Load a json config file (comments supported): every missing or
+        invalid value falls back to its default with a warning, and
+        unknown keys are ignored, so a loaded config is always
+        complete and valid.
+
+            Parameters:
+        filename -> path of the json config file
+        """
         config_data = get_json_from_file(filename)
         if not isinstance(config_data, dict):
             print(
@@ -77,36 +95,101 @@ class Config:
 
     @property
     def highscore_filename(self) -> str:
+        """
+            Description:
+        Give the file where the mandatory game keeps its scores.
+
+            Returns value:
+        return the score file path of the mandatory game
+        """
         return self.__highscore_filename
 
     @property
     def nb_level(self) -> int:
+        """
+            Description:
+        Give the number of levels of the mandatory game.
+
+            Returns value:
+        return the number of levels, at least 10
+        """
         return self.__nb_level
 
     @property
     def levels_dimensions(self) -> tuple[int, int]:
+        """
+            Description:
+        Give the (width, height) of the generated levels, in cells.
+
+            Returns value:
+        return the dimensions of a level
+        """
         return self.__levels_dimensions
 
     @property
     def lives(self) -> int:
+        """
+            Description:
+        Give the number of lives the player starts with.
+
+            Returns value:
+        return the starting lives
+        """
         return self.__lives
 
     @property
     def point_per_pacgum(self) -> int:
+        """
+            Description:
+        Give the points awarded for one pacgum.
+
+            Returns value:
+        return the value of a pacgum
+        """
         return self.__point_per_pacgum
 
     @property
     def point_per_super_pacgum(self) -> int:
+        """
+            Description:
+        Give the points awarded for one super pacgum.
+
+            Returns value:
+        return the value of a super pacgum
+        """
         return self.__point_per_super_pacgum
 
     @property
     def point_per_ghost(self) -> int:
+        """
+            Description:
+        Give the points awarded for one eaten ghost.
+
+            Returns value:
+        return the value of an eaten ghost
+        """
         return self.__point_per_ghost
 
     @property
     def seed(self) -> int:
+        """
+            Description:
+        Give the seed generating the first level of the mandatory
+        game: same seed, same first level.
+
+            Returns value:
+        return the seed of the first level
+        """
         return self.__seed
 
     @property
     def level_max_time(self) -> int:
+        """
+            Description:
+        Give the active seconds allowed per level: beyond that the
+        game is lost.
+
+            Returns value:
+        return the time limit of a level, in seconds
+        """
         return self.__level_max_time
