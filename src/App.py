@@ -23,8 +23,6 @@ class Display_config:
             "RIGHT": kek.KEY_D
         }
 
-        self.fps_max: int = 60
-
         self.texture_pack: str = TEXTURES_PACK["DEFAULT"]
 
 

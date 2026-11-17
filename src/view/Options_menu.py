@@ -10,7 +10,6 @@ from .widget import (
     ButtonPanel,
     Dropdown,
     TextPanel,
-    Input_box,
     Keybind_input_box,
     AnimIcon
 )
@@ -50,10 +49,11 @@ class Options_menu(View):
             The name of the keybind to change.
         """
 
-        if keybind not in self.app.display_config.keybinds.keys():
+        correct_keybind: str = keybind.split(" ")[0]
+        if correct_keybind not in self.app.display_config.keybinds.keys():
             return
-        self.app.display_config.keybinds[keybind] = (
-            self.keybind_input[keybind].display_key
+        self.app.display_config.keybinds[correct_keybind] = (
+            self.keybind_input[correct_keybind].display_key
         )
         self._update(True)
 
@@ -103,18 +103,6 @@ class Options_menu(View):
 
         self._update(True)
 
-    def change_fps(self) -> None:
-
-        """
-        Changes the frame rate of the game.
-        """
-
-        if not self.fps_input.input.isdigit():
-            return
-
-        self.app.display_config.fps_max = int(self.fps_input.input)
-        self._update(True)
-
     def change_texture_pack(self, new_pack: str) -> None:
 
         """
@@ -131,6 +119,40 @@ class Options_menu(View):
 
         self.app.display_config.texture_pack = TEXTURES_PACK[new_pack]
         self._update(True)
+
+    def get_key_equivalent(self, keybind: kek) -> str:
+
+        """
+        Determines the right 'name' for a specific keybind,
+        mostly to return 'arrow up/down/left/right' instead of their chr.
+
+        Parameters
+        ----------
+        keybind: pyray.KeyboardKey
+            The keybind for which to return its 'name'.
+
+        Returns
+        -------
+        str
+            The 'name' or label for the keybind.
+        """
+
+        if keybind not in [
+            kek.KEY_DOWN, kek.KEY_UP, kek.KEY_LEFT, kek.KEY_RIGHT
+        ]:
+            return chr(keybind)
+
+        direction: str = ""
+        match keybind:
+            case kek.KEY_DOWN:
+                direction = "down"
+            case kek.KEY_UP:
+                direction = "up"
+            case kek.KEY_LEFT:
+                direction = "left"
+            case kek.KEY_RIGHT:
+                direction = "right"
+        return ("arrow " + direction)
 
     def _update_keybinds(self) -> None:
 
@@ -154,7 +176,11 @@ class Options_menu(View):
             self.keybind_title.lowerbound + self.h // 25,
             self.keybind_title.width,
             self.h // 5,
-            list(self.app.display_config.keybinds.keys())
+            [
+                f"{key} ({self.get_key_equivalent(value)})"
+                for key, value
+                in self.app.display_config.keybinds.items()
+            ]
         )
         keybind_range: list[int] = [
             keycode for keycode in range(32, 126)
@@ -167,7 +193,11 @@ class Options_menu(View):
                     + self.keybind_panel.w
                     + self.keybind_panel.w // 10
                 ),
-                self.keybind_panel.labels[keybind].posy,
+                self.keybind_panel.labels[
+                    f"{keybind} ({self.get_key_equivalent(
+                        self.app.display_config.keybinds[keybind]
+                    )})"
+                ].posy,
                 self.keybind_title.width // 3,
                 self.keybind_panel.font_size,
                 (self.change_keybind, keybind),
@@ -182,7 +212,7 @@ class Options_menu(View):
 
         """
         Builds the graphics option panel, where the user
-        can choose the game window's resolution aswell as the framerate.
+        can choose the game window's resolution.
         """
 
         self.graphics_title: Text = Text(
@@ -210,45 +240,8 @@ class Options_menu(View):
             self.graphics_title.font_size,
             res_buttons
         )
-
-        fps_string: str = f"FPS max ({self.app.display_config.fps_max})"
-        fps_input_sz: int = self.res_dropdown.w // 5 + self.res_dropdown.w // 8
-
-        self.fps_label: Text = Text(
-            f"FPS max ({self.app.display_config.fps_max})",
-            self.res_dropdown.posx + (
-                self.res_dropdown.w
-                - Text.measure_text(
-                    fps_string, self.res_dropdown.main_panel.font_size
-                ) - fps_input_sz
-            ) // 2,
-            self.res_dropdown.posy + self.res_dropdown.h + self.h // 15,
-            self.res_dropdown.main_panel.font_size,
-            self.res_dropdown.w - fps_input_sz
-        )
-
-        self.fps_input: Input_box = Input_box(
-            (
-                self.fps_label.posx
-                + self.fps_label.width
-                + self.res_dropdown.w // 16
-            ),
-            (
-                self.fps_label.posy + (
-                    self.fps_label.font_size - self.graphics_title.font_size
-                ) // 2
-            ),
-            self.res_dropdown.w // 5,
-            self.graphics_title.font_size,
-            (self.change_fps, None),
-            4,
-            (48, 57)
-        )
-
         self.widgets += [
             self.graphics_title,
-            self.fps_label,
-            self.fps_input,
             self.res_dropdown
         ]
 
