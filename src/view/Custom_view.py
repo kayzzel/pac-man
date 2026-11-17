@@ -20,7 +20,7 @@ from .widget import (
 
 from ..game.Game import custom_game
 from ..game.map.Map_storing import get_stored_map_list
-from ..game.map.Map_custom import Map_custom
+from ..game.map.Map_custom import Maps_custom, Map_custom
 from ..game.map.Cell import Cell
 from ..game.entity.collectible.Consumable import Consumable
 from ..game.entity.collectible.Pacgum import Pacgum
@@ -81,7 +81,8 @@ class Custom_step(View, ABC):
 
         self.number: int = number
         self.main_view: View = view
-        self.map: Map_custom = self.get_attr("map")
+        self.maps: Maps_custom = self.get_attr("maps")
+        self.map: Map_custom = self.get_attr("current_map")
         self.map_renderer: Custom_map_renderer = Custom_map_renderer()
         self.description_label: str = description
         self.show_next: bool = show_next
@@ -1774,6 +1775,167 @@ class Step_four(Step_three):
 class Step_five(Custom_step):
 
     """
+    A class to ask the user if they wish to create a new map
+    or save the map(s) they already finished.
+    """
+
+    def __init__(self, main_view: View) -> None:
+
+        """
+        Initializes the main attributes of the step.
+
+        Parameters
+        ----------
+        main_view: View
+            The main view that handles the whole process.
+        """
+
+        self.main_view: View = main_view
+        self.maps: Maps_custom = self.get_attr("maps")
+        self.map: Map_custom = self.get_attr("current_map")
+        self.frame_counter: int = 0
+        self.show_message: str = ""
+        self._update(True)
+
+    def go_next(self) -> None:
+
+        """
+        Exits this step and goes to the next step (saving and naming the maps),
+        adding the current custom map to the collection of maps.
+        """
+
+        if not self.maps.add_map(self.map):
+            self.show_message = (
+                "A problem occured while adding the current map."
+            )
+            return
+
+        super().go_next()
+
+    def reset(self) -> None:
+
+        """
+        Also adds the current map to the collection,
+        but instead resets the whole custom creation cycle
+        to create a new map.
+        """
+
+        if not self.maps.add_map(self.map):
+            self.show_message = (
+                "A problem occured while adding the current map."
+            )
+            return
+
+        self.get_attr("reset_steps")()
+
+    def _update_buttons(self) -> None:
+
+        """
+        Builds the back/add map/save buttons that the user can click on
+        to either start a new custom map or save their collection.
+        Also builds the indicative text widget 'description'.
+        """
+        button_w: int = self.w // 6
+        button_h: int = self.h // 10
+        self.back_button: ButtonPanel = ButtonPanel(
+            (self.w - button_w * 4) // 2,
+            ((self.h - button_h) // 3) * 2,
+            button_w,
+            button_h,
+            {"back": (self.go_back, None)}
+        )
+        self.addmap_button: ButtonPanel = ButtonPanel(
+            self.back_button.posx + int(button_w * 1.5),
+            self.back_button.y,
+            button_w,
+            button_h,
+            {"add map": (self.reset, None)}
+        )
+        self.save_button: ButtonPanel = ButtonPanel(
+            self.addmap_button.posx + int(button_w * 1.5),
+            self.back_button.y,
+            button_w,
+            button_h,
+            {"save": (self.go_next, None)}
+        )
+        descr1: Text = Text(
+            "You can continue",
+            -2,
+            self.h // 4,
+            self.h // 15
+        )
+        descr2: Text = Text(
+            "creating new maps (levels) or save",
+            -2,
+            (descr1.lowerbound + self.h // 25),
+            descr1.font_size
+        )
+        self.widgets += [
+            self.back_button,
+            self.addmap_button,
+            self.save_button,
+            descr1,
+            descr2
+        ]
+
+    def _update(self, forced: bool = False) -> None:
+
+        """
+        Checks if the window has been resized or an update is required,
+        and updates the widgets if so.
+
+        Parameters
+        ----------
+        forced: bool (default False)
+            True if the step MUST be updated, False otherwise.
+        """
+
+        if not pr.is_window_resized() and not forced:
+            return
+
+        self.widgets: list[Widget] = []
+        self._update_buttons()
+        self.is_freed = False
+
+    def display_view(self) -> None:
+
+        """
+        Calls the grandparent View's display method
+        to simply update and display all of the step's widgets.
+        """
+
+        super(Custom_step, self).display_view()
+
+    def display_message(self) -> None:
+
+        """
+        Builds and displays a text message
+        if adding the current map has failed,
+        if the frame counter has not yet reached the end of the display time.
+        """
+
+        if self.frame_counter < MSG_TIME:
+
+            message: Text = Text(
+                self.show_message,
+                -2,
+                self.back_button.posy + self.back_button.h + self.h // 10,
+                self.h // 25,
+                self.w // 2,
+                pr.RED
+            )
+            message.display_widget()
+            self.frame_counter += 1
+
+        else:
+
+            self.show_message = ""
+            self.frame_counter = 0
+
+
+class Step_six(Custom_step):
+
+    """
     A step for the user to enter the name of their custom map.
     """
 
@@ -1791,7 +1953,7 @@ class Step_five(Custom_step):
         super().__init__(
             5,
             main_view,
-            "Choose a name for your map"
+            "Choose a name for your map(s)"
         )
 
     def validate_name(self) -> None:
@@ -1802,7 +1964,7 @@ class Step_five(Custom_step):
         to a confirmation/refusal message depending on if it's valid.
         """
 
-        if self.map.set_name(self.input_box.input):
+        if self.maps.set_name(self.input_box.input):
             self.show_message = (
                 f"Saved the name '{self.input_box.input}' for your custom map"
             )
@@ -1887,7 +2049,7 @@ class Step_five(Custom_step):
         saving the custom map's layout and information.
         """
 
-        self.map.save_map()
+        self.maps.save_maps()
         super().go_next()
 
     def go_back(self) -> None:
@@ -1897,7 +2059,7 @@ class Step_five(Custom_step):
         resetting the name of the map to undefined.
         """
 
-        self.map.name_set = False
+        self.maps.name_set = False
         super().go_back()
 
     def _update(self, forced: bool = False) -> None:
@@ -1917,7 +2079,7 @@ class Step_five(Custom_step):
             True if the step MUST be updated, False otherwise.
         """
 
-        self.show_next = self.map.name_set
+        self.show_next = self.maps.name_set
 
         if not pr.is_window_resized() and not forced:
             return
@@ -1927,7 +2089,7 @@ class Step_five(Custom_step):
         self._update_inputbox()
 
 
-class Step_six(Custom_step):
+class Step_seven(Custom_step):
 
     """
     A last step used for the user to launch their finished custom map
@@ -1946,7 +2108,7 @@ class Step_six(Custom_step):
         """
 
         self.main_view: View = main_view
-        self.map: Map_custom = self.get_attr("map")
+        self.map: Map_custom = self.get_attr("current_map")
         self.is_freed: bool = True
         self._update(True)
 
@@ -1954,7 +2116,7 @@ class Step_six(Custom_step):
 
         """
         Builds the yes, no buttons that the user can click on
-        to either launch their custom map or return to the main menu.
+        to either launch their custom map(s) or return to the main menu.
         Also builds the indicative text widgets 'question' and 'description'.
         """
         button_w: int = self.w // 15
@@ -2031,8 +2193,8 @@ class Custom_view(View):
     def __init__(self, app: "App") -> None:
 
         """
-        Initializes the main attributes of the view,
-        mainly the app, instanciates the Map_custom map,
+        Initializes the main attributes of the view, mainly the app,
+        instanciates the Maps_custom maps and Map_custom current map,
         and defines the list of steps for the creation process.
 
         Parameters
@@ -2042,7 +2204,8 @@ class Custom_view(View):
         """
 
         self.app: "App" = app
-        self.map: Map_custom = Map_custom(self.app.map_folder)
+        self.current_map: Map_custom = Map_custom()
+        self.maps: Maps_custom = Maps_custom(self.app.map_folder)
         self.is_freed: bool = False
 
         self.steps: list[
@@ -2053,6 +2216,7 @@ class Custom_view(View):
             | type[Step_four]
             | type[Step_five]
             | type[Step_six]
+            | type[Step_seven]
         ] = []
 
         maps: list[str] = get_stored_map_list(self.app.map_folder)
@@ -2065,7 +2229,8 @@ class Custom_view(View):
             Step_three,
             Step_four,
             Step_five,
-            Step_six
+            Step_six,
+            Step_seven
         ]
         self.steps_completed: list[Custom_step] = []
         self.sprites_set: list[tuple[Icon, Cell]] = []
@@ -2074,6 +2239,22 @@ class Custom_view(View):
         self.cur_step: Custom_step = self.steps[0](self)
 
         self.set_map_properties(0, 0, 0, 0, 0)
+
+    def reset_steps(self) -> None:
+
+        """
+        Resets the cycle of steps for the custom creation,
+        when the user wants to create a new map.
+        """
+
+        self.steps_completed.append(self.cur_step)
+        self._unload_images()
+        self.steps_completed = []
+        self.cur_step_index = 0
+        if self.steps[self.cur_step_index] == Step_zero:
+            self.cur_step_index += 1
+        self.current_map = Map_custom()
+        self.cur_step = self.steps[self.cur_step_index](self)
 
     def set_map_properties(
         self,
