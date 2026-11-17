@@ -324,34 +324,24 @@ class Game_view(View):
         self.map_panel_width: int = (
             self.w - self.info_panel.w - MIDDLE_LINE_THICKNESS - 10
         )
-        self.map_width: int = min(
+        map_space: int = min(
             self.map_panel_width - self.map_panel_width // 10,
             self.h - self.h // 10
         )
-        self.map_height: int = self.map_width
 
-        nb_cells_row: int = (self.map_width - 6) // len(self.grid[0])
-        nb_cells_col: int = (self.map_height - 6) // len(self.grid)
+        nb_cells_row: int = map_space // len(self.grid[0])
+        nb_cells_col: int = map_space // len(self.grid)
 
-        if nb_cells_row > nb_cells_col:
-            self.cell_size: int = nb_cells_row
-            self.map_height = self.cell_size * len(self.grid) + 6
-        else:
-            self.cell_size = nb_cells_col
-            self.map_width = self.cell_size * len(self.grid[0]) + 6
+        self.cell_size: int = min(nb_cells_row, nb_cells_col)
+        self.map_width = self.cell_size * len(self.grid[0])
+        self.map_height = self.cell_size * len(self.grid)
 
         self.map_renderer.update_grid(
             self.grid,
             (self.map_width, self.map_height),
-            (self.map_startx + 3, self.map_starty + 3),
+            (self.map_startx, self.map_starty),
             self.cell_size,
             [self.game.player] + list(self.game.ghosts.values())
-        )
-        self.map_outline: tuple[int, int, int, int] = (
-            self.map_startx,
-            self.map_starty,
-            self.map_width,
-            self.map_height
         )
 
     def pause_or_resume(self) -> None:
@@ -494,12 +484,6 @@ class Game_view(View):
             (self.info_panel.w, self.h),
             MIDDLE_LINE_THICKNESS,
             pr.RAYWHITE
-        )
-
-        pr.draw_rectangle_lines_ex(
-            self.map_outline,
-            3,
-            pr.DARKBLUE
         )
 
         self.map_renderer.display_grid()

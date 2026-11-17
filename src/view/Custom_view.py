@@ -270,8 +270,7 @@ class Custom_step(View, ABC):
         """
 
         return (
-            (self.h - self.map_h - (self.h - self.back.posy))
-            + (self.mid_space - self.map_h) // 2
+            (self.h - self.mid_space) // 2 + (self.mid_space - self.map_h) // 2
         )
 
     @property
@@ -820,11 +819,11 @@ class Step_two(Custom_step):
         """
 
         h_rem: int = self.h - (self.map_y + self.map_h)
-        button_h: int = h_rem // 2
+        button_h: int = min(self.h // 12, h_rem // 2)
         self.rand_button: ButtonPanel = ButtonPanel(
             -2,
-            self.h - button_h - h_rem // 4,
-            self.w // 7,
+            self.h - h_rem + (h_rem - button_h) // 2,
+            self.w // 6,
             button_h,
             {"randomize walls": (self.randomize_walls, None)}
         )

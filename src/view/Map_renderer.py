@@ -551,10 +551,12 @@ class Map_renderer:
         """
 
         posx = int(
-            self.map_x + en_posx * self.cell_size - self.entity_size // 2
+            self.map_x + (self.line_thickness * 2) + en_posx
+            * self.cell_size - self.entity_size // 2
         )
         posy = int(
-            self.map_y + en_posy * self.cell_size - self.entity_size // 2
+            self.map_y + (self.line_thickness * 2) + en_posy
+            * self.cell_size - self.entity_size // 2
         )
         return (posx, posy)
 
@@ -757,17 +759,31 @@ class Map_renderer:
         re-drawing the walls each frame.
         """
 
-        self.grid_texture = pr.load_render_texture(self.map_w, self.map_h)
+        self.grid_texture = pr.load_render_texture(
+            self.map_w + self.cell_padding,
+            self.map_h + self.cell_padding - self.line_thickness
+        )
         pr.begin_texture_mode(self.grid_texture)
         pr.clear_background(pr.BLACK)
 
-        cell_y: int = 0
+        pr.draw_rectangle_lines_ex(
+            (
+                0,
+                0,
+                self.map_w + self.cell_padding,
+                self.map_h + self.cell_padding - self.line_thickness
+            ),
+            self.line_thickness,
+            pr.DARKBLUE
+        )
 
-        for row in self.grid:
+        cell_y = self.cell_padding // 2 - self.line_thickness // 2
 
-            cell_x: int = 0
+        for row_i, row in enumerate(self.grid):
 
-            for cell in row:
+            cell_x = self.cell_padding // 2 - self.line_thickness
+
+            for cell_i, cell in enumerate(row):
 
                 self.draw_walls(cell, cell_x, cell_y)
                 self.add_collectibles(cell)
@@ -787,18 +803,23 @@ class Map_renderer:
 
         pr.draw_texture_rec(
             self.grid_texture.texture,
-            (0, 0, float(self.map_w), -float(self.map_h)),
+            (
+                0,
+                0,
+                float(self.map_w + self.cell_padding),
+                -float(self.map_h + self.cell_padding - self.line_thickness)
+            ),
             (self.map_x, self.map_y),
             pr.RAYWHITE
         )
 
-        cell_y: int = self.map_y
+        cell_y = self.map_y + self.line_thickness * 2
 
-        for row in self.grid:
+        for row_i, row in enumerate(self.grid):
 
-            cell_x: int = self.map_x
+            cell_x = self.map_x + self.line_thickness * 2
 
-            for cell in row:
+            for cell_i, cell in enumerate(row):
 
                 self.draw_sprites(cell, cell_x, cell_y)
 
