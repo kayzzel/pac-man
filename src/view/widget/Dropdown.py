@@ -23,10 +23,7 @@ class Dropdown(Widget):
         y: int,
         width: int,
         height: int,
-        buttons: dict[
-            str,
-            tuple[Callable[..., Any], Any]
-        ],
+        buttons: dict[str, tuple[Callable[..., Any], Any]],
         max_show: int = 5
     ) -> None:
 
@@ -55,10 +52,7 @@ class Dropdown(Widget):
 
         self.show: bool = False
 
-        self.buttons: dict[
-            str,
-            tuple[Callable[..., Any], Any]
-        ] = dict(buttons)
+        self.buttons: dict[str, tuple[Callable[..., Any], Any]] = dict(buttons)
         self.max_show: int = max_show
 
         self.arrow_size: int = self.h // 2
@@ -75,10 +69,7 @@ class Dropdown(Widget):
         the one shown at the top that indicates what it's for.
         """
 
-        self.main_button: dict[
-            str,
-            tuple[Callable[..., Any], Any]
-        ] = {
+        self.main_button: dict[str, tuple[Callable[..., Any], Any]] = {
             label: action
             for i, (label, action) in enumerate(self.buttons.items())
             if i == 0
@@ -163,10 +154,7 @@ class Dropdown(Widget):
 
         panel_height: int = self.h * self.max_show
 
-        current_buttons: dict[
-            str,
-            tuple[Callable[..., Any], Any]
-        ] = {
+        current_buttons: dict[str, tuple[Callable[..., Any], Any]] = {
             label: action
             for i, (label, action) in enumerate(self.buttons.items())
             if self.button_range[0] <= i <= self.button_range[1]

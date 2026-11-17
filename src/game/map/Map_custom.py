@@ -1,5 +1,5 @@
 from .Map import Map
-from .Map_storing import save_map_to_file
+from .Map_storing import save_maps_to_files
 from ..entity.collectible.Collectible import Collectible
 from ...utils.maze_utils import generate_empty_map, generate_walls
 from ...utils.path_utils import next_direction
@@ -10,16 +10,13 @@ import json
 
 
 class Map_custom:
-    def __init__(self, map_folder: Path) -> None:
-        self.map_folder: Path = map_folder
-
+    def __init__(self) -> None:
         self.__rows: int = 15
         self.__cols: int = 15
 
         self.__map = Map()
         self.__map.cells = generate_empty_map(self.__cols, self.__rows)
 
-        self.name_set: bool = False
         self.walls_set: bool = False
         self.pacman_spawn_set: bool = False
         self.collectibles_set: bool = False
@@ -83,28 +80,6 @@ class Map_custom:
                 cell.collectible = None
         self.collectibles_set = False
         self.__map.collectible_count = 0
-
-    def set_name(self, name: str) -> bool:
-        allowed: set[str] = set(
-                "abcdefghijklmnopqrstuvwxyz"
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                "0123456789_-"
-            )
-
-        if (
-                not isinstance(name, str)
-                or len(name) < 1
-                or len(name) > 20
-                or any(char not in allowed for char in name)
-           ):
-            return False
-
-        if (self.map_folder / name).exists():
-            return False
-
-        self.__map.name = name
-        self.name_set = True
-        return True
 
     def randomize_wall(self) -> None:
         self.walls_set = False
@@ -300,31 +275,86 @@ class Map_custom:
 
         return True
 
-    def save_map(self) -> str | None:
-        if not self.name_set:
-            return "name is not set"
-        if not self.walls_set:
-            return "walls are not set"
-        if not self.pacman_spawn_set:
-            return "pacman spawn is not set"
-        if not all(self.ghost_spawn_set.values()):
-            return "ghost spawn is not set"
-        if not all(self.ghost_scatter_set.values()):
-            return "ghost scatter point is not set"
-        if self.__map.collectible_count == 0:
-            return "no collectibles in the map"
 
-        folder: Path = self.map_folder / self.__map.name
+class Maps_custom:
+    def __init__(self, map_folder: Path) -> None:
+        self.map_folder: Path = map_folder
+
+        self.__name: str = ""
+        self.__maps: list[Map_custom] = []
+
+        self.name_set: bool = False
+
+    def set_name(self, name: str) -> bool:
+        allowed: set[str] = set(
+                "abcdefghijklmnopqrstuvwxyz"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "0123456789_-"
+            )
+
+        if (
+                not isinstance(name, str)
+                or len(name) < 1
+                or len(name) > 20
+                or any(char not in allowed for char in name)
+           ):
+            return False
+
+        if (self.map_folder / name).exists():
+            return False
+
+        self.__name = name
+        for m in self.__maps:
+            m.map.name = name
+
+        self.name_set = True
+        return True
+
+    def add_map(self, new_map: Map_custom) -> bool:
+        if not new_map.walls_set:
+            return False
+        if not new_map.pacman_spawn_set:
+            return False
+        if not all(new_map.ghost_spawn_set.values()):
+            return False
+        if not all(new_map.ghost_scatter_set.values()):
+            return False
+        if new_map.map.collectible_count == 0:
+            return False
+
+        self.__maps.append(new_map)
+        return True
+
+    def save_maps(self) -> str | None:
+        """
+            Description:
+        Save every map of the set in the folder named after the set:
+        map.json for the first one, map_1.json, map_2.json and so on
+        for the others, each validated, with a score.json next to
+        them unless the set already has its scores to keep.
+
+            Returns value:
+        return None on success, or the reason why the set cannot be
+        saved (no map, no name, unwritable folder)
+        """
+        if not self.__maps:
+            return "No maps created, can't save nothing"
+        if not self.name_set:
+            return "No name registered, can't save"
+
+        for m in self.__maps:
+            m.map.name = self.__name
+
+        folder: Path = self.map_folder / self.__name
 
         try:
-            folder.mkdir(parents=True, exist_ok=True)
-            save_map_to_file(self.__map, str(folder / "map.json"))
+            save_maps_to_files([m.map for m in self.__maps], folder)
 
             score_file: Path = folder / "score.json"
             if not score_file.exists():
                 with open(score_file, "w") as f:
                     json.dump([], f)
         except (OSError, ValueError) as err:
-            return f"couldn't save the map: {err}"
+            return f"couldn't save the maps: {err}"
 
         return None

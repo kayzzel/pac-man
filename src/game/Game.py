@@ -2,7 +2,7 @@ from .GameLoop import GameLoop
 from .GameCheats import GameCheats
 from .map.Map import Map
 from .map.Map_scores import Map_scores
-from .map.Map_storing import load_map_from_file
+from .map.Map_storing import load_maps_from_folder
 from .entity.Pac_man import Pac_man
 from .entity.ghost.Ghost import Ghost
 from .entity.ghost.Blinky import Blinky
@@ -237,10 +237,20 @@ def custom_game(
             map_directory: Path,
             config: Config | None = None
         ) -> Game | None:
-    """Start an async game on the stored map called map_name.
+    """
+        Description:
+    Load every map of the stored map-set called map_name (map.json,
+    then map_1.json, map_2.json and so on) and start an async game
+    chaining them in order, on the set's own scores.
 
-    Returns the running Game, or None when the map does not exist,
-    is not well formatted, or its name tries to escape map_directory.
+        Parameters:
+    map_name -> name of the map set, and of its folder
+    map_directory -> the folder holding every map set
+    config -> the config of the game, default values when None
+
+        Returns value:
+    return the running game, or None when the folder holds no
+    loadable map or its name tries to escape map_directory
     """
     if config is None:
         config = Config()
@@ -249,17 +259,14 @@ def custom_game(
         print("### no path for the map")
         return None
 
-    map_file = map_directory / map_name / "map.json"
+    folder: Path = map_directory / map_name
 
-    try:
-        new_map = load_map_from_file(str(map_file))
-    except ValueError:
-        print("### failed to load map from file")
+    maps: list[Map] = load_maps_from_folder(folder)
+    if not maps:
         return None
 
-    score_file: Path = map_directory / map_name / "score.json"
-    game = Game(config, map_name, score_file)
-    game.map.append(new_map)
+    game = Game(config, map_name, folder / "score.json")
+    game.map.extend(maps)
     game.start_async()
 
     return game
