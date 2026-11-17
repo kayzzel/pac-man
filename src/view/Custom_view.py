@@ -480,7 +480,7 @@ class Step_zero(Custom_step):
         """
 
         self.number: int = 0
-        self.maps: list[str] = get_stored_map_list(main_view.app.map_folder)
+        self.map_n: list[str] = get_stored_map_list(main_view.app.map_folder)
         self.main_view: View = main_view
         self.is_freed: bool = True
         self._update(True)
@@ -541,7 +541,7 @@ class Step_zero(Custom_step):
             load_label: (lambda: 0, None)
         } | {
             map_name: (self.get_attr("launch_game"), map_name)
-            for map_name in self.maps
+            for map_name in self.map_n
         }
         self.map_dropdown: Dropdown = Dropdown(
             -2,
