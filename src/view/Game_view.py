@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
 COUNTDOWN_TIME: int = 60
+LVL_SHOW_TIME: int = 100
 
 MIDDLE_LINE_THICKNESS: int = 10
 
@@ -53,10 +54,6 @@ class Game_view(View):
         self.show_as_modal: bool = False
         self.life_icon_init: bool = False
 
-        self.game_start: bool
-        self.countdown: int
-        self.frame_counter: int
-
         self.reset_game()
         super().__init__(app)
 
@@ -66,9 +63,11 @@ class Game_view(View):
         Resets the game for a new map.
         """
 
-        self.game_start = False
-        self.countdown = 3
-        self.frame_counter = 0
+        self.game_start: bool = False
+        self.lvl_shown: bool = False
+        self.countdown: int = 3
+        self.frame_counter: int = 0
+        self.map_renderer.end_loop_counter = 0
 
     def _update_countdown(self) -> None:
 
@@ -78,6 +77,23 @@ class Game_view(View):
         if it reaches 0, otherwise creating a Text widget
         to display the current countdown.
         """
+
+        if not self.lvl_shown:
+
+            if self.frame_counter == 0:
+                self.countdown_label: Text = Text(
+                    f"LEVEL {self.game.map_index + 1}",
+                    -2,
+                    (self.h - self.h // 4) // 2,
+                    self.h // 4
+                )
+
+            self.frame_counter += 1
+
+            if self.frame_counter > LVL_SHOW_TIME:
+                self.lvl_shown = True
+
+            return
 
         if self.countdown == -1:
 
@@ -98,7 +114,7 @@ class Game_view(View):
             label: str = str(self.countdown)
             if self.countdown == 0:
                 label = "START !!!"
-            self.countdown_label: Text = Text(
+            self.countdown_label = Text(
                 label,
                 -2,
                 (self.h - self.h // 6) // 2,
@@ -404,6 +420,7 @@ class Game_view(View):
         """
         Updates the game view aswell as the modal view (pause menu).
         Checking for user input (movement keys and escape key),
+        if the current map is finished (need reset),
         if the game is over (win or lose),
         if the start countdown has finished being displayed,
         if the window has been resized

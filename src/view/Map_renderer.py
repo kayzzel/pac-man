@@ -58,6 +58,7 @@ class Map_renderer:
             Game_state.DIED,
             Game_state.FINISHED_MAP
         ]
+        self.end_loop_counter: int = 0
 
     def update_grid(
         self,
@@ -693,9 +694,6 @@ class Map_renderer:
                 self.game.resume()
 
             elif self.game.state in [Game_state.WON, Game_state.FINISHED_MAP]:
-
-                if not hasattr(self, "end_loop_counter"):
-                    self.end_loop_counter: int = 0
 
                 if self.end_loop_counter < 3:
                     self.current_sprites["pacman"].reset_loop()
