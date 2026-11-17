@@ -72,7 +72,7 @@ class Main_menu(View):
 
         button_actions: dict[
             str,
-            tuple[Callable[[Any], Any], Any]
+            tuple[Callable[..., Any], Any]
         ] = {
             "start game": (self.app.change_view, Map_choice_menu(self.app)),
             "view highscores": (self.app.change_view, Scores_view(self.app)),

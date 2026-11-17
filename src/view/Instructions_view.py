@@ -246,7 +246,10 @@ class Instructions_view(View):
             self.h // 10
         )
 
-        buttons: dict[str, tuple[Callable, Any]] = {
+        buttons: dict[
+            str,
+            tuple[Callable[..., Any], Any]
+        ] = {
             label: (self.show_instruction, label)
             for label in TEXTS.keys()
         }

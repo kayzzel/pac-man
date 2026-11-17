@@ -394,7 +394,7 @@ class ClickableIcon(Icon):
         x: int,
         y: int,
         image_path: str,
-        action: tuple[Callable, Any],
+        action: tuple[Callable[..., Any], Any],
         max_size: tuple[int, int],
         to_resize: bool = False,
         magnify: bool = True
@@ -427,7 +427,7 @@ class ClickableIcon(Icon):
 
         super().__init__(x, y, image_path, max_size, to_resize)
 
-        self.action: tuple[Callable, Any] = action
+        self.action: tuple[Callable[..., Any], Any] = action
         self.magnify: bool = magnify
         self.was_in: bool = False
 

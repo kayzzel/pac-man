@@ -104,7 +104,10 @@ class Pause_menu(View):
         panel_width: int = self.w // 2 - self.w // 8
         panel_height: int = self.h - self.h // 3
 
-        button_actions: dict[str, tuple[Callable, Any]] = {
+        button_actions: dict[
+            str,
+            tuple[Callable[..., Any], Any]
+        ] = {
             "Resume": (self.global_view.pause_or_resume, None),
             "Options": (self.app.change_view, Options_menu(self.app)),
             "Scores": (
@@ -237,7 +240,7 @@ class Pause_menu(View):
             The parameter to add/remove (lives or score).
         """
 
-        function: Callable
+        function: Callable[..., Any]
         if parameter == "nb_lives":
             function = self.game.cheats.change_lives
             self.global_view.life_icon_init = False
@@ -263,7 +266,7 @@ class Pause_menu(View):
             The parameter to toggle ('invincible_mode' or 'nowalls_mode').
         """
 
-        function: Callable
+        function: Callable[..., Any]
         if parameter == "invincible_mode":
             function = self.game.cheats.toggle_invincible
         elif parameter == "nowalls_mode":

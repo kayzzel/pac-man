@@ -8,8 +8,8 @@ from ..game.map.Cell import Cell
 from ..game.entity.Pac_man import Pac_man
 from ..game.entity.Entity import Entity
 from ..game.entity.collectible.Consumable import Consumable
-from ..game.entity.ghost.Ghost import Ghost_state, Ghost
-from ..utils.enum_utils import Game_state, Pacman_state
+from ..game.entity.ghost.Ghost import Ghost
+from ..utils.enum_utils import Game_state, Pacman_state, Ghost_state
 
 
 DIRECTIONS: dict[str, str] = {
@@ -134,8 +134,8 @@ class Map_renderer:
                     alignment = "L" if alignment == "R" else "R"
 
                 case "S":
-                    if entity.direction == "N":
-                        alignment = "L" if entity.alignment == "R" else "R"
+                    if self.saved_dirs[entity.name][0] == "N":
+                        alignment = "L" if alignment == "R" else "R"
 
                 case "E":
                     alignment = "R"

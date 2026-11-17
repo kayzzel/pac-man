@@ -192,7 +192,10 @@ class Options_menu(View):
             self.title_fontsz
         )
 
-        res_buttons: dict[str, tuple[Callable, Any]] = {
+        res_buttons: dict[
+            str,
+            tuple[Callable[..., Any], Any]
+        ] = {
             "Screen dimensions": (lambda: 0, None)
         } | {
             res: (self.change_resolution, res)
@@ -285,7 +288,10 @@ class Options_menu(View):
             self.w // 3
         )
 
-        font_buttons: dict[str, tuple[Callable, Any]] = {
+        font_buttons: dict[
+            str,
+            tuple[Callable[..., Any], Any]
+        ] = {
             f"Select font (current: {Text.current_font})": (lambda: 0, None)
         } | {
             font: (self.change_font, font)
@@ -326,7 +332,10 @@ class Options_menu(View):
                 current_pack = k
                 break
 
-        texture_buttons: dict[str, tuple[Callable, Any]] = {
+        texture_buttons: dict[
+            str,
+            tuple[Callable[..., Any], Any]
+        ] = {
             f"Select texture pack (current: {current_pack})": (lambda: 0, None)
         } | {
             pack: (self.change_texture_pack, pack)

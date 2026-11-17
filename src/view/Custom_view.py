@@ -533,7 +533,10 @@ class Step_zero(Custom_step):
         """
 
         load_label: str = "Select a map"
-        dropdown_buttons: dict[str, tuple[Callable, Any]] = {
+        dropdown_buttons: dict[
+            str,
+            tuple[Callable[..., Any], Any]
+        ] = {
             load_label: (lambda: 0, None)
         } | {
             map_name: (self.get_attr("launch_game"), map_name)
@@ -2042,7 +2045,15 @@ class Custom_view(View):
         self.map: Map_custom = Map_custom(self.app.map_folder)
         self.is_freed: bool = False
 
-        self.steps: list = []
+        self.steps: list[
+            type[Step_zero]
+            | type[Step_one]
+            | type[Step_two]
+            | type[Step_three]
+            | type[Step_four]
+            | type[Step_five]
+            | type[Step_six]
+        ] = []
 
         maps: list[str] = get_stored_map_list(self.app.map_folder)
         if maps != ["mandatory", "arcade"]:

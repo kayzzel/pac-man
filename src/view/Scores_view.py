@@ -117,7 +117,10 @@ class Scores_view(View):
         )
         self.widgets.append(self.back_button)
 
-        dropdown_buttons: dict[str, tuple[Callable, Any]] = {
+        dropdown_buttons: dict[
+            str,
+            tuple[Callable[..., Any], Any]
+        ] = {
             load_label: (lambda: 0, None)
         } | {
             map_name: (self.load_new_scores, (map_name, self.app.map_folder))

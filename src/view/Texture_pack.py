@@ -122,11 +122,11 @@ class Texture_pack:
             The path to the pack in which to search for the textures needed.
         """
 
-        self.all_textures: dict = {}
+        self.all_textures: dict[str, str] = {}
         self.fill_textures(self.textures_needed, pack_path)
         self.fill_textures(self.special_movements, pack_path)
 
-        textures_missing: list = [
+        textures_missing: list[str] = [
             missing_text for missing_text in self.textures_needed
             if missing_text not in self.all_textures.keys()
         ]

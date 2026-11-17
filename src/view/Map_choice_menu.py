@@ -71,7 +71,10 @@ class Map_choice_menu(View):
         that the user can select, and builds the back button aswell.
         """
 
-        self.button_actions: dict[str, tuple[Callable, Any]] = {
+        self.button_actions: dict[
+            str,
+            tuple[Callable[..., Any], Any]
+        ] = {
             "MANDATORY": (
                 self.app.change_view,
                 Game_view(self.app, mandatory_game(self.app.config))
