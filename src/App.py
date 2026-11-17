@@ -107,10 +107,12 @@ class App:
 
     def stop_app(self) -> None:
 
-        already_checked: set = set()
-        for view in [*self.__previous_views, self.__current_view]:
-            if view and id(view) not in already_checked:
-                already_checked.add(id(view))
+        already_checked: set[int] = set()
+        for i, view in enumerate(
+            [*self.__previous_views, self.__current_view]
+        ):
+            if view and i not in already_checked:
+                already_checked.add(i)
                 if not view.is_freed:
                     view._unload_images()
 

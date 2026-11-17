@@ -70,7 +70,10 @@ class Main_menu(View):
         panel_y: int = icon_bottom + (height_remaining - panel_height) // 2
         panel_x: int = (self.w - panel_width) // 2
 
-        button_actions: dict[str, tuple[Callable, Any]] = {
+        button_actions: dict[
+            str,
+            tuple[Callable[[Any], Any], Any]
+        ] = {
             "start game": (self.app.change_view, Map_choice_menu(self.app)),
             "view highscores": (self.app.change_view, Scores_view(self.app)),
             "options": (self.app.change_view, Options_menu(self.app)),
