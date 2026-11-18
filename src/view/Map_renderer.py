@@ -551,11 +551,11 @@ class Map_renderer:
         """
 
         posx = int(
-            self.map_x + (self.line_thickness * 2) + en_posx
+            self.map_x + en_posx
             * self.cell_size - self.entity_size // 2
         )
         posy = int(
-            self.map_y + (self.line_thickness * 2) + en_posy
+            self.map_y + self.line_thickness + en_posy
             * self.cell_size - self.entity_size // 2
         )
         return (posx, posy)
@@ -817,7 +817,7 @@ class Map_renderer:
 
         for row_i, row in enumerate(self.grid):
 
-            cell_x = self.map_x + self.line_thickness * 2
+            cell_x = self.map_x + self.line_thickness // 2
 
             for cell_i, cell in enumerate(row):
 
