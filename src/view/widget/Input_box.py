@@ -21,7 +21,10 @@ ARROW_RIGHT_PATH: str = "src/view/assets/icons/arrow_right.png"
 
 class Input_box(Widget):
 
-    # a simple input box with a validating function to call at the end
+    """
+    A simple input box with a validating function to call
+    when the user presses the enter key.
+    """
 
     def __init__(
         self,
@@ -38,6 +41,31 @@ class Input_box(Widget):
             CURSOR_COLOR
         )
     ) -> None:
+
+        """
+        Initializes the main attributes of an input box.
+
+        Parameters
+        ----------
+        x: int
+            The x coordinate of the input box.
+        y: int
+            The y coordinate of the input box.
+        width: int
+            The width of the input box.
+        height: int
+            The height of the input box.
+        action: tuple[Callable, Any] (default lambda: 0, None)
+            The function and its arguments to call
+            when the user presses the enter key.
+        max_chars: int (default MAX_INPUT_CHARS)
+            The maximum number of characters the user can enter.
+        char_range: tuple[int, int] | list[int] (default (32, 125))
+            The character range (or list) allowed for the user input.
+        colors: tuple[pr.Color, pr.Color, pr.Color]
+            (default DEFAULT_COLOR, TEXT_COLOR, CURSOR_COLOR)
+            Respectively the background color, text color, and cursor color.
+        """
 
         super().__init__(x, y, width, height)
 
@@ -74,11 +102,15 @@ class Input_box(Widget):
 
     def _update_widget(self) -> None:
 
-        # if click inside text box for first time, input activated
+        """
+        Checks if the user is currently entering a valid input,
+        if so catching it and converting the keycodes to a string,
+        and checking if backspace, escape and enter keys have been pressed.
+        """
+
         if self.is_pressed and not self.enter_input:
             self.enter_input = True
-
-        # if click outside the box, input deactivated
+            self.text_color = self.base_colors[1]
 
         if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT) and not self.is_in:
             self.enter_input = False
@@ -117,6 +149,13 @@ class Input_box(Widget):
 
     def display_widget(self) -> None:
 
+        """
+        Displays the input box.
+        If the user is currently entering input, their input is shown,
+        aswell as a horizontal blinking cursor
+        and a different color for the box's border.
+        """
+
         self._update_widget()
 
         pr.draw_rectangle(*self.textbox, pr.DARKGRAY)
@@ -130,7 +169,7 @@ class Input_box(Widget):
         pr.draw_rectangle_lines(*self.textbox, line_color)
 
         text_padding: int = (
-            self.w + self.w // 8
+            self.w
             - Text.measure_text(self.standin_input, self.font_size)
         ) // 2
 
@@ -145,19 +184,28 @@ class Input_box(Widget):
         user_input.y += (self.h - user_input.font_size) // 2
         user_input.display_widget()
 
-        # displays a blinking cursor in input box
-
         if (
             self.enter_input
         ) and (
-            len(self.input) < self.max_chars
+            len(self.input) <= self.max_chars
         ) and (
             (self.frame_counter // 20) % 2 == 0
         ):
+
+            cursor_x: int = user_input.x + user_input.width
+
+            if len(self.input) == self.max_chars:
+                cursor_x -= Text.measure_text(
+                    user_input.label[:-1],
+                    user_input.font_size
+                )
+
+            cursor_y: int = user_input.y + self.h // 8
+
             pr.draw_text_ex(
                 Text.font,
                 "_",
-                (user_input.x + self.w // 15, self.posy + self.h // 3),
+                (cursor_x, cursor_y),
                 float(user_input.font_size),
                 Text.spacing,
                 self.cursor_color
@@ -166,7 +214,9 @@ class Input_box(Widget):
 
 class Keybind_input_box(Input_box):
 
-    # special input box just to take single keybinds
+    """
+    Special input box just to take single keybinds.
+    """
 
     def __init__(
         self,
@@ -184,6 +234,31 @@ class Keybind_input_box(Input_box):
         )
     ) -> None:
 
+        """
+        Initializes the main attributes of a special keybind input box.
+
+        Parameters
+        ----------
+        x: int
+            The x coordinate of the input box.
+        y: int
+            The y coordinate of the input box.
+        width: int
+            The width of the input box.
+        height: int
+            The height of the input box.
+        action: tuple[Callable, Any] (default lambda: 0, None)
+            The function and its arguments to call
+            when the user presses the enter key.
+        max_chars: int (default MAX_INPUT_CHARS)
+            The maximum number of characters the user can enter.
+        char_range: tuple[int, int] | list[int] (default (32, 125))
+            The character range (or list) allowed for the user input.
+        colors: tuple[pr.Color, pr.Color, pr.Color]
+            (default DEFAULT_COLOR, TEXT_COLOR, CURSOR_COLOR)
+            Respectively the background color, text color, and cursor color.
+        """
+
         super().__init__(
             x, y, width, height, action, max_chars, char_range, colors
         )
@@ -191,7 +266,10 @@ class Keybind_input_box(Input_box):
 
     def _update_keys(self) -> None:
 
-        # initializes the icons for the arrow keys (cannot chr)
+        """
+        Initializes the icons for the arrow keys
+        (since you cannot use 'chr' for arrow keybinds).
+        """
 
         icon_size: int = self.h - self.h // 3
         icon_x: int = self.posx + (self.w - icon_size) // 2
@@ -214,11 +292,14 @@ class Keybind_input_box(Input_box):
 
     def _update_widget(self) -> None:
 
-        # if click inside text box for first time, input activated
+        """
+        Checks if the user is entering a valid keybind,
+        if so catching it and setting the 'display_key' to the keybind entered,
+        and checking if backspace, escape and enter keys have been pressed.
+        """
+
         if self.is_pressed and not self.enter_input:
             self.enter_input = True
-
-        # if click outside the box, input deactivated
 
         if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT) and not self.is_in:
             self.enter_input = False
@@ -233,7 +314,6 @@ class Keybind_input_box(Input_box):
 
             while key > 0:
 
-                # if an authorized keybind is entered, the keybind is displayed
                 if key in self.char_range and self.display_key == 0:
 
                     self.display_key = key
@@ -260,6 +340,13 @@ class Keybind_input_box(Input_box):
 
     def display_widget(self) -> None:
 
+        """
+        Displays the input box.
+        If the user is currently entering input, their keybing input is shown,
+        aswell as a blinking horizontal cursor,
+        and a different color for the box's border.
+        """
+
         self._update_widget()
 
         pr.draw_rectangle(*self.textbox, pr.DARKGRAY)
@@ -272,8 +359,6 @@ class Keybind_input_box(Input_box):
 
         pr.draw_rectangle_lines(*self.textbox, line_color)
 
-        # displays a blinking cursor in input box
-
         if (
             self.enter_input and self.display_key == 0
             and (self.frame_counter // 20) % 2 == 0
@@ -281,7 +366,7 @@ class Keybind_input_box(Input_box):
             cursor_x: int = self.posx + (
                 self.w - Text.measure_text("_", self.font_size)
             ) // 2
-            cursor_y: int = self.posy + self.h // 3
+            cursor_y: int = self.posy + self.h - self.font_size
             pr.draw_text_ex(
                 Text.font,
                 "_",

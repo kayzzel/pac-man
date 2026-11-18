@@ -256,6 +256,7 @@ def custom_game(
         config = Config()
 
     if map_name != Path(map_name).name:
+        print("### no path for the map")
         return None
 
     folder: Path = map_directory / map_name

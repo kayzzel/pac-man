@@ -12,4 +12,8 @@ class Cell:
                 "E": False,
                 "W": False,
         }
+        self.neighbors: dict[str, Cell | None] = {
+            direction: None
+            for direction in self.walls.keys()
+        }
         self.special: bool = False
