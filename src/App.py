@@ -78,6 +78,67 @@ class App:
             print(err, file=stderr)
             return (1)
 
+        def create_mandatory_score(highscore_filename: str) -> int:
+            """
+                Description:
+            Make sure the score file of the mandatory game is usable:
+            an existing path must be a readable and writable file (a
+            folder or a locked file is refused), a missing file is
+            created with an empty score list, and any failure raises
+            a ValueError with a clear message.
+
+                Parameters:
+            highscore_filename -> path of the score file from the
+                                  config
+
+                Returns value:
+            return 0 when the score file is ready to use
+
+                Raises:
+            ValueError when the path is a directory, unreadable,
+            unwritable, or cannot be created
+            """
+            score_file = Path(highscore_filename)
+
+            if score_file.exists():
+                if score_file.is_dir():
+                    raise ValueError(
+                            f"ERROR: score file {highscore_filename} "
+                            "is a directory"
+                        )
+                try:
+                    with open(score_file, "r"):
+                        pass
+                except OSError as err:
+                    raise ValueError(
+                            f"ERROR: score file {highscore_filename} "
+                            f"is not readable: {err}"
+                        ) from err
+                try:
+                    with open(score_file, "a"):
+                        pass
+                except OSError as err:
+                    raise ValueError(
+                            f"ERROR: score file {highscore_filename} "
+                            f"is not writable: {err}"
+                        ) from err
+                return 0
+
+            try:
+                score_file.write_text("[]")
+            except OSError as err:
+                raise ValueError(
+                        f"ERROR: couldn't create the score file "
+                        f"{highscore_filename}: {err}"
+                    ) from err
+            return 0
+
+        try:
+            create_mandatory_score(self.__config.highscore_filename)
+        except ValueError as err:
+            print(err, file=stderr)
+            return (1)
+
         return (0)
 
     def add_view(self, new_view: dict[str, View]) -> None:
