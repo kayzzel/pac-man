@@ -10,8 +10,8 @@ from .Instructions_view import Instructions_view
 from .widget import ButtonPanel, Icon, AnimIcon
 
 
-BACKGROUND_IMAGE_PATH: str = "src/view/assets/gifs/pac-man_bg.gif"
-TITLE_IMAGE_PATH: str = "src/view/assets/icons/pac-man_title.png"
+BACKGROUND_IMAGE_PATH: str = "assets/gifs/pac-man_bg.gif"
+TITLE_IMAGE_PATH: str = "assets/icons/pac-man_title.png"
 
 BORDER_THICKNESS: int = 7
 BORDER_PADDING: int = 3

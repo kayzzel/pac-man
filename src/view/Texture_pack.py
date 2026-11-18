@@ -2,8 +2,8 @@ import os
 
 
 TEXTURES_PACK: dict[str, str] = {
-    "DEFAULT": "src/view/assets/default_texture_pack",
-    "LUIGI": "src/view/assets/luigi_texture_pack"
+    "DEFAULT": "assets/default_texture_pack",
+    "LUIGI": "assets/luigi_texture_pack"
 }
 
 

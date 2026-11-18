@@ -15,8 +15,8 @@ DEFAULT_COLOR: pr.Color = pr.GRAY
 TEXT_COLOR: pr.Color = pr.LIGHTGRAY
 CURSOR_COLOR: pr.Color = pr.RAYWHITE
 
-ARROW_LEFT_PATH: str = "src/view/assets/icons/arrow_left.png"
-ARROW_RIGHT_PATH: str = "src/view/assets/icons/arrow_right.png"
+ARROW_LEFT_PATH: str = "assets/icons/arrow_left.png"
+ARROW_RIGHT_PATH: str = "assets/icons/arrow_right.png"
 
 
 class Input_box(Widget):

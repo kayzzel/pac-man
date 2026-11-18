@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from ..App import App
 
 
-LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
+LIFE_ICON_PATH: str = "assets/icons/pac-man_life_icon.png"
 COUNTDOWN_TIME: int = 60
 LVL_SHOW_TIME: int = 100
 

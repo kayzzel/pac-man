@@ -11,9 +11,9 @@ from ..game.Game import mandatory_game
 
 
 ICON_PATHS: dict[str, str] = {
-    "MANDATORY": "src/view/assets/icons/placeholder.png",
-    "ARCADE": "src/view/assets/icons/pacman_arcade_snapshot.jpg",
-    "CUSTOM": "src/view/assets/icons/placeholder.png"
+    "MANDATORY": "assets/icons/placeholder.png",
+    "ARCADE": "assets/icons/pacman_arcade_snapshot.jpg",
+    "CUSTOM": "assets/icons/placeholder.png"
 }
 
 

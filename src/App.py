@@ -27,7 +27,9 @@ class Display_config:
 
 
 class App:
+
     def __init__(self) -> None:
+
         self.__config: Config = Config()
         self.views: dict[str, View] = {}
         self.__current_view: View | None = None
@@ -86,7 +88,7 @@ class App:
 
         # pr.set_config_flags(pr.FLAG_WINDOW_RESIZABLE)
         pr.set_trace_log_level(tr_log_lvl.LOG_ERROR)
-        pr.init_window(1920, 1080, "pac-man menu example")
+        pr.init_window(1920, 1080, "pac-man")
         pr.toggle_fullscreen()
         pr.set_target_fps(60)
         pr.set_exit_key(kek.KEY_NULL)

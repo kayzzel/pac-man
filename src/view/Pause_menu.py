@@ -23,8 +23,8 @@ PASSWORD_MSG_TIME: int = 120
 
 BORDER_THICK: int = 5
 
-LOCK_CLOSED_PATH: str = "src/view/assets/icons/lock_closed.jpg"
-LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
+LOCK_CLOSED_PATH: str = "assets/icons/lock_closed.jpg"
+LOCK_OPEN_PATH: str = "assets/icons/lock_open.jpg"
 
 
 class Pause_menu(View):

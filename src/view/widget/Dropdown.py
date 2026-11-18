@@ -7,8 +7,8 @@ from .Panel import ButtonPanel
 from .Icon import ClickableIcon
 
 
-ARROW_UP_PATH: str = "src/view/assets/icons/arrow_up.png"
-ARROW_DOWN_PATH: str = "src/view/assets/icons/arrow_down.png"
+ARROW_UP_PATH: str = "assets/icons/arrow_up.png"
+ARROW_DOWN_PATH: str = "assets/icons/arrow_down.png"
 
 
 class Dropdown(Widget):

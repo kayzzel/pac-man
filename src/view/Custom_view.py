@@ -34,8 +34,8 @@ if TYPE_CHECKING:
 
 MSG_TIME: int = 120
 
-WALL_VER: str = "src/view/assets/icons/walls/wall_ver"
-WALL_HOR: str = "src/view/assets/icons/walls/wall_hor"
+WALL_VER: str = "assets/icons/walls/wall_ver"
+WALL_HOR: str = "assets/icons/walls/wall_hor"
 WALL_HERE: str = "_h.png"
 WALL_NOTHERE: str = "_nh.png"
 
