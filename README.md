@@ -32,7 +32,7 @@
 
   **Installation**
 
-  This project uses `uv` as a dependency manager. To install the required packages (`pyray` and the `mazegenerator` provided), you can simply run:
+  This project uses `uv` as a dependency manager. To install the required packages (`pyray` and the `mazegenerator`   provided), you can simply run:
   ```
   make
   ```
@@ -58,5 +58,80 @@
   ```
   make build
   ```
-  This command creates a standalone executable bundled with the required assets, configuration file and documentation into 
-  a `pac-man.zip` archive that you can find in the `dist/` directory.
+  This command creates a standalone executable bundled with the required assets, configuration file and documentation that    you can find in the `dist/` directory.
+
+### Configuration
+
+
+  ____
+
+  The specifications of the game rely on a JSON configuration file (by default, `config.json`), which is checked and validated through Pydantic models to make sure the game is not given invalid data.<br>
+
+  **Structure of the file and default values:**
+
+  + `score_file` (string) : The path to the file in which are stored the scores for the mandatory maps (default=`.maps/mandatory/score.json`)<br>
+  + `life` (integer) : The initial number of lives for the player (default=`3`)<br>
+  + `width` (integer) : The width (number of columns) of the generated maze for mandatory maps (default=`15`)<br>
+  + `height` (integer) : The height (number of rows) of the generated maze for mandatory maps (default=`15`)<br>
+  + `seed` (integer) : The random seed for the first maze generation (first level)<br>
+  + `time` (integer) : The time limit in seconds to complete a level (default=`120`)<br>
+  + `pacgum_points` (integer) : The number of points awarded to the player when collecting a pacgum (default=`10`)<br>
+  + `super_pacgum_points` (integer) : The number of points awarded to the player when collecting a super pacgum (default=`50`)<br>
+  + `ghost_points` (integer) : The number of points awarded to the player when eating a ghost (default=`200`)<br>
+
+  In case of missing or invalid keys, the default values are adopted. Unknown keys are ignored.<br><br>
+
+### Highscore
+
+
+  ____
+
+  The highscore system allows the player to save their scores for the different maps by storing them in JSON files,
+  all located by default in a `.maps/<map_name>/score.json` file, with the <map_name> being the name of the collection of maps/levels (for example, `mandatory` or `arcade`).<br>
+
+  **How the scores are stored:**
+
+  TO BE FILLED BY GAUTHIER
+
+### Maze Generation
+
+
+  ____
+
+  For the maze generation of the mandatory levels, we used the `mazegenerator` package provided, from the `A-Maze-Ing` 42 project.
+  TO BE FILLED BY GAUTHIER
+
+
+### Implementation
+
+
+  ____
+
+
+
+### General Software Architecture
+
+
+  ____
+
+
+### Project Management
+
+
+  ____
+
+
+### Resources
+
+
+  ____
+
+  **Links:**
+
+  + Pyray documentation
+  + Raylib cheatsheet
+  + Raylib examples
+
+  **AI Usage:**
+
+  TO BE FILLED BY GAUTHIER
