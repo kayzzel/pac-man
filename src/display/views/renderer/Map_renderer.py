@@ -1,15 +1,15 @@
 import pyray as pr
 
-from .Texture_pack import Texture_pack
-from .widget import Icon, AnimIcon
+from ...Texture_pack import Texture_pack
+from ...widgets import Icon, AnimIcon
 
-from ..game.Game import Game
-from ..game.map.Cell import Cell
-from ..game.entity.Pac_man import Pac_man
-from ..game.entity.Entity import Entity
-from ..game.entity.collectible.Consumable import Consumable
-from ..game.entity.ghost.Ghost import Ghost
-from ..utils.enum_utils import Game_state, Pacman_state, Ghost_state
+from src.game.Game import Game
+from src.game.map.Cell import Cell
+from src.game.entity.Pac_man import Pac_man
+from src.game.entity.Entity import Entity
+from src.game.entity.collectible.Consumable import Consumable
+from src.game.entity.ghost.Ghost import Ghost
+from src.utils.enum_utils import Game_state, Pacman_state, Ghost_state
 
 
 DIRECTIONS: dict[str, str] = {

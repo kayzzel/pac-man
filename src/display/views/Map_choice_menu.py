@@ -4,16 +4,16 @@ from typing import Callable, Any
 
 from .View import View
 from .Game_view import Game_view
-from .Custom_view import Custom_view
-from .widget import Text, ButtonPanel, Icon
+from .custom_view import Custom_view
+from ..widgets import Text, ButtonPanel, Icon
 
-from ..game.Game import mandatory_game
+from src.game.Game import mandatory_game
 
 
 ICON_PATHS: dict[str, str] = {
-    "MANDATORY": "src/view/assets/icons/placeholder.png",
-    "ARCADE": "src/view/assets/icons/pacman_arcade_snapshot.jpg",
-    "CUSTOM": "src/view/assets/icons/placeholder.png"
+    "MANDATORY": "assets/icons/placeholder.png",
+    "ARCADE": "assets/icons/pacman_arcade_snapshot.jpg",
+    "CUSTOM": "assets/icons/placeholder.png"
 }
 
 

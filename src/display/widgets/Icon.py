@@ -1,8 +1,10 @@
 import pyray as pr
+
 from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
-from .Widget import Widget
 from typing import Any, Callable
+
+from .Widget import Widget
 
 
 BASE_FRAME_DELAY: int = 8

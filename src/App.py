@@ -1,20 +1,34 @@
 import pyray as pr
-from pyray import TraceLogLevel as tr_log_lvl
-from pyray import KeyboardKey as kek
-from typing import Any
-from .Config import Config
-from .view.View import View
-from .view.Main_menu import Main_menu
-from .view.widget.Text import Text, PACMAN_FONT
-from .view.Texture_pack import TEXTURES_PACK
 
 from pathlib import Path
 from sys import stderr
 
+from pyray import TraceLogLevel as tr_log_lvl
+from pyray import KeyboardKey as kek
+from typing import Any
+
+from .Config import Config
+from .display import (
+    View,
+    Main_menu,
+    Text,
+    PACMAN_FONT,
+    TEXTURES_PACK
+)
+
 
 class Display_config:
 
+    """
+    A simple storage class used for user configuration
+    (changing keybinds, textures...).
+    """
+
     def __init__(self) -> None:
+
+        """
+        Initializes default settings for the display.
+        """
 
         self.keybinds: dict[str, Any] = {
             "UP": kek.KEY_W,

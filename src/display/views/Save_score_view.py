@@ -1,13 +1,13 @@
 import pyray as pr
 
 from .View import View
-from .widget import Text, Input_box, ButtonPanel
+from ..widgets import Text, Input_box, ButtonPanel
 
-from ..game.Game import Game
+from src.game.Game import Game
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ..App import App
+    from src.App import App
 
 
 MAX_INPUT_LENGTH: int = 20

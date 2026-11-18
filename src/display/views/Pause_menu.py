@@ -8,13 +8,13 @@ from .View import View
 from .Scores_view import Scores_view
 from .Save_score_view import Save_score_view
 from .Options_menu import Options_menu
-from .widget import Text, ButtonPanel, TextPanel, ClickableIcon, Input_box
+from ..widgets import Text, ButtonPanel, TextPanel, ClickableIcon, Input_box
 
-from ..game.Game import Game
+from src.game.Game import Game
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ..App import App
+    from src.App import App
     from .Game_view import Game_view
 
 
@@ -23,8 +23,8 @@ PASSWORD_MSG_TIME: int = 120
 
 BORDER_THICK: int = 5
 
-LOCK_CLOSED_PATH: str = "src/view/assets/icons/lock_closed.jpg"
-LOCK_OPEN_PATH: str = "src/view/assets/icons/lock_open.jpg"
+LOCK_CLOSED_PATH: str = "assets/icons/lock_closed.jpg"
+LOCK_OPEN_PATH: str = "assets/icons/lock_open.jpg"
 
 
 class Pause_menu(View):

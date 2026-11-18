@@ -4,11 +4,11 @@ from abc import ABC
 from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh
 
-from .widget import Widget, Icon
+from ..widgets import Widget, Icon
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ..App import App
+    from src.App import App
 
 
 class View(ABC):

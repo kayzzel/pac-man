@@ -4,14 +4,14 @@ from typing import Callable, Any
 from pathlib import Path
 
 from .View import View
-from .widget import Text, ButtonPanel, TextPanel, Dropdown
+from ..widgets import Text, ButtonPanel, TextPanel, Dropdown
 
-from ..game.map.Map_scores import Map_scores
-from ..game.map.Map_storing import get_stored_map_list
+from src.game.map.Map_scores import Map_scores
+from src.game.map.Map_storing import get_stored_map_list
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ..App import App
+    from src.App import App
 
 
 class Scores_view(View):

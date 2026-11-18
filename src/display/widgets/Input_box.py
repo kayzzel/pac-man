@@ -1,8 +1,10 @@
 import pyray as pr
+
 from pyray import KeyboardKey as kek
 from pyray import MouseButton as mb
 from pyray import MouseCursor as mc
 from typing import Callable, Any
+
 from .Widget import Widget
 from .Text import Text
 from .Icon import Icon

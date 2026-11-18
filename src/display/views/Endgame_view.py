@@ -2,13 +2,13 @@ import pyray as pr
 
 from .View import View
 from .Save_score_view import Save_score_view
-from .widget import ButtonPanel, TextPanel, Text
+from ..widgets import ButtonPanel, TextPanel, Text
 
-from ..game.Game import Game
+from src.game.Game import Game
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ..App import App
+    from src.App import App
 
 
 class Endgame_view(View):

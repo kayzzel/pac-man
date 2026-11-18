@@ -5,11 +5,11 @@ from pyray import MouseButton as mb
 from typing import Callable, Any
 
 from .View import View
-from .widget import Text, ButtonPanel
+from ..widgets import Text, ButtonPanel
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ..App import App
+    from src.App import App
 
 
 TEXTS: dict[str, list[str]] = {

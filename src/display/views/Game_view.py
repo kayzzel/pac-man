@@ -5,19 +5,19 @@ from pyray import KeyboardKey as kek
 from .View import View
 from .Pause_menu import Pause_menu
 from .Endgame_view import Endgame_view
-from .Map_renderer import Map_renderer
-from .widget import Icon, Text, Widget, TextPanel
+from .renderer.Map_renderer import Map_renderer
+from ..widgets import Icon, Text, Widget, TextPanel
 
-from ..game.Game import Game
-from ..game.map.Cell import Cell
-from ..utils.enum_utils import Game_state, Consumable_type
+from src.game.Game import Game
+from src.game.map.Cell import Cell
+from src.utils.enum_utils import Game_state, Consumable_type
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ..App import App
+    from src.App import App
 
 
-LIFE_ICON_PATH: str = "src/view/assets/icons/pac-man_life_icon.png"
+LIFE_ICON_PATH: str = "assets/icons/pac-man_life_icon.png"
 COUNTDOWN_TIME: int = 60
 LVL_SHOW_TIME: int = 100
 

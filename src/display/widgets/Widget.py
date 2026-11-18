@@ -1,4 +1,5 @@
 import pyray as pr
+
 from pyray import MouseButton as mb
 from pyray import get_screen_width as sw
 from pyray import get_screen_height as sh

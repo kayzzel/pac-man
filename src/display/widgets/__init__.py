@@ -4,7 +4,7 @@ from .Button import Button
 from .Panel import Panel, TextPanel, ButtonPanel
 from .Input_box import Input_box, Keybind_input_box
 from .Dropdown import Dropdown
-from .Text import Text
+from .Text import Text, PACMAN_FONT
 
 
 __all__: list[str] = [
@@ -19,5 +19,6 @@ __all__: list[str] = [
     "Dropdown",
     "Text",
     "Input_box",
-    "Keybind_input_box"
+    "Keybind_input_box",
+    "PACMAN_FONT"
 ]

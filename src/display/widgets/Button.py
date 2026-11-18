@@ -1,6 +1,8 @@
 import pyray as pr
+
 from pyray import MouseButton as mb
 from typing import Callable, Any
+
 from .Widget import Widget
 from .Text import Text
 

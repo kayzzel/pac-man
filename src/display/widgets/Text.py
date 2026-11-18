@@ -1,10 +1,12 @@
 import pyray as pr
+
 from pyray import get_screen_width as sw
+
 from .Widget import Widget
 
 
-DEFAULT_FONT = "src/view/assets/fonts/Gohu/GohuFont11NerdFontMono-Regular.ttf"
-PACMAN_FONT = "src/view/assets/fonts/crackman/Crackman.otf"
+DEFAULT_FONT = "assets/fonts/Gohu/GohuFont11NerdFontMono-Regular.ttf"
+PACMAN_FONT = "assets/fonts/crackman/Crackman.otf"
 
 TEXT_COLOR = pr.RAYWHITE
 

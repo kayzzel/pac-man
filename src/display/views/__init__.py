@@ -6,8 +6,8 @@ from .Game_view import Game_view
 from .Save_score_view import Save_score_view
 from .Scores_view import Scores_view
 from .Options_menu import Options_menu
-from .Custom_view import Custom_view
 from .Instructions_view import Instructions_view
+from .custom_view import Custom_view
 
 __all__: list[str] = [
     "View",

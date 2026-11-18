@@ -7,11 +7,11 @@ from .Scores_view import Scores_view
 from .Map_choice_menu import Map_choice_menu
 from .Options_menu import Options_menu
 from .Instructions_view import Instructions_view
-from .widget import ButtonPanel, Icon, AnimIcon
+from ..widgets import ButtonPanel, Icon, AnimIcon
 
 
-BACKGROUND_IMAGE_PATH: str = "src/view/assets/gifs/pac-man_bg.gif"
-TITLE_IMAGE_PATH: str = "src/view/assets/icons/pac-man_title.png"
+BACKGROUND_IMAGE_PATH: str = "assets/gifs/pac-man_bg.gif"
+TITLE_IMAGE_PATH: str = "assets/icons/pac-man_title.png"
 
 BORDER_THICKNESS: int = 7
 BORDER_PADDING: int = 3
