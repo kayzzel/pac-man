@@ -13,7 +13,7 @@ import json
 class Map_custom:
     """The map creator: builds, edits and saves one custom map."""
 
-    def __init__(self, map_folder: Path) -> None:
+    def __init__(self) -> None:
         """
             Description:
         Create an empty editor on a blank empty map of the default
@@ -22,8 +22,6 @@ class Map_custom:
             Parameters:
         map_folder -> the folder where every custom map is saved
         """
-        self.map_folder: Path = map_folder
-
         self.__rows: int = 15
         self.__cols: int = 15
 
@@ -148,40 +146,6 @@ class Map_custom:
                 cell.collectible = None
         self.collectibles_set = False
         self.__map.collectible_count = 0
-
-    def set_name(self, name: str) -> bool:
-        """
-            Description:
-        Name the map: 1 to 20 characters among letters, digits, _
-        and -, a name that no existing map folder already uses, so
-        every map keeps its own folder and its own scores.
-
-            Parameters:
-        name -> the wanted name of the map
-
-            Returns value:
-        return True when the name was accepted
-        """
-        allowed: set[str] = set(
-                "abcdefghijklmnopqrstuvwxyz"
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                "0123456789_-"
-            )
-
-        if (
-                not isinstance(name, str)
-                or len(name) < 1
-                or len(name) > 20
-                or any(char not in allowed for char in name)
-           ):
-            return False
-
-        if (self.map_folder / name).exists():
-            return False
-
-        self.__map.name = name
-        self.name_set = True
-        return True
 
     def randomize_wall(self) -> None:
         """
@@ -494,29 +458,6 @@ class Map_custom:
 
         return True
 
-    def save_map(self) -> str | None:
-        """
-            Description:
-        Save the finished map in its own folder, as a map.json file
-        validated by Map_info, with an empty score.json next to it
-        unless the map already has scores to keep.
-
-            Returns value:
-        return None on success, or the reason why the map cannot be
-        saved (a missing step, an unwritable folder)
-        """
-        if not self.name_set:
-            return "name is not set"
-        if not self.walls_set:
-            return "walls are not set"
-        if not self.pacman_spawn_set:
-            return "pacman spawn is not set"
-        if not all(self.ghost_spawn_set.values()):
-            return "ghost spawn is not set"
-        if not all(self.ghost_scatter_set.values()):
-            return "ghost scatter point is not set"
-        if self.__map.collectible_count == 0:
-            return "no collectibles in the map"
 
 class Maps_custom:
     def __init__(self, map_folder: Path) -> None:
