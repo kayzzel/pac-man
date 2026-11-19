@@ -44,6 +44,7 @@
   ```
   uv sync
   ```
+  <br><br>
 
   **Execution**
 
@@ -55,6 +56,7 @@
   ```
   uv run python pac-man.py <config_file>
   ```
+  <br><br>
 
   **Build**
 
