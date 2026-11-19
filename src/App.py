@@ -34,7 +34,7 @@ class App:
         self.views: dict[str, View] = {}
         self.__current_view: View | None = None
         self.__previous_views: list[View | None] = []
-        self.__is_running = False
+        self.__is_running: bool = False
         self.map_folder: Path = Path(".maps")
         self.map_folder.mkdir(parents=True, exist_ok=True)
 
@@ -88,22 +88,32 @@ class App:
 
         # pr.set_config_flags(pr.FLAG_WINDOW_RESIZABLE)
         pr.set_trace_log_level(tr_log_lvl.LOG_ERROR)
-        pr.init_window(1920, 1080, "pac-man")
+        pr.init_window(1920, 1080, "Pac-Man")
         pr.toggle_fullscreen()
         pr.set_target_fps(60)
         pr.set_exit_key(kek.KEY_NULL)
         Text._load_font(PACMAN_FONT)
+        self.__is_running = True
 
         menu: Main_menu = Main_menu(self)
         self.views["main_menu"] = menu
         self.__current_view = menu
 
-        while not pr.window_should_close():
+        self.main_loop()
+
+    def main_loop(self) -> None:
+
+        while (
+            not pr.window_should_close()
+            and self.__is_running
+        ):
 
             pr.begin_drawing()
             pr.clear_background(pr.BLACK)
             self.display_app()
             pr.end_drawing()
+
+        pr.close_window()
 
     def stop_app(self) -> None:
 
@@ -116,7 +126,7 @@ class App:
                 if not view.is_freed:
                     view._unload_images()
 
-        pr.close_window()
+        self.__is_running = False
 
     def display_app(self) -> None:
 
