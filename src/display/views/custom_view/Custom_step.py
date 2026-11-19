@@ -234,7 +234,7 @@ class Custom_step(View, ABC):
         """
 
         return (
-            (self.h - self.mid_space) // 2 + (self.mid_space - self.map_h) // 2
+            self.description.lowerbound + (self.mid_space - self.map_h) // 2
         )
 
     @property
@@ -390,6 +390,17 @@ class Custom_step(View, ABC):
         super()._update(True)
         self._update_title()
         self._update_backnext_buttons()
+
+    def display_view(self) -> None:
+
+        """
+        Updates and displays the step's widgets,
+        including the next button if the step is completed.
+        """
+
+        super().display_view()
+        if self.show_next:
+            self.next.display_widget()
 
     def display_message(self) -> None:
 

@@ -1,5 +1,7 @@
 import pyray as pr
 
+from pyray import MouseButton as mb
+
 from .Custom_step import Custom_step
 from ..View import View
 from ...widgets import Widget, ButtonPanel, ClickableIcon
