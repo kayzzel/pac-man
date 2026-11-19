@@ -8,7 +8,7 @@ from .Collectible import Collectible
 class Super_Pacgum(Collectible):
     """The big dot giving the power-up that makes ghosts edible."""
 
-    def __init__(self, x: int, y: int, points: int) -> None:
+    def __init__(self, x: int, y: int, points: int = 50) -> None:
         """
             Description:
         Create a super pacgum on a cell.

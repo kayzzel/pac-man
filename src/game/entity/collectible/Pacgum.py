@@ -4,7 +4,7 @@ from .Collectible import Collectible
 class Pacgum(Collectible):
     """The small dot filling the corridors, the basic collectible."""
 
-    def __init__(self, x: int, y: int, points: int) -> None:
+    def __init__(self, x: int, y: int, points: int = 10) -> None:
         """
             Description:
         Create a simple pacgum on a cell.
