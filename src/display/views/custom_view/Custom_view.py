@@ -59,7 +59,7 @@ class Custom_view(View):
         ] = []
 
         maps: list[str] = get_stored_map_list(self.app.map_folder)
-        if maps != ["mandatory", "arcade"]:
+        if maps:
             self.steps.append(Step_zero)
 
         self.steps += [

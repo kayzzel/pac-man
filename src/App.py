@@ -42,6 +42,7 @@ class Display_config:
 
 class App:
     def __init__(self) -> None:
+
         self.__config: Config = Config()
         self.views: dict[str, View] = {}
         self.__current_view: View | None = None

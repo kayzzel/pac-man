@@ -62,6 +62,7 @@ class Map_renderer:
 
     def update_grid(
         self,
+        texture_pack: str,
         grid: list[list[Cell]],
         map_size: tuple[int, int],
         map_coor: tuple[int, int],
@@ -79,6 +80,8 @@ class Map_renderer:
 
         Parameters
         ----------
+        texture_pack: str
+            The texture pack to use for loading the sprites.
         grid: list[list[Cell]]
             The cells of the map to render.
         map_size: tuple[int, int]
@@ -91,6 +94,7 @@ class Map_renderer:
             All the entities that are part of the game.
         """
 
+        self.texture_pack = Texture_pack(texture_pack)
         self.grid: list[list[Cell]] = grid
         self.entities: list[Entity] = entities
         self.saved_dirs: dict[str, tuple[str, str, tuple[float, float]]] = {

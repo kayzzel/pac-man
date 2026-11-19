@@ -9,8 +9,8 @@ from .Panel import ButtonPanel
 from .Icon import ClickableIcon
 
 
-ARROW_UP_PATH: str = "src/view/assets/icons/arrow_up.png"
-ARROW_DOWN_PATH: str = "src/view/assets/icons/arrow_down.png"
+ARROW_UP_PATH: str = "assets/icons/arrow_up.png"
+ARROW_DOWN_PATH: str = "assets/icons/arrow_down.png"
 
 
 class Dropdown(Widget):
@@ -70,6 +70,9 @@ class Dropdown(Widget):
         Initializes the main label of the dropdown,
         the one shown at the top that indicates what it's for.
         """
+
+        if not self.buttons:
+            return
 
         self.main_button: dict[str, tuple[Callable[..., Any], Any]] = {
             label: action
@@ -147,7 +150,7 @@ class Dropdown(Widget):
         when the dropdown is deployed.
         """
 
-        if not self.show:
+        if not self.buttons or not self.show:
             return
 
         if pr.is_mouse_button_pressed(mb.MOUSE_BUTTON_LEFT) and not self.is_in:
@@ -184,6 +187,9 @@ class Dropdown(Widget):
         and updates the buttons that should be shown if it's the case.
         """
 
+        if not self.buttons:
+            return
+
         if self.nb_buttons <= self.max_show:
             return
 
@@ -215,6 +221,6 @@ class Dropdown(Widget):
         self.main_panel.display_widget()
         self.arrow_icons[self.arrow_icon_path].display_widget()
 
-        if self.show:
+        if self.show and self.buttons:
             self._update_buttons()
             self.panel.display_widget()

@@ -372,6 +372,7 @@ class Game_view(View):
         self.map_height = self.cell_size * len(self.grid)
 
         self.map_renderer.update_grid(
+            self.app.display_config.texture_pack,
             self.grid,
             (self.map_width, self.map_height),
             (self.map_startx, self.map_starty),
@@ -460,7 +461,12 @@ class Game_view(View):
         if pr.get_key_pressed() in self.app.display_config.keybinds.values():
             self.catch_player_input()
 
-        if pr.is_key_pressed(kek.KEY_ESCAPE):
+        if (
+            pr.is_key_pressed(kek.KEY_ESCAPE)
+            and self.game.state not in [
+                Game_state.WON, Game_state.LOST, Game_state.DIED
+            ]
+        ):
             self.pause_or_resume()
 
         if self.game.state == Game_state.FINISHED_MAP and self.game_start:
@@ -510,10 +516,6 @@ class Game_view(View):
             self.countdown_label.display_widget()
             return
 
-        if self.show_as_modal:
-            self.modal_view.display_view()
-            return
-
         pr.draw_line_ex(
             (self.info_panel.w, 0),
             (self.info_panel.w, self.h),
@@ -528,3 +530,6 @@ class Game_view(View):
 
         for widget in self.widgets:
             widget.display_widget()
+
+        if self.show_as_modal:
+            self.modal_view.display_view()
