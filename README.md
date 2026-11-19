@@ -58,7 +58,7 @@
   ```
   make build
   ```
-  This command creates a standalone executable bundled with the required assets, configuration file and documentation that    you can find in the `dist/` directory.
+  This command creates a standalone executable bundled with the required assets, configuration file and documentation into a `pacman.zip` that you can find in the `dist/` directory.
 
 ### Configuration
 
@@ -91,7 +91,7 @@
 
   **How the scores are stored:**
 
-  TO BE FILLED BY GAUTHIER
+  TO BE FILLED LATER
 
 ### Maze Generation
 
@@ -99,7 +99,7 @@
   ____
 
   For the maze generation of the mandatory levels, we used the `mazegenerator` package provided, from the `A-Maze-Ing` 42 project.
-  TO BE FILLED BY GAUTHIER
+  TO BE FILLED LATER
 
 
 ### Implementation
