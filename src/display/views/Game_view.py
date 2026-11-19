@@ -1,6 +1,7 @@
 import pyray as pr
 
 from pyray import KeyboardKey as kek
+from typing import Callable, Any
 
 from .View import View
 from .Pause_menu import Pause_menu
@@ -30,7 +31,12 @@ class Game_view(View):
     A view used to display the current game playing.
     """
 
-    def __init__(self, app: "App", game: Game) -> None:
+    def __init__(
+        self,
+        app: "App",
+        game_func: Callable[..., Any],
+        args: Any
+    ) -> None:
 
         """
         Initializes the main attributes of the view,
@@ -45,8 +51,11 @@ class Game_view(View):
             The game started by the user.
         """
 
-        self.game: Game = game
-        self.modal_view: Pause_menu = Pause_menu(app, game, self)
+        self.game: Game = game_func(args)
+        if self.game is None:
+            app.return_to_prev_view()
+            return
+        self.modal_view: Pause_menu = Pause_menu(app, self.game, self)
         self.map_renderer: Map_renderer = Map_renderer(
             self.game,
             app.display_config.texture_pack
@@ -154,36 +163,62 @@ class Game_view(View):
         )
 
         self.life_label: Text = Text(
-            "Lives : ",
+            "Lives :",
             self.info_panel.w // 10,
             self.info_panel.posy + self.info_panel.h + self.h // 4,
             self.info_panel.font_size
         )
-
-        if not self.life_icon_init:
-
-            self.life_icon_sz: int = (
-                self.info_panel.w - (self.life_label.x + self.life_label.width)
-            ) // self.game.player.nb_lives - self.info_panel.w // 30
-            self.life_icon_init = True
-
-        self.lives: list[Icon] = [Icon(
-            (
-                self.info_panel.w // 30
-                + self.life_label.x
-                + self.life_label.width
-                + self.life_icon_sz * life
-            ),
-            self.life_label.y + (
-                self.life_label.font_size - self.life_icon_sz
-            ) // 2,
-            LIFE_ICON_PATH,
-            (self.life_icon_sz, self.life_icon_sz),
-            True
-        ) for life in range(self.game.player.nb_lives)]
-
         self.info_widgets += [self.info_panel, self.life_label]
-        self.info_widgets += [i for i in self.lives]
+
+        if self.game.player.nb_lives >= 8:
+
+            self.life_text: Text = Text(
+                str(self.game.player.nb_lives),
+                (
+                    self.life_label.x
+                    + self.life_label.width
+                    + self.info_panel.w // 8
+                ),
+                self.life_label.y,
+                self.life_label.font_size * 2,
+                (
+                    self.info_panel.w
+                    - self.life_label.width
+                    - self.info_panel.w // 5
+                )
+            )
+            self.life_text.y += (
+                self.life_label.font_size - self.life_text.font_size
+            ) // 2
+            self.info_widgets.append(self.life_text)
+
+        else:
+
+            if not self.life_icon_init:
+
+                self.life_icon_sz: int = (
+                    self.info_panel.w - self.info_panel.w // 30
+                    - (self.life_label.x + self.life_label.width)
+                ) // self.game.player.nb_lives
+                self.life_icon_init = True
+
+            self.lives: list[Icon] = [Icon(
+                (
+                    self.info_panel.w // 60
+                    + self.life_label.x
+                    + self.life_label.width
+                    + self.life_icon_sz * life
+                ),
+                self.life_label.y + (
+                    self.life_label.font_size - self.life_icon_sz
+                ) // 2,
+                LIFE_ICON_PATH,
+                (self.life_icon_sz, self.life_icon_sz),
+                True
+            ) for life in range(self.game.player.nb_lives)]
+
+            self.info_widgets += [i for i in self.lives]
+
         self._update_collectibles()
 
     def _update_collectibles(self) -> None:

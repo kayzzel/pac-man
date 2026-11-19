@@ -77,11 +77,11 @@ class Map_choice_menu(View):
         ] = {
             "MANDATORY": (
                 self.app.change_view,
-                Game_view(self.app, mandatory_game(self.app.config))
+                Game_view(self.app, mandatory_game, self.app.config)
             ),
             "ARCADE": (
                 self.app.change_view,
-                Game_view(self.app, mandatory_game(self.app.config))
+                Game_view(self.app, mandatory_game, self.app.config)
             ),
             "CUSTOM": (self.app.change_view, Custom_view(self.app))
         }
