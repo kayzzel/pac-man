@@ -23,7 +23,11 @@
 
   ____
 
-  The goal of this project was to recreate the Pac-Man game in Python, using an external maze generator package provided by the 42 project __A-Maze-Ing__. We decided to implement three different modes: mandatory, arcade and custom. The mandatory mode respects the game mechanics of the original game (ghosts patterns), but uses maps from the maze generator, makes the ghosts spawn at the four corners, and does not include collectibles other than pacgums and super pacgums. The arcade mode, however, is a copy of the original game, with the same maps/levels and collectibles (apple, melon, galaxian, etc). And then the custom mode allows the player to create their own maps/levels. The whole game display was made using the __pyray__ library (wrapped from raylib in C).
+  The goal of this project was to recreate the Pac-Man game in Python, using an external maze generator package provided by the 42 project __A-Maze-Ing__.<br><br>
+  We decided to implement three different modes: mandatory, arcade and custom.<br>
+  The mandatory mode respects the game mechanics of the original game (ghosts patterns), but uses maps from the maze generator, makes the ghosts spawn at the four corners, and does not include collectibles other than pacgums and super pacgums.<br>
+  The arcade mode, however, is a copy of the original game, with the same maps/levels and collectibles (apple, melon, galaxian, etc).<br>
+  And then the custom mode allows the player to create their own maps/levels. The whole game display was made using the __pyray__ library (wrapped from raylib in C).<br><br>
 
 ### Instructions
 
@@ -58,7 +62,7 @@
   ```
   make build
   ```
-  This command creates a standalone executable bundled with the required assets, configuration file and documentation into a `pacman.zip` that you can find in the `dist/` directory.
+  This command creates a standalone executable bundled with the required assets, configuration file and documentation into a `pacman.zip` that you can find in the `dist/` directory.<br><br>
 
 ### Configuration
 
@@ -98,7 +102,7 @@
 
   ____
 
-  For the maze generation of the mandatory levels, we used the `mazegenerator` package provided, from the `A-Maze-Ing` 42 project.
+  For the maze generation of the mandatory levels, we used the `mazegenerator` package provided, from the `A-Maze-Ing` 42 project.<br>
   TO BE FILLED LATER
 
 
@@ -108,18 +112,18 @@
   ____
 
   As required by the 42 subject for this project, it was built entirely in Python.<br>
-  The UI interface used `pyray` as the graphic library to make an easy 2D rendering system with `views`, the main `App` cycling through them. The views use `widgets` built from scratch using basic `pyray` functions, for more complex display options.<br>
+  The UI interface used `pyray` as the graphic library to make an easy 2D rendering system with `views`, the main `App` cycling through them. The views use `widgets` built from scratch using basic `pyray` functions, for more complex display options.<br><br>
 
 ### General Software Architecture
 
 
   ____
 
-  At the root of the repository, the Makefile, README.md, `pac-man.py` as well as the default `config.json` are present. There's also an `assets` folder containing all the sprites/icons.
+  At the root of the repository, the Makefile, README.md, `pac-man.py` as well as the default `config.json` are present. There's also an `assets` folder containing all the sprites/icons.<br>
   And then all of the code Python files are found inside the `src` folder. At the root of `src` there are the main `App` class, and the `Config` class, otherwise we structured the files into three subfolders: `display`, `game` and `utils`.<br>
   The `display` folder contains everything display-related, such as the `views`, the `widgets`, and also the `Texture_pack` class.<br>
   The `game` folder contains everything game core-related, such as the `map` classes (`Map`, `Cell`, `Map_custom`, etc.), the `game` classes (`Game`, `GameLoop`, etc.) and of course the entity classes (`Entity`, `Pac_man`, `Ghost`, `Collectible`, etc.).<br>
-  And then the `utils` folder contains all the helper functions and enums.<br>
+  And then the `utils` folder contains all the helper functions and enums.<br><br>
 
   **`src` tree architecture:**
   ```
@@ -201,13 +205,16 @@
       ├── maze_utils.py
       └── path_utils.py
   ```
+  <br><br>
 
 ### Project Management
 
 
   ____
 
-  At the beginning of the project, we put together a roadmap detailing every single class/function to implement, as well as basic display ideas. We also wrote the prototypes of every class that we would both use, ensuring that our code would not clash at any point. Then we divided the two main aspects of the project between us: __gabach__ took care of the game engine and entities, and __ibady__ did the UI interface (display) part. We implemented git rules that made it impossible to merge our branches directly with dev or main, to avoid having to clean up messes on the dev branch later. Instead, we had to make Pull Requests to merge a specific branch into dev: this branch had to pass __lint__ checks and then the merge had to be approved by the other person.<br>
+  At the beginning of the project, we put together a roadmap detailing every single class/function to implement, as well as basic display ideas. We also wrote the prototypes of every class that we would both use, ensuring that our code would not clash at any point.<br>
+  Then we divided the two main aspects of the project between us: __gabach__ took care of the game engine and entities, and __ibady__ did the UI interface (display) part.<br>
+  We implemented git rules that made it impossible to merge our branches directly with dev or main, to avoid having to clean up messes on the dev branch later. Instead, we had to make Pull Requests to merge a specific branch into dev: this branch had to pass __lint__ checks and then the merge had to be approved by the other person.<br><br>
   When we had questions/points/issues to address with the other, we either discussed them on the campus, or we called/messaged via Discord.
   We didn't really have any big interfering code issues while progressing because our parts were almost completely isolated from one another, and even when we had stuff to modify in the other's part, it was usually resolved very easily.<br>
   Overall, the communication was fluid and the project went smoothly.<br><br>
