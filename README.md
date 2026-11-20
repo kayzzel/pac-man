@@ -131,7 +131,7 @@
 
 
   At the root of the repository, the Makefile, README.md, `pac-man.py` as well as the default `config.json` are present. There's also an `assets` folder containing all the sprites/icons.<br>
-  And then all of the code Python files are found inside the `src` folder. At the root of `src` there are the main `App` class, and the `Config` class, otherwise we structured the files into three subfolders: `display`, `game` and `utils`.<br>
+  And then all of the code Python files are found inside the `src` folder. At the root of `src` we put the main `App` class and the `Config` class, otherwise we structured the files into three subfolders: `display`, `game` and `utils`.<br>
   The `display` folder contains everything display-related, such as the `views`, the `widgets`, and also the `Texture_pack` class.<br>
   The `game` folder contains everything game core-related, such as the `map` classes (`Map`, `Cell`, `Map_custom`, etc.), the `game` classes (`Game`, `GameLoop`, etc.) and of course the entity classes (`Entity`, `Pac_man`, `Ghost`, `Collectible`, etc.).<br>
   And then the `utils` folder contains all the helper functions and enums.<br><br>
