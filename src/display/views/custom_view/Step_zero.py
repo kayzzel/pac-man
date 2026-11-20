@@ -33,6 +33,7 @@ class Step_zero(Custom_step):
         self.map_n: list[str] = get_stored_map_list(main_view.app.map_folder)
         self.main_view: View = main_view
         self.is_freed: bool = True
+        self.show_next: bool = False
         self.show_message: str = ""
         self.frame_counter: int = 0
         self.show_outline: bool = False
@@ -153,14 +154,3 @@ class Step_zero(Custom_step):
         self._update_title()
         self._update_buttons()
         self._update_dropdown()
-
-    def display_view(self) -> None:
-
-        """
-        Calls the grandparent View's method
-        to simply update and display the step's widgets.
-        """
-
-        super(Custom_step, self).display_view()
-        if self.show_message:
-            self.display_message()

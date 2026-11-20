@@ -402,6 +402,8 @@ class Custom_step(View, ABC):
         super().display_view()
         if self.show_next:
             self.next.display_widget()
+        if self.show_message:
+            self.display_message()
 
     def display_message(self) -> None:
 
