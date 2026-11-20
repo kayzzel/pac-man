@@ -25,9 +25,9 @@
 
 
   The goal of this project was to recreate the Pac-Man game in Python, using an external maze generator package provided by the 42 project __A-Maze-Ing__.<br><br>
-  We decided to implement three different modes: __mandatory__, __arcade__ and __custom__.<br>
-  The mandatory mode respects the game mechanics of the original game (ghosts patterns), but uses maps from the maze generator, makes the ghosts spawn at the four corners, and does not include collectibles other than pacgums and super pacgums.<br>
-  The arcade mode, however, is a copy of the original game, with the same maps/levels and collectibles (apple, melon, galaxian, etc).<br>
+  We decided to implement three different modes: __mandatory__, __arcade__ and __custom__.<br><br>
+  The mandatory mode respects the game mechanics of the original game (ghosts patterns), but uses maps from the maze generator, makes the ghosts spawn at the four corners, and does not include collectibles other than pacgums and super pacgums.<br><br>
+  The arcade mode, however, is a copy of the original game, with the same maps/levels and collectibles (apple, melon, galaxian, etc).<br><br>
   And then the custom mode allows the player to create their own maps/levels. The whole game display was made using the `pyray` library (wrapped from raylib in C).<br><br>
 
 ### Instructions
