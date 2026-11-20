@@ -2,7 +2,7 @@ import pyray as pr
 
 from typing import Callable, Any
 
-from .Custom_step import Custom_step
+from .Custom_step import Custom_step, MSG_TIME
 from ..View import View
 from ...widgets import Text, ButtonPanel, Dropdown
 
@@ -33,6 +33,9 @@ class Step_zero(Custom_step):
         self.map_n: list[str] = get_stored_map_list(main_view.app.map_folder)
         self.main_view: View = main_view
         self.is_freed: bool = True
+        self.show_message: str = ""
+        self.frame_counter: int = 0
+        self.show_outline: bool = False
         self._update(True)
 
     def _update_title(self) -> None:
@@ -102,6 +105,35 @@ class Step_zero(Custom_step):
         )
         self.widgets.append(self.map_dropdown)
 
+    def display_message(self) -> None:
+
+        """
+        Builds and displays a text widget showing the error message
+        if the loading of a game failed.
+        """
+
+        if self.frame_counter < MSG_TIME:
+
+            message: Text = Text(
+                self.show_message,
+                -2,
+                (
+                    self.map_dropdown.posy
+                    + self.map_dropdown.h
+                    + self.h // 15
+                ),
+                self.h // 10,
+                self.w // 2,
+                pr.RED
+            )
+            message.display_widget()
+            self.frame_counter += 1
+
+        else:
+
+            self.show_message = ""
+            self.frame_counter = 0
+
     def _update(self, forced: bool = False) -> None:
 
         """
@@ -130,3 +162,5 @@ class Step_zero(Custom_step):
         """
 
         super(Custom_step, self).display_view()
+        if self.show_message:
+            self.display_message()

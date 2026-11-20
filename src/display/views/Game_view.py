@@ -53,10 +53,14 @@ class Game_view(View):
             The game started by the user.
         """
 
-        self.game: Game = game_func(args)
+        if isinstance(args, tuple):
+            self.game: Game = game_func(*args)
+        else:
+            self.game = game_func(args)
+
         if self.game is None:
-            app.return_to_prev_view()
             return
+
         self.modal_view: Pause_menu = Pause_menu(app, self.game, self)
         self.map_renderer: Map_renderer = Map_renderer(
             self.game,

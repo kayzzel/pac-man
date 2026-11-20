@@ -21,24 +21,20 @@ class Map_scores:
         self.score_file.parent.mkdir(parents=True, exist_ok=True)
         self.scores: list[Score] = []
 
-        self.load_scores()
+        self.loaded: bool = self.load_scores()
 
-    def load_scores(self) -> None:
+    def load_scores(self) -> bool:
         Score_list = TypeAdapter(list[Score])
 
         try:
             data = get_json_from_file(str(self.score_file))
             self.scores = Score_list.validate_python(data)
-        except (ValidationError, JsonUtilsError) as err:
-            print(
-                    "WARNING: couldn't load the score file "
-                    f"{self.score_file}: {err}",
-                    file=stderr
-                )
+        except (ValidationError, JsonUtilsError):
             self.scores = []
-            return
+            return False
 
         self.scores.sort(key=(lambda e: e.score), reverse=True)
+        return True
 
     def add_score(self, name: str, score: int) -> bool:
         try:

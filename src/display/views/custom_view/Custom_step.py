@@ -55,6 +55,7 @@ class Custom_step(View, ABC):
         self.show_next: bool = show_next
         self.show_message: str = ""
         self.frame_counter: int = 0
+        self.show_outline: bool = False
         self.is_freed: bool = True
         self._update(True)
 

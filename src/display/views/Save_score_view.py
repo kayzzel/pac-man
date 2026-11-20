@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from src.App import App
 
 
-MAX_INPUT_LENGTH: int = 20
+MAX_INPUT_LENGTH: int = 10
 
 MSG_DISPLAY_TIME: int = 80
 
@@ -107,6 +107,7 @@ class Save_score_view(View):
             self.h // 16,
             self.w
         )
+        self.go_next: bool = False
 
     def _update(self, forced: bool = False) -> None:
 
@@ -136,14 +137,21 @@ class Save_score_view(View):
         to display a confirmation message for a few seconds before exiting.
         """
 
-        self.player_name: str = self.input_box.input
-        self.game.scores.add_score(self.player_name, self.game.player.score)
+        self.pl_name: str = self.input_box.input
         self.input_text.label = ""
-        self.show_message = [
-            "Successfully saved ",
-            f"the score {self.game.player.score}",
-            f" for player {self.player_name}!"
-        ]
+        if (
+            self.game.scores.add_score(self.pl_name, self.game.player.score)
+            is False
+        ):
+            self.show_message = ["This score cannot be saved, try again"]
+            self.go_next = False
+        else:
+            self.show_message = [
+                "Successfully saved ",
+                f"the score {self.game.player.score}",
+                f" for player {self.pl_name}!"
+            ]
+            self.go_next = True
         self.msg_frame_counter: int = 0
 
     def display_view(self) -> None:
@@ -196,4 +204,5 @@ class Save_score_view(View):
         else:
 
             self.show_message = []
-            self.app.change_view("main_menu")
+            if self.go_next:
+                self.app.change_view("main_menu")

@@ -109,7 +109,7 @@ class Map_renderer:
         self.line_thickness: int = 3
         self.cell_padding: int = cell_size // 8 + self.line_thickness
 
-        self.collectible_size: int = cell_size // 3
+        self.collectible_size: int = cell_size // 2
         self.consumable_size: int = cell_size // 2
         self.entity_space: int = self.cell_size - self.cell_padding * 2
         self.entity_size: int = self.entity_space - self.entity_space // 8
