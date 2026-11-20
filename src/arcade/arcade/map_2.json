@@ -1,0 +1,4515 @@
+{
+    "name": "arcade",
+    "cells": [
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 1,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 2,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 4,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 5,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 6,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 10,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 11,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 12,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 14,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 15,
+                    "y": 0,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 0,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 0,
+                    "points": 10
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 1,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 1,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 1,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 1,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 1,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 1,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 1,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 1,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 1,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 1,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 1,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 1,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 1,
+                    "points": 10
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 2,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "super_pacgum",
+                    "x": 0,
+                    "y": 2,
+                    "points": 50
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 2,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 2,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 2,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 2,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 2,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 2,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 2,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 2,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 2,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 2,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "super_pacgum",
+                    "x": 16,
+                    "y": 2,
+                    "points": 50
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 3,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 1,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 2,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 3,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 4,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 5,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 6,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 3,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "orange",
+                    "x": 8,
+                    "y": 3,
+                    "points": 200
+                }
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 3,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 10,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 11,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 3,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 14,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 3,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 15,
+                    "y": 3,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 3,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 3,
+                    "points": 10
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 4,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 4,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 4,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 4,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 4,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 5,
+                    "y": 4,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 4,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 11,
+                    "y": 4,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 4,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 4,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 4,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 4,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 4,
+                    "points": 10
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 5,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 1,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 2,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 5,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 5,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 5,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 6,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 10,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 5,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 11,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 5,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 14,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 5,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 15,
+                    "y": 5,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 5,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 5,
+                    "points": 10
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 6,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 6,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 6,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 6,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 6,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 6,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 6,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 6,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 6,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 7,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 7,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 7,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 7,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 7,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 7,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 7,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 8,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 8,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 8,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 8,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 8,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 8,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 8,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 8,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 8,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 8,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 9,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 9,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 9,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 9,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 9,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 9,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 9,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 9,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 9,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 10,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 10,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 10,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 10,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 10,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 10,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 10,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 1,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 2,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 11,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 4,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 11,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 5,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 6,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 10,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 11,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 11,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 12,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 11,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 14,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 15,
+                    "y": 11,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 11,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 11,
+                    "points": 10
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 12,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 12,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 12,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 12,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 12,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 12,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 12,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 12,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 12,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 12,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 12,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 12,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 12,
+                    "points": 10
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 13,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "super_pacgum",
+                    "x": 0,
+                    "y": 13,
+                    "points": 50
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 1,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 13,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 4,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 5,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 6,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 13,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 13,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 10,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 11,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 12,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 13,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 13,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 15,
+                    "y": 13,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 13,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "super_pacgum",
+                    "x": 16,
+                    "y": 13,
+                    "points": 50
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 14,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 1,
+                    "y": 14,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 14,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 14,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 14,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 5,
+                    "y": 14,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 14,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 11,
+                    "y": 14,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 14,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 14,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 14,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 15,
+                    "y": 14,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 14,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 15,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 1,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 2,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 15,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 15,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 5,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 6,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 10,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 15,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 11,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 15,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 14,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 15,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 15,
+                    "y": 15,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 15,
+                "walls": {
+                    "N": true,
+                    "S": false,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 15,
+                    "points": 10
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 16,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 16,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 16,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 16,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 16,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 16,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": null
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 16,
+                "walls": {
+                    "N": false,
+                    "S": false,
+                    "E": true,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 16,
+                    "points": 10
+                }
+            }
+        ],
+        [
+            {
+                "pos_x": 0,
+                "pos_y": 17,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": true
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 0,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 1,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 1,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 2,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 2,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 3,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 3,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 4,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 4,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 5,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 5,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 6,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 6,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 7,
+                "pos_y": 17,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 7,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 8,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 8,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 9,
+                "pos_y": 17,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 9,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 10,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 10,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 11,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 11,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 12,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 12,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 13,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 13,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 14,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 14,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 15,
+                "pos_y": 17,
+                "walls": {
+                    "N": true,
+                    "S": true,
+                    "E": false,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 15,
+                    "y": 17,
+                    "points": 10
+                }
+            },
+            {
+                "pos_x": 16,
+                "pos_y": 17,
+                "walls": {
+                    "N": false,
+                    "S": true,
+                    "E": true,
+                    "W": false
+                },
+                "special": false,
+                "collectible": {
+                    "name": "pacgum",
+                    "x": 16,
+                    "y": 17,
+                    "points": 10
+                }
+            }
+        ]
+    ],
+    "real_path_finding": false,
+    "collectible_count": 152,
+    "pacman_spawn": [
+        8.5,
+        13.5
+    ],
+    "ghosts_spawn": {
+        "BLINKY": [
+            8.5,
+            7.5
+        ],
+        "PINKY": [
+            8.5,
+            8.5
+        ],
+        "CLYDE": [
+            9.5,
+            8.5
+        ],
+        "INKY": [
+            7.5,
+            8.5
+        ]
+    },
+    "ghosts_scatter": {
+        "BLINKY": [
+            0.5,
+            0.5
+        ],
+        "PINKY": [
+            16.5,
+            17.5
+        ],
+        "CLYDE": [
+            0.5,
+            17.5
+        ],
+        "INKY": [
+            16.5,
+            0.5
+        ]
+    }
+}
