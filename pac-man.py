@@ -1,5 +1,4 @@
 from src.App import App
-import sys
 
 
 def main() -> int:
