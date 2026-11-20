@@ -10,6 +10,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.App import App
 
+BORDER_THICKNESS: int = 7
+BORDER_PADDING: int = 3
+BORDER_COLOR: pr.Color = pr.DARKBLUE
+
 
 class View(ABC):
 
@@ -29,8 +33,15 @@ class View(ABC):
             The app that manages everything.
         """
 
-        self.app = app
+        self.app: "App" = app
         self.is_freed: bool = True
+        self.outline: tuple[int, int, int, int] = (
+            BORDER_PADDING,
+            BORDER_PADDING,
+            self.w - BORDER_PADDING * 2,
+            self.h - BORDER_PADDING * 2
+        )
+        self.show_outline: bool = True
         self._update(True)
 
     def _unload_images(self) -> None:
@@ -133,5 +144,12 @@ class View(ABC):
         """
 
         self._update()
+
+        if self.show_outline:
+            pr.draw_rectangle_lines_ex(
+                self.outline,
+                BORDER_THICKNESS,
+                BORDER_COLOR
+            )
         for widget in self.widgets:
             widget.display_widget()

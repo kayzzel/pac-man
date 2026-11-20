@@ -28,6 +28,7 @@ class Step_seven(Custom_step):
         self.main_view: View = main_view
         self.map: Map_custom = self.get_attr("current_map")
         self.is_freed: bool = True
+        self.show_outline: bool = False
         self._update(True)
 
     def _update_widgets(self) -> None:

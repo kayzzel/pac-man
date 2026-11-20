@@ -80,10 +80,12 @@ class Scores_view(View):
             map_folder / map_name / "score.json"
         )
         self.scores: list[str] = [
-            f"{i}. {pl.name} --- {pl.score}"
+            f"{i + 1}. {pl.name} --- {pl.score}"
             for i, pl in enumerate(self.map_scores.scores)
         ]
-        if not self.scores:
+        if not self.map_scores.loaded:
+            self.scores.append("Couldn't load the scores for this map")
+        elif not self.scores:
             self.scores.append("No scores yet")
         elif len(self.scores) < 10:
             self.scores += [" " for _ in range(10 - len(self.scores))]

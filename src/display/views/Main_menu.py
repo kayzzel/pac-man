@@ -2,7 +2,7 @@ import pyray as pr
 
 from typing import Callable, Any
 
-from .View import View
+from .View import View, BORDER_PADDING
 from .Scores_view import Scores_view
 from .Map_choice_menu import Map_choice_menu
 from .Options_menu import Options_menu
@@ -12,9 +12,6 @@ from ..widgets import ButtonPanel, Icon, AnimIcon
 
 BACKGROUND_IMAGE_PATH: str = "assets/gifs/pac-man_bg.gif"
 TITLE_IMAGE_PATH: str = "assets/icons/pac-man_title.png"
-
-BORDER_THICKNESS: int = 7
-BORDER_PADDING: int = 3
 
 
 class Main_menu(View):
@@ -46,12 +43,6 @@ class Main_menu(View):
             (self.w - self.w // 3, self.h // 6),
             True,
             5
-        )
-        self.outline: tuple[int, int, int, int] = (
-            BORDER_PADDING,
-            BORDER_PADDING,
-            self.w - BORDER_PADDING * 2,
-            self.h - BORDER_PADDING * 2
         )
         self.widgets += [self.menu_icon, self.background]
 
@@ -92,8 +83,7 @@ class Main_menu(View):
             button_actions,
             (10, 2, 0.1),
             -2,
-            (pr.RED, pr.BLANK),
-            (pr.GRAY, pr.GOLD)
+            (pr.RED, pr.BLANK)
         )
         self.widgets.append(self.panel)
 
@@ -115,20 +105,3 @@ class Main_menu(View):
         super()._update(True)
         self._update_icons()
         self._update_panel()
-
-    def display_view(self) -> None:
-
-        """
-        Updates and displays the menu,
-        drawing the outline and displaying the widgets.
-        """
-
-        self._update()
-
-        pr.draw_rectangle_lines_ex(
-            self.outline,
-            BORDER_THICKNESS,
-            pr.DARKBLUE
-        )
-        for widget in self.widgets:
-            widget.display_widget()

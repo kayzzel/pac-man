@@ -89,7 +89,7 @@ class Dropdown(Widget):
             (0, 0, 0),
             0,
             (pr.BLANK, pr.DARKGRAY),
-            (pr.RAYWHITE, pr.RAYWHITE)
+            (pr.LIGHTGRAY, pr.LIGHTGRAY)
         )
 
         self.main_label: str = [k for k in self.main_button.keys()][0]
@@ -174,7 +174,7 @@ class Dropdown(Widget):
             (0, 0, 0),
             -2,
             (pr.BLANK, pr.DARKGRAY),
-            (pr.RAYWHITE, pr.BLACK),
+            (pr.RAYWHITE, pr.GOLD),
             pr.LIGHTGRAY
         )
         for button in self.panel.buttons.values():

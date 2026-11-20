@@ -7,7 +7,7 @@ from .Widget import Widget
 from .Text import Text
 
 
-BUTTON_BASE_COLOR: pr.Color = pr.WHITE
+BUTTON_BASE_COLOR: pr.Color = pr.GOLD
 BUTTON_HOVER_COLOR: pr.Color = pr.DARKGRAY
 
 

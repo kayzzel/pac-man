@@ -153,11 +153,18 @@ class Custom_view(View):
             The name of the map to load and start a game with.
         """
 
-        self.app.change_view(Game_view(
+        game_view: Game_view = Game_view(
             self.app,
             custom_game,
             (map_name, self.app.map_folder)
-        ))
+        )
+        if game_view.game is None:
+            self.cur_step.show_message = (
+                "Couldn't load the game, an error occurred."
+            )
+            return
+
+        self.app.change_view(game_view)
 
     def go_to_menu(self) -> None:
 

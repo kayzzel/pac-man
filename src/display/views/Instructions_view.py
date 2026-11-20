@@ -142,7 +142,7 @@ class Instructions_view(View):
         return self.h // 40
 
     @property
-    def outline(self) -> tuple[int, int, int, int]:
+    def instr_outline(self) -> tuple[int, int, int, int]:
 
         """
         Calculates the rectangle position and size
@@ -185,7 +185,7 @@ class Instructions_view(View):
         if not self.show_instruction_panel:
             return False
 
-        x, y, w, h = self.outline
+        x, y, w, h = self.instr_outline
         if (
             x <= pr.get_mouse_x() <= x + w
             and y <= pr.get_mouse_y() <= y + h
@@ -227,7 +227,8 @@ class Instructions_view(View):
                     -2,
                     starty + font_sz * (i + 1) + font_sz * i,
                     font_sz,
-                    t_w
+                    t_w,
+                    pr.DARKBLUE
                 ) for i, txt in enumerate(text)
             ]
             self.all_instr[category] = (texts, (t_w, t_h))
@@ -327,17 +328,17 @@ class Instructions_view(View):
         if self.show_instruction_panel:
 
             pr.draw_rectangle_rounded_lines_ex(
-                self.outline,
+                self.instr_outline,
                 0.1,
                 4,
-                2,
-                pr.LIGHTGRAY
+                10,
+                pr.GRAY
             )
             pr.draw_rectangle_rounded(
-                self.outline,
+                self.instr_outline,
                 0.1,
                 4,
-                pr.DARKGRAY
+                pr.LIGHTGRAY
             )
             for instr in self.cur_instr[0]:
                 instr.display_widget()

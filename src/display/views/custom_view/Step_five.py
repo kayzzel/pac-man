@@ -30,6 +30,7 @@ class Step_five(Custom_step):
         self.map: Map_custom = self.get_attr("current_map")
         self.frame_counter: int = 0
         self.show_message: str = ""
+        self.show_outline: bool = False
         self._update(True)
 
     def go_next(self) -> None:

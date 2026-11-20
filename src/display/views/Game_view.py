@@ -8,6 +8,7 @@ from .Pause_menu import Pause_menu
 from .Endgame_view import Endgame_view
 from .renderer.Map_renderer import Map_renderer
 from ..widgets import Icon, Text, Widget, TextPanel
+from ..widgets.Text import TEXT_COLOR
 
 from src.game.Game import Game
 from src.game.map.Cell import Cell
@@ -23,6 +24,7 @@ COUNTDOWN_TIME: int = 60
 LVL_SHOW_TIME: int = 100
 
 MIDDLE_LINE_THICKNESS: int = 10
+MIDDLE_LINE_COLOR: pr.Color = pr.MAROON
 
 
 class Game_view(View):
@@ -51,10 +53,14 @@ class Game_view(View):
             The game started by the user.
         """
 
-        self.game: Game = game_func(args)
+        if isinstance(args, tuple):
+            self.game: Game = game_func(*args)
+        else:
+            self.game = game_func(args)
+
         if self.game is None:
-            app.return_to_prev_view()
             return
+
         self.modal_view: Pause_menu = Pause_menu(app, self.game, self)
         self.map_renderer: Map_renderer = Map_renderer(
             self.game,
@@ -250,7 +256,7 @@ class Game_view(View):
             self.life_label.lowerbound + self.h // 15,
             self.info_panel.font_size,
             self.info_panel.w,
-            pr.RAYWHITE,
+            TEXT_COLOR,
             self.info_panel.w
         )
         self.info_widgets.append(collectible_label)
@@ -520,7 +526,7 @@ class Game_view(View):
             (self.info_panel.w, 0),
             (self.info_panel.w, self.h),
             MIDDLE_LINE_THICKNESS,
-            pr.RAYWHITE
+            MIDDLE_LINE_COLOR
         )
 
         self.map_renderer.display_grid()

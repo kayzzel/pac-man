@@ -8,7 +8,7 @@ from .Widget import Widget
 DEFAULT_FONT = "assets/fonts/Gohu/GohuFont11NerdFontMono-Regular.ttf"
 PACMAN_FONT = "assets/fonts/crackman/Crackman.otf"
 
-TEXT_COLOR = pr.RAYWHITE
+TEXT_COLOR = pr.GOLD
 
 
 class Text(Widget):
@@ -51,7 +51,7 @@ class Text(Widget):
         y: int,
         font_size: int,
         max_w: int = 0,
-        color: pr.Color = pr.RAYWHITE,
+        color: pr.Color = TEXT_COLOR,
         width: int = 0
     ) -> None:
 
@@ -70,7 +70,7 @@ class Text(Widget):
             The font size for the text.
         max_w: int (default 0 but changed below to screen width)
             The width the text should not go above.
-        color: pr.Color (default RAYWHITE)
+        color: pr.Color (default TEXT_COLOR)
             The color of the text.
         width: int (default 0 but changed below to screen width)
             The total width that the text should be relative to
