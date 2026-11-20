@@ -81,7 +81,7 @@ class Scores_view(View):
         if map_name == "mandatory":
             score_path: Path = Path(self.app.config.highscore_filename)
         elif map_name == "arcade":
-            score_path: Path = Path("src/arcade/score.json")
+            score_path = Path("src/arcade/arcade/score.json")
         else:
             score_path = map_folder / map_name / "score.json"
 
