@@ -80,6 +80,8 @@ class Scores_view(View):
 
         if map_name == "mandatory":
             score_path: Path = Path(self.app.config.highscore_filename)
+        elif map_name == "arcade":
+            score_path: Path = Path("src/arcade/score.json")
         else:
             score_path = map_folder / map_name / "score.json"
 
@@ -131,7 +133,7 @@ class Scores_view(View):
             load_label: (lambda: 0, None)
         } | {
             map_name: (self.load_new_scores, (map_name, self.app.map_folder))
-            for map_name in ["mandatory"] + self.maps
+            for map_name in ["mandatory", "arcade"] + self.maps
         }
         self.map_dropdown: Dropdown = Dropdown(
             -2,
