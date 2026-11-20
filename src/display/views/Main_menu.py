@@ -92,8 +92,7 @@ class Main_menu(View):
             button_actions,
             (10, 2, 0.1),
             -2,
-            (pr.RED, pr.BLANK),
-            (pr.GRAY, pr.GOLD)
+            (pr.RED, pr.BLANK)
         )
         self.widgets.append(self.panel)
 

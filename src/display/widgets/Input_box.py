@@ -14,8 +14,8 @@ from .Dropdown import ARROW_UP_PATH, ARROW_DOWN_PATH
 MAX_INPUT_CHARS: int = 10
 
 DEFAULT_COLOR: pr.Color = pr.GRAY
-TEXT_COLOR: pr.Color = pr.LIGHTGRAY
-CURSOR_COLOR: pr.Color = pr.RAYWHITE
+TEXT_COLOR: pr.Color = pr.GOLD
+CURSOR_COLOR: pr.Color = pr.GOLD
 
 ARROW_LEFT_PATH: str = "src/view/assets/icons/arrow_left.png"
 ARROW_RIGHT_PATH: str = "src/view/assets/icons/arrow_right.png"

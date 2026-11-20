@@ -8,6 +8,7 @@ from .Pause_menu import Pause_menu
 from .Endgame_view import Endgame_view
 from .renderer.Map_renderer import Map_renderer
 from ..widgets import Icon, Text, Widget, TextPanel
+from ..widgets.Text import TEXT_COLOR
 
 from src.game.Game import Game
 from src.game.map.Cell import Cell
@@ -250,7 +251,7 @@ class Game_view(View):
             self.life_label.lowerbound + self.h // 15,
             self.info_panel.font_size,
             self.info_panel.w,
-            pr.RAYWHITE,
+            TEXT_COLOR,
             self.info_panel.w
         )
         self.info_widgets.append(collectible_label)

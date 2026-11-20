@@ -7,7 +7,7 @@ from .Text import Text, TEXT_COLOR
 from .Button import Button, BUTTON_BASE_COLOR, BUTTON_HOVER_COLOR
 
 
-PANEL_OUTLINE_COLOR: pr.Color = pr.DARKGRAY
+PANEL_OUTLINE_COLOR: pr.Color = pr.MAROON
 PANEL_FILL_COLOR: pr.Color = pr.BLANK
 
 

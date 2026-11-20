@@ -227,7 +227,8 @@ class Instructions_view(View):
                     -2,
                     starty + font_sz * (i + 1) + font_sz * i,
                     font_sz,
-                    t_w
+                    t_w,
+                    pr.DARKBLUE
                 ) for i, txt in enumerate(text)
             ]
             self.all_instr[category] = (texts, (t_w, t_h))
@@ -330,14 +331,14 @@ class Instructions_view(View):
                 self.outline,
                 0.1,
                 4,
-                2,
-                pr.LIGHTGRAY
+                10,
+                pr.GRAY
             )
             pr.draw_rectangle_rounded(
                 self.outline,
                 0.1,
                 4,
-                pr.DARKGRAY
+                pr.LIGHTGRAY
             )
             for instr in self.cur_instr[0]:
                 instr.display_widget()
