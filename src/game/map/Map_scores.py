@@ -77,6 +77,9 @@ class Map_scores:
         Load the score file, sorted from the best score down and
         capped to the top 10: an unreadable or invalid file is only
         a warning, and the scores start empty.
+
+            Returns:
+        return True if it could load the scores False in other cases
         """
         Score_list = TypeAdapter(list[Score])
 
