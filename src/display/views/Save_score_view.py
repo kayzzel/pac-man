@@ -97,7 +97,7 @@ class Save_score_view(View):
         self.widgets.append(self.input_box)
 
         self.input_text: Text = Text(
-            "enter name : ",
+            "enter name:",
             -2,
             (
                 self.input_box.posy
@@ -105,8 +105,7 @@ class Save_score_view(View):
                 - self.h // 20
             ),
             self.h // 16,
-            self.w,
-            pr.LIGHTGRAY
+            self.w
         )
 
     def _update(self, forced: bool = False) -> None:

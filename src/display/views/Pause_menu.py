@@ -22,6 +22,7 @@ CHEAT_PASSWORD: str = "password"
 PASSWORD_MSG_TIME: int = 120
 
 BORDER_THICK: int = 5
+BORDER_COLOR: pr.Color = pr.DARKBLUE
 
 LOCK_CLOSED_PATH: str = "assets/icons/lock_closed.jpg"
 LOCK_OPEN_PATH: str = "assets/icons/lock_open.jpg"
@@ -399,7 +400,7 @@ class Pause_menu(View):
             self.x, self.y, self.w, self.h
         )
         pr.draw_rectangle(*outline, pr.BLACK)
-        pr.draw_rectangle_lines_ex(outline, BORDER_THICK, pr.RAYWHITE)
+        pr.draw_rectangle_lines_ex(outline, BORDER_THICK, BORDER_COLOR)
 
         self.left_panel.display_widget()
 

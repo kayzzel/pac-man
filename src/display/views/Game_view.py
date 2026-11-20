@@ -24,6 +24,7 @@ COUNTDOWN_TIME: int = 60
 LVL_SHOW_TIME: int = 100
 
 MIDDLE_LINE_THICKNESS: int = 10
+MIDDLE_LINE_COLOR: pr.Color = pr.MAROON
 
 
 class Game_view(View):
@@ -521,7 +522,7 @@ class Game_view(View):
             (self.info_panel.w, 0),
             (self.info_panel.w, self.h),
             MIDDLE_LINE_THICKNESS,
-            pr.RAYWHITE
+            MIDDLE_LINE_COLOR
         )
 
         self.map_renderer.display_grid()
