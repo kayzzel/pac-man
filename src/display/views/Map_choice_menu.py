@@ -1,13 +1,14 @@
 import pyray as pr
 
 from typing import Callable, Any
+from pathlib import Path
 
 from .View import View
 from .Game_view import Game_view
 from .custom_view import Custom_view
 from ..widgets import Text, ButtonPanel, Icon
 
-from src.game.Game import mandatory_game
+from src.game.Game import custom_game, mandatory_game
 
 
 ICON_PATHS: dict[str, str] = {
@@ -81,7 +82,11 @@ class Map_choice_menu(View):
             ),
             "ARCADE": (
                 self.app.change_view,
-                Game_view(self.app, mandatory_game, self.app.config)
+                Game_view(
+                    self.app,
+                    custom_game,
+                    ("arcade", Path("src/arcade"))
+                )
             ),
             "CUSTOM": (self.app.change_view, Custom_view(self.app))
         }
