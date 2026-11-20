@@ -1,20 +1,34 @@
 import pyray as pr
-from pyray import TraceLogLevel as tr_log_lvl
-from pyray import KeyboardKey as kek
-from typing import Any
-from .Config import Config
-from .view.View import View
-from .view.Main_menu import Main_menu
-from .view.widget.Text import Text, PACMAN_FONT
-from .view.Texture_pack import TEXTURES_PACK
 
 from pathlib import Path
 from sys import stderr
 
+from pyray import TraceLogLevel as tr_log_lvl
+from pyray import KeyboardKey as kek
+from typing import Any
+
+from .Config import Config
+from .display import (
+    View,
+    Main_menu,
+    Text,
+    PACMAN_FONT,
+    TEXTURES_PACK
+)
+
 
 class Display_config:
 
+    """
+    A simple storage class used for user configuration
+    (changing keybinds, textures...).
+    """
+
     def __init__(self) -> None:
+
+        """
+        Initializes default settings for the display.
+        """
 
         self.keybinds: dict[str, Any] = {
             "UP": kek.KEY_W,
@@ -28,6 +42,7 @@ class Display_config:
 
 class App:
     def __init__(self) -> None:
+
         self.__config: Config = Config()
         self.views: dict[str, View] = {}
         self.__current_view: View | None = None
@@ -86,7 +101,7 @@ class App:
 
         # pr.set_config_flags(pr.FLAG_WINDOW_RESIZABLE)
         pr.set_trace_log_level(tr_log_lvl.LOG_ERROR)
-        pr.init_window(1920, 1080, "pac-man menu example")
+        pr.init_window(1920, 1080, "Pac-Man")
         pr.toggle_fullscreen()
         pr.set_target_fps(60)
         pr.set_exit_key(kek.KEY_NULL)
@@ -95,13 +110,23 @@ class App:
         menu: Main_menu = Main_menu(self)
         self.views["main_menu"] = menu
         self.__current_view = menu
+        self.__is_running = True
 
-        while not pr.window_should_close():
+        self.main_loop()
+
+    def main_loop(self) -> None:
+
+        while (
+            not pr.window_should_close()
+            and self.__is_running
+        ):
 
             pr.begin_drawing()
             pr.clear_background(pr.BLACK)
             self.display_app()
             pr.end_drawing()
+
+        pr.close_window()
 
     def stop_app(self) -> None:
 
@@ -114,7 +139,7 @@ class App:
                 if not view.is_freed:
                     view._unload_images()
 
-        pr.close_window()
+        self.__is_running = False
 
     def display_app(self) -> None:
 
