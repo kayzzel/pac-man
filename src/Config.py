@@ -193,3 +193,6 @@ class Config:
         return the time limit of a level, in seconds
         """
         return self.__level_max_time
+
+    def custom_level_time(self) -> None:
+        self.__level_max_time = 3600

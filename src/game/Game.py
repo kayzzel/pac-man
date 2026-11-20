@@ -394,6 +394,7 @@ def custom_game(
     if not maps:
         return None
 
+    config.custom_level_time()
     game = Game(config, map_name, folder / "score.json")
     game.map.extend(maps)
     game.start_async()
