@@ -47,7 +47,10 @@ class Endgame_view(View):
                 for pl in self.game.scores.scores
             ]
 
-        if not self.scores:
+        if not self.game.scores.loaded:
+            self.scores.append("Couldn't load the scores for this map")
+
+        elif not self.scores:
             self.scores.append("No scores yet")
 
         elif len(self.scores) < 10:
