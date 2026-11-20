@@ -195,4 +195,8 @@ class Config:
         return self.__level_max_time
 
     def custom_level_time(self) -> None:
+        """
+        Raises the level time limit to one hour, for the custom maps
+        played at the user's own pace.
+        """
         self.__level_max_time = 3600

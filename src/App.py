@@ -142,11 +142,17 @@ class App:
         return (0)
 
     def add_view(self, new_view: dict[str, View]) -> None:
-
+        """
+        Adds one or more views to the app by name, so they can be
+        selected later with change_view.
+        """
         self.views.update(new_view)
 
     def return_to_prev_view(self) -> None:
-
+        """
+        Goes back to the view shown before the current one, freeing
+        the images of the view left behind.
+        """
         if not self.previous_view:
             return
 
@@ -160,7 +166,11 @@ class App:
             prev._update(True)
 
     def change_view(self, view: View | str) -> None:
-
+        """
+        Replaces the current view with the given one, either the view
+        itself or the name of a registered view. The images of the old
+        view are freed and the new one is updated once.
+        """
         if self.__current_view and not self.__current_view.is_freed:
             self.__current_view._unload_images()
 
@@ -177,7 +187,10 @@ class App:
             self.__current_view._update(True)
 
     def start_app(self) -> None:
-
+        """
+        Opens the window, loads the font, builds the main menu and
+        runs the app until the window is closed.
+        """
         # pr.set_config_flags(pr.FLAG_WINDOW_RESIZABLE)
         pr.set_trace_log_level(tr_log_lvl.LOG_ERROR)
         pr.init_window(1920, 1080, "Pac-Man")
@@ -194,7 +207,10 @@ class App:
         self.main_loop()
 
     def main_loop(self) -> None:
-
+        """
+        Draws one frame at a time until the window is closed or the
+        app is stopped.
+        """
         while (
             not pr.window_should_close()
             and self.__is_running
@@ -208,7 +224,9 @@ class App:
         pr.close_window()
 
     def stop_app(self) -> None:
-
+        """
+        Frees every view, then stops the main loop.
+        """
         already_checked: set[int] = set()
         for i, view in enumerate(
             [*self.__previous_views, self.__current_view]
@@ -221,18 +239,24 @@ class App:
         self.__is_running = False
 
     def display_app(self) -> None:
-
+        """
+        Draws the current view for one frame.
+        """
         if self.__current_view:
             self.__current_view.display_view()
 
     @property
     def current_view(self) -> View | None:
-
+        """
+        The view the app is showing right now.
+        """
         return self.__current_view
 
     @property
     def previous_view(self) -> View | None:
-
+        """
+        The view shown before the current one, or None.
+        """
         if not self.__previous_views:
             return None
 
@@ -240,5 +264,7 @@ class App:
 
     @property
     def config(self) -> Config:
-
+        """
+        The loaded config of the game.
+        """
         return self.__config

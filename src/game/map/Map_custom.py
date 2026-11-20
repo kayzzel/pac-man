@@ -94,6 +94,10 @@ class Map_custom:
             self.ghost_scatter_set[key] = False
 
     def reset(self) -> None:
+        """
+        Starts over on a blank empty map of the current size: used
+        when the editor wants to go back to a clean slate.
+        """
         self.__reset()
 
     def set_cols(self, nbr: int) -> bool:
@@ -460,7 +464,13 @@ class Map_custom:
 
 
 class Maps_custom:
+    """A set of maps the user built, saved and played together."""
+
     def __init__(self, map_folder: Path) -> None:
+        """
+        Creates an empty set of maps, without a name yet, on the
+        folder where every map set is saved.
+        """
         self.map_folder: Path = map_folder
 
         self.__name: str = ""
@@ -469,6 +479,11 @@ class Maps_custom:
         self.name_set: bool = False
 
     def set_name(self, name: str) -> bool:
+        """
+        Names the set: 1 to 20 characters among letters, digits, _
+        and -, a name that no existing set folder already uses. The
+        name is also given to every map already in the set.
+        """
         allowed: set[str] = set(
                 "abcdefghijklmnopqrstuvwxyz"
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -494,6 +509,11 @@ class Maps_custom:
         return True
 
     def add_map(self, new_map: Map_custom) -> bool:
+        """
+        Adds one finished map to the set: the wall is validated and
+        every step (walls, pacman spawn, collectibles, 4 ghost spawns
+        and scatters) must be done before the map can join the set.
+        """
         if not new_map.walls_set:
             return False
         if not new_map.pacman_spawn_set:

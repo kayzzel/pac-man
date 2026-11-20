@@ -337,7 +337,10 @@ def load_maps_from_folder(folder: Path) -> list[Map]:
         Returns value:
     return the loaded maps in game order, empty when there is none
     """
+
     def index_of(path: Path) -> int:
+        """Give the game position of a map file: 0 for map.json, N
+        for map_N.json, and -1 for anything that is not a map file."""
         stem = path.stem
         if stem == "map":
             return 0
