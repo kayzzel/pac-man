@@ -517,6 +517,8 @@ class Map_custom:
             return "ghost scatter point is not set"
         if self.__map.collectible_count == 0:
             return "no collectibles in the map"
+        return None
+
 
 class Maps_custom:
     def __init__(self, map_folder: Path) -> None:

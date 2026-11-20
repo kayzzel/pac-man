@@ -1,5 +1,7 @@
 from src.App import App
 
+import sys
+
 
 def main() -> int:
     if len(sys.argv) != 2:
