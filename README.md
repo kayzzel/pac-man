@@ -122,8 +122,9 @@
   ____
   
 
-  As required by the 42 subject for this project, it was built entirely in Python.<br>
-  The UI interface used `pyray` as the graphic library to make an easy 2D rendering system with `views`, the main `App` cycling through them. The views use `widgets` built from scratch using basic `pyray` functions, for more complex display options.<br><br>
+  As required by the 42 subject for this project, it was built entirely in Python.<br><br>
+  The UI interface used `pyray` as the graphic library to make an easy 2D rendering system with `views`, the main `App` cycling through them. The views use `widgets` built from scratch using basic `pyray` functions, for more complex display options.<br>
+  There are 10 views (not including the abstract parent class `View`). From the `Main_menu`, the game provides in-game instructions, options of configuration (font, texture pack, keybinds, etc.), and a display of the best scores as well. When the player clicks on "start game", there is a menu to choose the mode, and then either a new game starts, or if you chose the custom mode you can go through the step-by-step process of creating your own maps.<br><br>
 
 ### General Software Architecture
 
