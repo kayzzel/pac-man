@@ -134,8 +134,6 @@ class Widget(ABC):
         -------
         int:
             The calculated x coordinate of the widget.
-            Returns value:
-        return the x column where the widget is drawn
         """
 
         return (
