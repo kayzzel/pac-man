@@ -11,10 +11,9 @@ from .entity.ghost.Clyde import Clyde
 from .entity.ghost.Inky import Inky
 from .entity.collectible.Consumable import Consumable
 from ..Config import Config
-from ..utils.maze_utils import convert_maze_to_map
+from ..utils.maze_utils import convert_maze_to_map, generate_maze
 from ..utils.enum_utils import Game_state, Ghost_state, Pacman_state
 
-from mazegenerator import MazeGenerator
 from pathlib import Path
 
 import os
@@ -24,12 +23,25 @@ import contextlib
 
 
 class Game:
+    """A whole game: maps, entities, scores, cheat panel and thread."""
+
     def __init__(
                 self,
                 config: Config,
                 map_name: str,
                 score_file: Path,  # maps_folder/map_name/score.json
             ) -> None:
+        """
+            Description:
+        Create a game for one map: Pac-Man, the four ghosts, the
+        scores of the map, the cheat panel and the game loop, in the
+        NOT_RUNNING state, without any level in it.
+
+            Parameters:
+        config -> the loaded config of the game
+        map_name -> the name of the map or mode played
+        score_file -> the json file keeping the scores of this game
+        """
         self.map: list[Map] = []
         self.map_index: int = 0
 
@@ -55,21 +67,52 @@ class Game:
         self.cheats: GameCheats = GameCheats(self)
 
     def stop(self, status: Game_state = Game_state.LOST) -> None:
+        """
+            Description:
+        Put the game in the given state and ask the loop to end. A
+        FINISHED_MAP status is also remembered so the next level is
+        announced with the right state, even to a GUI that resumed
+        too early.
+
+            Parameters:
+        status -> the state to give the game
+        """
         self.state = status
         if status == Game_state.FINISHED_MAP:
             self.__map_finished = True
         self.game_loop.stop()
 
     def pause(self, status: Game_state = Game_state.PAUSED) -> None:
+        """
+            Description:
+        Pause the game with the given state: the worker thread parks,
+        using no CPU, and the state tells the GUI why (waiting for a
+        start, a death or a cleared level animation).
+
+            Parameters:
+        status -> the pause state to give the game
+        """
         self.state = status
         self.game_loop.pause()
 
     def resume(self) -> None:
+        """
+            Description:
+        Put the game in the RUNNING state and wake the parked worker
+        thread: the timer and the game only move while running.
+        """
         self.state = Game_state.RUNNING
         self.game_loop.resume()
 
     def start(self) -> None:
-
+        """
+            Description:
+        Play every level in order: reset the clock and the
+        positions, park at PAUSED (or FINISHED_MAP right after a
+        cleared level) waiting for resume, run the level until it is
+        cleared, lost or stopped, then move on to the next one. All
+        levels cleared means WON.
+        """
         for _ in self.map:
 
             self.start_position()
@@ -93,6 +136,21 @@ class Game:
         self.stop(Game_state.WON)
 
     def generate_map(self, width: int, height: int, seed: int = 0) -> Map:
+        """
+            Description:
+        Generate one level with the external A-Maze-ing package and
+        build a complete map out of it: walls, pacgums, super
+        pacgums in the corners and the spawns. Any failure of the
+        package becomes a clean ValueError.
+
+            Parameters:
+        width -> width of the level, in cells
+        height -> height of the level, in cells
+        seed -> seed of the maze, 0 for a random one
+
+            Returns value:
+        return the generated map, ready to be played
+        """
         if width < 2 or height < 2:
             raise ValueError(f"Invalid map size: {width}x{height}")
 
@@ -100,15 +158,23 @@ class Game:
             open(os.devnull, "w") as devnull,
             contextlib.redirect_stdout(devnull),
         ):
-            generator: MazeGenerator = MazeGenerator(
-                    (width, height), False, seed=seed
-                )
+            maze: list[list[int]] = generate_maze(width, height, seed)
 
-            new_map = convert_maze_to_map(generator.maze, self.config)
-
-        return new_map
+        try:
+            return convert_maze_to_map(maze, self.config)
+        except Exception as err:
+            raise ValueError(
+                    "failed to build the map from the generated "
+                    f"maze: {err}"
+                ) from err
 
     def start_position(self) -> None:
+        """
+            Description:
+        Put every entity back in place: Pac-Man on his spawn without
+        any power-up, and the four ghosts on their spawns in SCATTER,
+        at their normal speed.
+        """
         cur_map = self.map[self.map_index]
 
         self.player.pos_x, self.player.pos_y = cur_map.pacman_spawn
@@ -129,12 +195,24 @@ class Game:
             ghost.state = Ghost_state.SCATTER
 
     def start_async(self) -> None:
+        """
+            Description:
+        Start playing the game in a daemon worker thread and come
+        back immediately: the GUI keeps the hand and drives the
+        pauses with resume().
+        """
         if self.__thread is not None and self.__thread.is_alive():
             return
         self.__thread = threading.Thread(target=self.__run_safe, daemon=True)
         self.__thread.start()
 
     def __run_safe(self) -> None:
+        """
+            Description:
+        Body of the worker thread: play the game, and turn any
+        unexpected exception into a clean ERROR state instead of a
+        frozen game.
+        """
         try:
             self.start()
         except Exception as err:
@@ -143,11 +221,32 @@ class Game:
             self.game_loop.stop()
 
     def join(self, timeout: float = 2.0) -> None:
+        """
+            Description:
+        Wait politely for the worker thread to end, at most the
+        given timeout, typically before leaving the app.
+
+            Parameters:
+        timeout -> maximum seconds to wait
+        """
         if self.__thread is not None:
             self.__thread.join(timeout)
 
 
 def calculate_collision(game: Game) -> bool:
+    """
+        Description:
+    Handle what happens on Pac-Man's tile: eat the collectible if
+    there, then check the ghosts standing on the same tile: an
+    invincible or energized Pac-Man eats them, anything else costs
+    him a life.
+
+        Parameters:
+    game -> the running game
+
+        Returns value:
+    return True when the collision cost Pac-Man a life
+    """
     pacman = game.player
 
     x = int(pacman.pos_x)
@@ -183,6 +282,17 @@ def calculate_collision(game: Game) -> bool:
 
 
 def update_game(game: Game) -> None:
+    """
+        Description:
+    Advance the whole game by one tick: refresh the visible timer,
+    move Pac-Man and the four ghosts, then handle the collisions:
+    a lost life respawns everything and parks the game in DIED, no
+    life left ends the game in LOST, and a fully eaten map ends the
+    level in FINISHED_MAP.
+
+        Parameters:
+    game -> the running game
+    """
     game.timer = game.game_loop.timer
 
     pacman = game.player
@@ -214,18 +324,37 @@ def update_game(game: Game) -> None:
         game.stop(Game_state.FINISHED_MAP)
 
 
-def mandatory_game(config: Config) -> Game:
+def mandatory_game(config: Config) -> Game | None:
+    """
+        Description:
+    Build the mandatory game on the levels generated by the
+    A-Maze-ing package (the first one from the fixed seed, the
+    others random) and start playing it in its own thread.
+
+        Parameters:
+    config -> the loaded config of the game
+
+        Returns value:
+    return the running game, or None with a clear message printed
+    when the generator fails
+    """
     game = Game(config, "Mandatory", Path(config.highscore_filename))
     first = True
 
     width, height = config.levels_dimensions
 
-    for _ in range(config.nb_level):
-        if first:
-            game.map.append(game.generate_map(width, height, config.seed))
-            first = False
-        else:
-            game.map.append(game.generate_map(width, height))
+    try:
+        for _ in range(config.nb_level):
+            if first:
+                game.map.append(
+                        game.generate_map(width, height, config.seed)
+                    )
+                first = False
+            else:
+                game.map.append(game.generate_map(width, height))
+    except ValueError as err:
+        print(err, file=sys.stderr)
+        return None
 
     game.start_async()
 
@@ -265,6 +394,7 @@ def custom_game(
     if not maps:
         return None
 
+    config.custom_level_time()
     game = Game(config, map_name, folder / "score.json")
     game.map.extend(maps)
     game.start_async()

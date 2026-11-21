@@ -118,6 +118,7 @@ class Widget(ABC):
         A method to display the widget,
         must be implemented by all different widgets.
         """
+
         ...
 
     @property

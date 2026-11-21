@@ -40,6 +40,7 @@ class Scores_view(View):
             for which to display the scores.
         """
 
+        self.app = app
         self.maps: list[str] = get_stored_map_list(app.map_folder)
         self.init_scores: bool = False
         self.load_new_scores(map_name, app.map_folder)
@@ -64,21 +65,25 @@ class Scores_view(View):
     def load_new_scores(self, map_name: str, map_folder: Path) -> None:
 
         """
-        Loads the scores of a map, searching for them
-        in the folder where the scores are stored.
+        Loads the scores of a map: the mandatory game reads them from
+        the score file of the config (highscore_filename), every custom
+        map set reads them from its own score.json in the map folder.
 
         Parameters
         ----------
         map_name: str
-            The name of the map for which to load the scores.
+            The name of the map for which to load the scores, or
+            "mandatory" for the mandatory game.
         map_folder: Path
             The path to the folder where the score files are stored.
         """
 
-        self.map_scores: Map_scores = Map_scores(
-            map_name,
-            map_folder / map_name / "score.json"
-        )
+        if map_name == "mandatory":
+            score_path: Path = Path(self.app.config.highscore_filename)
+        else:
+            score_path = map_folder / map_name / "score.json"
+
+        self.map_scores: Map_scores = Map_scores(map_name, score_path)
         self.scores: list[str] = [
             f"{i + 1}. {pl.name} --- {pl.score}"
             for i, pl in enumerate(self.map_scores.scores)
@@ -126,7 +131,7 @@ class Scores_view(View):
             load_label: (lambda: 0, None)
         } | {
             map_name: (self.load_new_scores, (map_name, self.app.map_folder))
-            for map_name in self.maps
+            for map_name in ["mandatory"] + self.maps
         }
         self.map_dropdown: Dropdown = Dropdown(
             -2,
