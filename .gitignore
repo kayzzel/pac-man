@@ -1,3 +1,7 @@
+# Custom ignore
+.maps/
+highscore.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
