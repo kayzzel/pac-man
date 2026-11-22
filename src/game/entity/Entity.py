@@ -17,7 +17,7 @@ class Entity(ABC):
         self.name: str = name
         self.pos_x: float = 0.0
         self.pos_y: float = 0.0
-        self.speed = 0.02
+        self.speed = 0.025
         self.direction = "N"
 
     def walk(self) -> None:
