@@ -140,6 +140,7 @@
   As required by the 42 subject for this project, it was built entirely in Python.<br><br>
   The UI interface used `pyray` as the graphic library to make an easy 2D rendering system with `views`, the main `App` cycling through them. The views use `widgets` built from scratch using basic `pyray` functions, for more complex display options.<br>
   There are 10 views (not including the abstract parent class `View`). From the `Main_menu`, the game provides in-game instructions, options of configuration (font, texture pack, keybinds, etc.), and a display of the best scores as well. When the player clicks on "start game", there is a menu to choose the mode, and then either a new game starts, or if you chose the custom mode you can go through the step-by-step process of creating your own maps.<br><br>
+  On the game engine side, it runs completely independently from the display: every `Game` plays in its own worker thread, advancing on a fixed-timestep `GameLoop` capped at 100 updates per second, while the display thread only reads the game's attributes to render the current state. The two threads therefore communicate without any lock or shared queue, and pausing simply parks the worker thread on a flag: it consumes no CPU while the display keeps animating (pause menu, level transitions, etc.). The game advances through the states `NOT_RUNNING`, `PAUSED`, `FINISHED_MAP`, `WON` and `LOST`: at the start of each level the entities are put back in place and the thread waits for the display to resume it, and a game is won when every map of the set has been cleared. Paused time is never counted: only the active seconds elapsed before `level_max_time`.<br><br>
 
 ### General Software Architecture
 
@@ -277,3 +278,4 @@
 
   For the display part, AI was only used two or three times when stuck for too long on an issue and not managing to find the root of the problem (since it sometimes came from the graphic library itself, and `pyray` being a wrapper of a library originally written in C, the behavior of some functions could change).<br><br>
   For the game engine part, I principally used the AI for documentation on python usage and tests until the display was up for tests. I also used it on the docstrings
+ And it was used to write the instructions.
