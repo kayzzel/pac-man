@@ -83,7 +83,11 @@ class Step_two(Custom_step):
         Randomizes the map's walls.
         """
 
-        self.map.randomize_wall()
+        try:
+            self.map.randomize_wall()
+        except ValueError as ve:
+            self.show_message = ve
+            return
         self._update(True)
 
     def _update_randomize_button(self) -> None:

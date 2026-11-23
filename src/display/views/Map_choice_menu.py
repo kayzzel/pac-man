@@ -10,6 +10,11 @@ from ..widgets import Text, ButtonPanel, Icon
 
 from src.game.Game import custom_game, mandatory_game
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.App import App
+
+MSG_TIME: int = 80
 
 ICON_PATHS: dict[str, str] = {
     "MANDATORY": "assets/icons/mandatory_snapshot.png",
@@ -24,6 +29,21 @@ class Map_choice_menu(View):
     A view used for the user to select the game mode
     they want to play (mandatory, arcade or custom).
     """
+
+    def __init__(self, app: "App") -> None:
+
+        """
+        Initializes the main attributes of the view.
+
+        Parameters
+        ----------
+        app: App
+            The main app that handles everything.
+        """
+
+        self.show_message: str = ""
+        self.frame_counter: int = 0
+        super().__init__(app)
 
     def _update_title(self) -> None:
 
@@ -77,16 +97,12 @@ class Map_choice_menu(View):
             tuple[Callable[..., Any], Any]
         ] = {
             "MANDATORY": (
-                self.app.change_view,
-                Game_view(self.app, mandatory_game, self.app.config)
+                self.launch_game,
+                (mandatory_game, self.app.config)
             ),
             "ARCADE": (
-                self.app.change_view,
-                Game_view(
-                    self.app,
-                    custom_game,
-                    ("arcade", Path("src/arcade"))
-                )
+                self.launch_game,
+                (custom_game, ("arcade", Path("src/arcade")))
             ),
             "CUSTOM": (self.app.change_view, Custom_view(self.app))
         }
@@ -123,6 +139,36 @@ class Map_choice_menu(View):
         )
         self.widgets.append(self.back_button)
 
+    def launch_game(
+        self,
+        game_function: Callable[..., Any],
+        args: Any
+    ) -> None:
+
+        """
+        Launches a custom game using the game function and the args.
+
+        Parameters
+        ----------
+        game_function: Callable[..., Any]
+            The function to start a game with (mandatory/custom).
+        args: Any
+            The argument(s) to pass to the game creation function.
+        """
+
+        game_view: Game_view = Game_view(
+            self.app,
+            game_function,
+            args
+        )
+        if game_view.game is None:
+            self.show_message = (
+                "Couldn't load the game, an error occurred."
+            )
+            return
+
+        self.app.change_view(game_view)
+
     def calculate_panel_spacing(self) -> None:
 
         """
@@ -156,6 +202,31 @@ class Map_choice_menu(View):
 
         self.spacing: int = width_remaining // (nb_buttons + 1)
 
+    def display_message(self) -> None:
+
+        """
+        Builds and displays a text message
+        if the game could not be launched.
+        """
+
+        if self.frame_counter < MSG_TIME:
+
+            message: Text = Text(
+                self.show_message,
+                -2,
+                self.back_button.posy - self.h // 25,
+                self.h // 25,
+                self.w // 2,
+                pr.MAROON
+            )
+            message.display_widget()
+            self.frame_counter += 1
+
+        else:
+
+            self.show_message = ""
+            self.frame_counter = 0
+
     def _update(self, forced: bool = False) -> Any:
 
         """
@@ -175,3 +246,15 @@ class Map_choice_menu(View):
         self._update_title()
         self._update_icons()
         self._update_panels()
+
+    def display_view(self) -> None:
+
+        """
+        Updates and displays the view's widgets,
+        and also shows the game failing message if needed.
+        """
+
+        super().display_view()
+
+        if self.show_message:
+            self.display_message()

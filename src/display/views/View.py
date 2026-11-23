@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.App import App
 
+
 BORDER_THICKNESS: int = 7
 BORDER_PADDING: int = 3
 BORDER_COLOR: pr.Color = pr.DARKBLUE
