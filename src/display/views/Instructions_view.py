@@ -83,8 +83,8 @@ TEXTS: dict[str, list[str]] = {
     "SCORES": [
         "- Each mode and each custom map keeps its own scores.",
         "- The mandatory mode stores them in the file given by the config",
-        "  (highscore_filename, default "highscore.json");",
-        "  every other mapkeeps a score file in its own folder.",
+        "  (highscore_filename, default 'highscore.json');",
+        "  every other map keeps a score file in its own folder.",
         "- Your name is limited to 10 characters, letters, digits",
         "  and spaces only.",
         "- Only the top 10 scores are kept."
