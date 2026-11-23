@@ -98,11 +98,21 @@
 
 
   The highscore system allows the player to save their scores for the different maps by storing them in JSON files,
-  all located by default in a `.maps/<map_name>/score.json` file, with the <map_name> being the name of the collection of maps/levels (for example, `mandatory` or `arcade`).<br>
+  for the mandatory the score are stored in the `highscore_file` defined in the config,
+  for the arcade it is store in `src/arcade/arcade/score.json`, 
+  all of the custom maps scores are located by default in a `.maps/<map_name>/score.json` file, with the <map_name> being the name of the collection of maps/levels (for example, `map2` or `map1`).<br>
 
   **How the scores are stored:**
-
-  TO BE FILLED LATER
+  they are stored in a json file formated this way:
+  ``` json
+  [
+    {
+        "name": {player-name},
+        "score": {player-score},
+    },
+    ...
+  ]
+  ```
   <br><br>
 
 ### Maze Generation
@@ -112,7 +122,8 @@
   
 
   For the maze generation of the mandatory levels, we used the `mazegenerator` package provided, from the `A-Maze-Ing` 42 project.<br>
-  TO BE FILLED LATER
+  After the generation of the maze, we created a function to convert it into a map with enverything needed. The walls were all converted into cells and put collectibles in them (pacgum and super-pacgum), we set pacman spawn (the cells nearest to the center of the maze that is a possible position so not inside the 42 and not in a full cell), and set the ghosts position and scater point into the corners
+
   <br><br>
 
 
