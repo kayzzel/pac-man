@@ -2,9 +2,9 @@ import pyray as pr
 
 from pyray import MouseButton as mb
 
-from .Custom_step import Custom_step
+from .Custom_step import Custom_step, MSG_TIME
 from ..View import View
-from ...widgets import Widget, ButtonPanel, ClickableIcon
+from ...widgets import Widget, Text, ButtonPanel, ClickableIcon
 
 from src.game.map.Cell import Cell
 
@@ -83,7 +83,11 @@ class Step_two(Custom_step):
         Randomizes the map's walls.
         """
 
-        self.map.randomize_wall()
+        try:
+            self.map.randomize_wall()
+        except ValueError:
+            self.show_message = "Couldn't randomize the walls"
+            return
         self._update(True)
 
     def _update_randomize_button(self) -> None:
@@ -322,6 +326,31 @@ class Step_two(Custom_step):
         self._update_randomize_button()
         self._update_grid()
         self.is_freed = False
+
+    def display_message(self) -> None:
+
+        """
+        Builds and displays a text widget showing the refusal message
+        if an error occurred when setting the walls.
+        """
+
+        if self.frame_counter < MSG_TIME:
+
+            message: Text = Text(
+                self.show_message,
+                -2,
+                self.description.lowerbound + self.h // 40,
+                self.h // 25,
+                self.w // 2,
+                pr.MAROON
+            )
+            message.display_widget()
+            self.frame_counter += 1
+
+        else:
+
+            self.show_message = ""
+            self.frame_counter = 0
 
     def display_view(self) -> None:
 

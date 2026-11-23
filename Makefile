@@ -31,7 +31,6 @@ build: install
 	cp -r assets $(DIST)/pacman
 	cp -r README_package.md $(DIST)/pacman/README.md
 	cp config.json $(DIST)/pacman
-	cp highscore.json $(DIST)/pacman
 	cp instruction.txt $(DIST)/pacman
 	mv $(DIST)/pac-man $(DIST)/pacman
 	cd $(DIST); zip -r pac-man.zip pacman/
