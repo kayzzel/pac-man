@@ -37,9 +37,10 @@
 
   **Execution**
 
-  To run the game, you just need to extract the archive and execute the provided `pac-man` binary in your terminal (giving the configuration file as argument).<br><br>
+  To run the game, you just need to extract the archive and execute the provided `pac-man` binary in your terminal (giving the configuration file as argument).<br>
+  The itch.io project only works on __x86__ as it was compiled on Linux, but you can play/build the game yourself from the [Github repository](https://github.com/kayzzel/pac-man).<br><br>
 
-  __On Linux / macOS__:
+  __On Linux__:
   ```
   chmod +x ./pac-man
   ./pac-man <config_file>
