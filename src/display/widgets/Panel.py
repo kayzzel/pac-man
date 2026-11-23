@@ -3,7 +3,7 @@ import pyray as pr
 from typing import Callable, Any
 
 from .Widget import Widget
-from .Text import Text, TEXT_COLOR
+from .Text import Text
 from .Button import Button, BUTTON_BASE_COLOR, BUTTON_HOVER_COLOR
 
 
