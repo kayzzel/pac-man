@@ -55,7 +55,10 @@ class GameCheats:
         if self.__game.player.nb_lives + lives < 1:
             self.__game.player.nb_lives = 1
             return
-        self.__game.player.nb_lives += lives
+        if self.__game.player.nb_lives + lives > 2147483647:
+            self.__game.player.nb_lives = 2147483647
+            return
+        self.__game.player.nb_lives = lives
 
     def change_points(self, points: int) -> None:
         """
@@ -69,7 +72,10 @@ class GameCheats:
         if self.__game.player.score + points < 0:
             self.__game.player.score = 0
             return
-        self.__game.player.score += points
+        if self.__game.player.nb_lives + points > 2147483647:
+            self.__game.player.score = 2147483647
+            return
+        self.__game.player.score = points
 
     def toggle_invincible(self) -> None:
         """
