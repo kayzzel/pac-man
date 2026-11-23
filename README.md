@@ -84,7 +84,7 @@
   + `width` (integer) : The width (number of columns) of the generated maze for mandatory maps (default=`15`)<br>
   + `height` (integer) : The height (number of rows) of the generated maze for mandatory maps (default=`15`)<br>
   + `seed` (integer) : The random seed for the first maze generation (first level)<br>
-  + `time` (integer) : The time limit in seconds to complete a level (default=`120`)<br>
+  + `time` (integer) : The time limit in seconds to complete a level (default=`90`)<br>
   + `pacgum_points` (integer) : The number of points awarded to the player when collecting a pacgum (default=`10`)<br>
   + `super_pacgum_points` (integer) : The number of points awarded to the player when collecting a super pacgum (default=`50`)<br>
   + `ghost_points` (integer) : The number of points awarded to the player when eating a ghost (default=`200`)<br>
@@ -227,7 +227,7 @@
 
 
   At the beginning of the project, we put together a roadmap detailing every single class/function to implement, as well as basic display ideas. We also wrote the prototypes of every class that we would both use, ensuring that our code would not clash at any point.<br>
-  Then we divided the two main aspects of the project between us: __gabach__ took care of the game engine and entities, and __ibady__ did the UI interface (display) part.<br>
+  Then we divided the two main aspects of the project between us: __gabach__ took care of the game engine and entities, and __ibady__ did the UI interface (display) part. A more detailed reconstruction of the project timeline is at the root of the repository.<br>
   We implemented git rules that made it impossible to merge our branches directly with dev or main, to avoid having to clean up messes on the dev branch later. Instead, we had to make Pull Requests to merge a specific branch into dev: this branch had to pass __lint__ checks and then the merge had to be approved by the other person.<br><br>
   When we had questions/points/issues to address with the other, we either discussed them on the campus, or we called/messaged via Discord.
   We didn't really have any big interfering code issues while progressing because our parts were almost completely isolated from one another, and even when we had stuff to modify in the other's part, it was usually resolved very easily.<br>
