@@ -251,8 +251,8 @@
 
   **Links:**
 
-  + [Pyray documentation](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://electronstudio.github.io/raylib-python-cffi/pyray.html&ved=2ahUKEwib_c3WopSYAxVzRUEAHUfxNwYQFnoECBAQAQ&usg=AOvVaw2ZUNKq2gg3KP_7LusLnY5x)<br>
-  + [Raylib cheatsheet](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.raylib.com/cheatsheet/cheatsheet.html&ved=2ahUKEwjMm9beopSYAxVbU0EAHQrdKUEQjBB6BAgmEAE&usg=AOvVaw1NzH6pz9l4Hv6_g03xONnz)<br>
+  + [Pyray documentation](https://electronstudio.github.io/raylib-python-cffi/pyray.html)<br>
+  + [Raylib cheatsheet](https://www.raylib.com/cheatsheet/cheatsheet.html)<br>
   + [Raylib examples](https://www.raylib.com/examples.html)<br>
   + [Free pixel art editor online used to make the sprites](https://www.piskelapp.com/)<br><br>
 
