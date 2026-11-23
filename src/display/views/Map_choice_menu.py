@@ -14,7 +14,7 @@ from src.game.Game import custom_game, mandatory_game
 ICON_PATHS: dict[str, str] = {
     "MANDATORY": "assets/icons/placeholder.png",
     "ARCADE": "assets/icons/pacman_arcade_snapshot.jpg",
-    "CUSTOM": "assets/icons/placeholder.png"
+    "CUSTOM": "assets/icons/custom_snapshot.png"
 }
 
 
@@ -46,7 +46,7 @@ class Map_choice_menu(View):
         of each game mode for the user to select.
         """
 
-        self.icon_width: int = self.w // 5
+        self.icon_width: int = self.w // 4
 
         height_remaining: int = self.h - self.title.lowerbound
         self.icon_height: int = 2 * (height_remaining // 3)
