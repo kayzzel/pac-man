@@ -3,12 +3,13 @@ import pyray as pr
 from typing import Callable, Any
 
 from .Widget import Widget
-from .Text import Text, TEXT_COLOR
+from .Text import Text
 from .Button import Button, BUTTON_BASE_COLOR, BUTTON_HOVER_COLOR
 
 
 PANEL_OUTLINE_COLOR: pr.Color = pr.MAROON
 PANEL_FILL_COLOR: pr.Color = pr.BLANK
+TEXT_PANEL_COLOR: pr.Color = pr.DARKBLUE
 
 
 class Panel(Widget):
@@ -156,7 +157,7 @@ class TextPanel(Panel):
             PANEL_OUTLINE_COLOR,
             PANEL_FILL_COLOR
         ),
-        label_color: pr.Color = TEXT_COLOR
+        label_color: pr.Color = TEXT_PANEL_COLOR
     ) -> None:
 
         """

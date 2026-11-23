@@ -167,6 +167,8 @@ class Game_view(View):
             self.labels,
             (self.w // 12 // 2, 2, 0.1)
         )
+        for label in self.info_panel.labels.values():
+            label.color = pr.GOLD
 
         self.life_label: Text = Text(
             "Lives :",

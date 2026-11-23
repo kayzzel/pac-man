@@ -43,8 +43,8 @@ class Endgame_view(View):
 
         if self.game.scores.scores:
             self.scores = [
-                pl.name + ": " + str(pl.score)
-                for pl in self.game.scores.scores
+                f"{i + 1}. {pl.name} ---- {pl.score}"
+                for i, pl in enumerate(self.game.scores.scores)
             ]
 
         if not self.game.scores.loaded:
@@ -71,7 +71,9 @@ class Endgame_view(View):
             ),
             -2,
             self.h // 25,
-            self.h // 10
+            self.h // 10,
+            self.w // 2,
+            (pr.GREEN if self.state else pr.MAROON)
         )
 
         self.score: Text = Text(
@@ -85,7 +87,9 @@ class Endgame_view(View):
             "Highscores",
             -2,
             self.score.lowerbound + self.h // 15,
-            self.h // 20
+            self.h // 20,
+            self.w // 4,
+            pr.DARKBLUE
         )
 
         self.widgets += [self.title, self.score, self.highscore]

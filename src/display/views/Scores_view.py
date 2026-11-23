@@ -87,7 +87,7 @@ class Scores_view(View):
 
         self.map_scores: Map_scores = Map_scores(map_name, score_path)
         self.scores: list[str] = [
-            f"{i + 1}. {pl.name} --- {pl.score}"
+            f"{i + 1}. {pl.name} ---- {pl.score}"
             for i, pl in enumerate(self.map_scores.scores)
         ]
         if not self.map_scores.loaded:
