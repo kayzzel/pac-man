@@ -57,9 +57,12 @@ clean:
 	find . -name "*.egg-info" 		-type d -exec rm -rf "{}" +
 	find . -name ".coverage" 		-delete
 	find . -name "*.pyc" 			-delete
+	rm -rf build
+	rm -rf pac-man.spec
 
 fclean: clean
 	rm -rf .venv
+	rm -rf dist
 
 re: check_uv fclean install
 
