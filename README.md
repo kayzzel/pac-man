@@ -103,7 +103,6 @@
   all of the custom maps scores are located by default in a `.maps/<map_name>/score.json` file, with the <map_name> being the name of the collection of maps/levels (for example, `map2` or `map1`).<br>
 
   **How the scores are stored:**
-  they are stored in a json file formated this way:
   ``` json
   [
     {
