@@ -57,15 +57,15 @@
 
   **Structure of the file and default values:**
 
-  + `score_file` (string) : The path to the file in which are stored the scores for the mandatory maps (default=`.maps/mandatory/score.json`)<br>
-  + `life` (integer) : The initial number of lives for the player (default=`3`)<br>
-  + `width` (integer) : The width (number of columns) of the generated maze for mandatory maps (default=`15`)<br>
-  + `height` (integer) : The height (number of rows) of the generated maze for mandatory maps (default=`15`)<br>
-  + `seed` (integer) : The random seed for the first maze generation (first level)<br>
-  + `time` (integer) : The time limit in seconds to complete a level (default=`120`)<br>
-  + `pacgum_points` (integer) : The number of points awarded to the player when collecting a pacgum (default=`10`)<br>
-  + `super_pacgum_points` (integer) : The number of points awarded to the player when collecting a super pacgum (default=`50`)<br>
-  + `ghost_points` (integer) : The number of points awarded to the player when eating a ghost (default=`200`)<br>
+  + `highscore_filename` (string) : The path to the file in which are stored the top-10 scores of the mandatory game (default=`highscore.json`)<br>
+  + `nb_level` (integer) : The number of levels in the mandatory game (default=`10`, minimum 10)<br>
+  + `levels_dimensions` (array of two integers) : The size `[width, height]` in cells of each generated level for the mandatory game, each dimension must be between 10 and 50 (default=`[15, 15]`)<br>
+  + `lives` (integer) : The initial number of lives for the player (default=`3`, minimum 1)<br>
+  + `point_per_pacgum` (integer) : The number of points awarded to the player when collecting a pacgum (default=`10`, minimum 0)<br>
+  + `point_per_super_pacgum` (integer) : The number of points awarded to the player when collecting a super pacgum (default=`50`, minimum 0)<br>
+  + `point_per_ghost` (integer) : The number of points awarded to the player when eating a ghost (default=`200`, minimum 0)<br>
+  + `seed` (integer) : The random seed for the first level's maze generation, the following levels are generated randomly, so it only defines the first level (default=`42`)<br>
+  + `level_max_time` (integer) : The time limit in seconds to complete a level, the time spent paused is not counted (default=`90`)<br>
 
   In case of missing or invalid keys, the default values are adopted. Unknown keys are ignored.<br><br>
 
