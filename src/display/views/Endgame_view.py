@@ -142,9 +142,8 @@ class Endgame_view(View):
             self.w // 3,
             scores_height,
             self.scores,
-            (padding, 2, 0.1),
+            (padding, 2, 0.1)
         )
-        self.score_panel.label_color = pr.DARKBLUE
         self.widgets.append(self.score_panel)
 
     def _update(self, forced: bool = False) -> None:
