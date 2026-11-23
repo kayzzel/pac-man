@@ -249,5 +249,4 @@
   **AI Usage:**
 
   For the display part, AI was only used two or three times when stuck for too long on an issue and not managing to find the root of the problem (since it sometimes came from the graphic library itself, and `pyray` being a wrapper of a library originally written in C, the behavior of some functions could change).<br><br>
-
-  TO BE FILLED BY GAUTHIER
+  For the game engine part, I principally used the AI for documentation on python usage and tests until the display was up for tests. I also used it on the docstrings
