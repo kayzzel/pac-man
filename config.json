@@ -1,0 +1,38 @@
+{
+    // Pac-Man configuration file.
+    // Every key is optional: missing or invalid values fall back to
+    // the defaults shown below, and unknown keys are ignored.
+    // Lines starting with # are also ignored, as are /* ... */ blocks.
+
+    // File where the mandatory game keeps its top-10 scores.
+    "highscore_filename": "highscore.json",
+
+    // Number of levels in the mandatory game (minimum 10).
+    "nb_level": 10,
+
+    // Size of each generated level as [width, height], in cells.
+    // Each dimension must be between 10 and 50.
+    "levels_dimensions": [15, 15],
+
+    // Lives the player starts with (minimum 1).
+    "lives": 3,
+
+    // Points awarded for eating one pacgum (0 or more).
+    "point_per_pacgum": 10,
+
+    // Points awarded for eating one super pacgum, the big dots in
+    // the corners that make the ghosts edible for 7 seconds
+    // (the last 3 seconds they blink).
+    "point_per_super_pacgum": 50,
+
+    // Points awarded for eating one edible ghost.
+    "point_per_ghost": 200,
+
+    // Seed of the first level's maze: same seed, same first level.
+    // The following levels are generated randomly.
+    "seed": 42,
+
+    // Active seconds allowed per level before the game is lost
+    // (paused time is not counted).
+    "level_max_time": 90
+}

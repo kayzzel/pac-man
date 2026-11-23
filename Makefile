@@ -5,6 +5,8 @@ NAME		=	pac-man
 SRC			=	pac-man.py
 VENV		=	.venv
 
+DIST		=	dist
+
 CONF		?=	config.json
 
 EXCLUDE				=	--exclude $(VENV)
@@ -21,6 +23,18 @@ install: check_uv
 
 run: check_uv
 	@uv run python $(SRC) $(CONF)
+
+build: install
+	rm -fr $(DIST)/
+	uv run pyinstaller --onefile --windowed $(SRC)
+	mkdir $(DIST)/pacman
+	cp -r assets $(DIST)/pacman
+	cp -r README_package.md $(DIST)/pacman/README.md
+	cp config.json $(DIST)/pacman
+	cp instruction.txt $(DIST)/pacman
+	mv $(DIST)/pac-man $(DIST)/pacman
+	cd $(DIST); zip -r pac-man.zip pacman/
+	rm -fr $(DIST)/pacman
 
 debug: check_uv
 	@uv run python -m pdb $(SRC) $(CONF)
@@ -42,9 +56,12 @@ clean:
 	find . -name "*.egg-info" 		-type d -exec rm -rf "{}" +
 	find . -name ".coverage" 		-delete
 	find . -name "*.pyc" 			-delete
+	rm -rf build
+	rm -rf pac-man.spec
 
 fclean: clean
 	rm -rf .venv
+	rm -rf dist
 
 re: check_uv fclean install
 
