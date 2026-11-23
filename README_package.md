@@ -77,10 +77,22 @@
   ____
 
 
-  The highscore system allows the player to save their scores for the different maps by storing them in JSON files,
-  all located by default in a `.maps/<map_name>/score.json` file, with the <map_name> being the name of the collection of maps/levels (for example, `mandatory` or `arcade`).<br>
+  The highscore system allows the player to save their scores for the different maps by storing them in JSON files:<br>
+  for the mandatory, the scores are stored in the `highscore_filename` file defined in the config (by default `highscore.json`, shipped next to the executable),
+  for the arcade it is stored in the bundled `score.json` of the arcade levels,
+  and all of the custom maps scores are located by default in a `.maps/<map_name>/score.json` file created at runtime, with the <map_name> being the name of the collection of maps/levels (for example, `map2` or `map1`).<br><br>
+
+  Each map keeps its own scores in its own file, so that every level or map set has an independent ranking instead of one global board.
+  Only the ten best scores are kept per map: when a game ends, the score is added to the file only if it belongs to these top-10 scores, and the lowest score is dropped when the file already holds ten of them.<br>
 
   **How the scores are stored:**
-
-  TO BE FILLED LATER
-  <br><br>
+  ``` json
+  [
+    {
+        "name": {player-name},
+        "score": {player-score}
+    },
+    ...
+  ]
+  ```
+  with the scores sorted from the best to the lowest one.<br>
