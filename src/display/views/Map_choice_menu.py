@@ -12,8 +12,8 @@ from src.game.Game import custom_game, mandatory_game
 
 
 ICON_PATHS: dict[str, str] = {
-    "MANDATORY": "assets/icons/placeholder.png",
-    "ARCADE": "assets/icons/pacman_arcade_snapshot.jpg",
+    "MANDATORY": "assets/icons/mandatory_snapshot.png",
+    "ARCADE": "assets/icons/arcade_snapshot.png",
     "CUSTOM": "assets/icons/custom_snapshot.png"
 }
 
@@ -49,7 +49,7 @@ class Map_choice_menu(View):
         self.icon_width: int = self.w // 4
 
         height_remaining: int = self.h - self.title.lowerbound
-        self.icon_height: int = 2 * (height_remaining // 3)
+        self.icon_height: int = 2 * (height_remaining // 4)
 
         self.icon_y: int = self.title.lowerbound + height_remaining // 10
         icon_spacing: int = (self.w - self.icon_width * 3) // 4
