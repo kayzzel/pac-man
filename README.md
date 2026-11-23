@@ -1,4 +1,4 @@
-*This project was created as a part of the 42 curriculum by gabach, ibady.*
+*This project has been created as part of the 42 curriculum by gabach, ibady.*
 
 
 # ==== PAC-MAN ====
