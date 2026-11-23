@@ -67,7 +67,8 @@
   ```
   make build
   ```
-  This command creates a standalone executable bundled with the required assets, configuration file and documentation into a `pacman.zip` that you can find in the `dist/` directory.<br><br>
+  This command creates a standalone executable bundled with the required assets, configuration file and documentation into a `pacman.zip` that you can find in the `dist/` directory.<br>
+  You can also find the game as a restricted project on __itch.io__ by clicking [this link](https://naim-mushy.itch.io/pacman42) (the password to access it is 'pac-man_et_c_ok').<br><br>
 
 ### Configuration
 
