@@ -113,7 +113,10 @@ class Pause_menu(View):
             "Options": (self.app.change_view, Options_menu(self.app)),
             "Scores": (
                 self.app.change_view,
-                Scores_view(self.app)
+                Scores_view(
+                    self.app,
+                    self.game.map[self.game.map_index].name
+                )
             ),
             "Save and exit": (
                 self.app.change_view,
