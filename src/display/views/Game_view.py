@@ -204,10 +204,14 @@ class Game_view(View):
 
             if not self.life_icon_init:
 
+                number_lives: int = self.game.player.nb_lives
+                if number_lives <= 0:
+                    number_lives = 1
+
                 self.life_icon_sz: int = (
                     self.info_panel.w - self.info_panel.w // 30
                     - (self.life_label.x + self.life_label.width)
-                ) // self.game.player.nb_lives
+                ) // number_lives
                 self.life_icon_init = True
 
             self.lives: list[Icon] = [Icon(
