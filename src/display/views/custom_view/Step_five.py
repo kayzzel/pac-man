@@ -40,13 +40,7 @@ class Step_five(Custom_step):
         adding the current custom map to the collection of maps.
         """
 
-        if not self.maps.add_map(self.map):
-            self.show_message = (
-                "A problem occured while adding the current map."
-            )
-            return
-
-        super().go_next()
+        self.get_attr("save_level")()
 
     def reset(self) -> None:
 

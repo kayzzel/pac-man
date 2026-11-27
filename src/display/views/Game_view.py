@@ -404,6 +404,7 @@ class Game_view(View):
 
         if self.show_as_modal:
             self.game.pause()
+            self.modal_view._update(True)
             if not self.modal_view.show_cheat_panel:
                 self.modal_view.reset_input()
         else:
@@ -476,7 +477,10 @@ class Game_view(View):
         if (
             pr.is_key_pressed(kek.KEY_ESCAPE)
             and self.game.state not in [
-                Game_state.WON, Game_state.LOST, Game_state.DIED
+                Game_state.WON,
+                Game_state.LOST,
+                Game_state.DIED,
+                Game_state.FINISHED_MAP
             ]
         ):
             self.pause_or_resume()

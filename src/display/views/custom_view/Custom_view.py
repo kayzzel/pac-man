@@ -72,6 +72,7 @@ class Custom_view(View):
             Step_seven
         ]
         self.steps_completed: list[Custom_step] = []
+        self.saved_levels: set[int] = set()
         self.sprites_set: list[tuple[Icon, Cell]] = []
 
         self.cur_step_index: int = 0
@@ -141,6 +142,26 @@ class Custom_view(View):
             if not step.is_freed:
                 step._unload_images()
         self.is_freed = True
+
+    def save_level(self) -> None:
+
+        """
+        Saves the current custom level (map)
+        inside a set of unique ids to avoid re-saving
+        the same map as another level.
+        """
+
+        if id(self.cur_step) in self.saved_levels:
+            self.step_forward()
+            return
+
+        if not self.maps.add_map(self.current_map):
+            self.cur_step.show_message = (
+                "A problem occured while adding the current map."
+            )
+            return
+        self.saved_levels.add(id(self.cur_step))
+        self.step_forward()
 
     def launch_game(self, map_name: str) -> None:
 
