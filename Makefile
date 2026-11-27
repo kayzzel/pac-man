@@ -28,8 +28,10 @@ build: install
 	rm -fr $(DIST)/
 	uv run pyinstaller --onefile --windowed $(SRC)
 	mkdir $(DIST)/pacman
+	mkdir $(DIST)/pacman/src
 	cp -r assets $(DIST)/pacman
 	cp -r README_package.md $(DIST)/pacman/README.md
+	cp -r src/arcade $(DIST)/pacman/src/
 	cp config.json $(DIST)/pacman
 	cp instruction.txt $(DIST)/pacman
 	mv $(DIST)/pac-man $(DIST)/pacman
